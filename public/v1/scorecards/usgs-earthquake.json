@@ -1,0 +1,69 @@
+{
+  "dimensions": {
+    "completeness_by_segment": {
+      "overall_pct": 100.0,
+      "segments": {
+        "ak": 100.0,
+        "av": 100.0,
+        "ci": 100.0,
+        "hv": 100.0,
+        "nc": 100.0,
+        "nm": 100.0,
+        "nn": 100.0,
+        "ok": 100.0,
+        "pr": 100.0,
+        "tx": 100.0,
+        "us": 100.0,
+        "uu": 100.0,
+        "uw": 100.0
+      },
+      "status": "ok"
+    },
+    "correction_latency": {
+      "events_evaluated": 14,
+      "p50_seconds": 20567.0,
+      "p95_seconds": 20567.0,
+      "status": "ok"
+    },
+    "freshness_lag": {
+      "p50_seconds": null,
+      "p95_seconds": null,
+      "sample_count": 4,
+      "status": "insufficient_data"
+    },
+    "internal_consistency": {
+      "consistent_snapshots_pct": 100.0,
+      "contradictions_count": 0,
+      "status": "ok"
+    },
+    "revision_behavior": {
+      "revised_records_count": 14,
+      "revision_rate_pct": 1.92,
+      "status": "ok",
+      "total_records_count": 731
+    },
+    "schema_stability": {
+      "schema_changes_count": 2,
+      "stable_snapshots_pct": 0.0,
+      "status": "ok"
+    }
+  },
+  "generated_at": "2026-09-11T21:41:20Z",
+  "method_version": "0.2",
+  "schema_version": "0.2",
+  "scoring_window": {
+    "end": "2026-09-11T21:41:17Z",
+    "snapshot_count": 4,
+    "start": "2026-09-11T15:58:31Z"
+  },
+  "source_id": "usgs-earthquake",
+  "source_name": "USGS Earthquake Hazards Program",
+  "thresholds": {
+    "completeness_samples": 1,
+    "correction_latency_events": 1,
+    "freshness_lag_samples": 5,
+    "internal_consistency_samples": 1,
+    "revision_behavior_diffs": 1,
+    "schema_stability_diffs": 1
+  }
+}

@@ -1,0 +1,195 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import fs from 'node:fs';
+import path from 'node:path';
+
+export async function getStaticPaths() {
+  const scorecardsDir = path.resolve('./public/scorecards');
+  if (!fs.existsSync(scorecardsDir)) {
+    return [];
+  }
+  const files = fs.readdirSync(scorecardsDir).filter(f => f.endsWith('.json') && f !== 'manifest.json');
+  return files.map(file => {
+    const filePath = path.join(scorecardsDir, file);
+    const content = JSON.parse(fs.readFileSync(filePath, 'utf-8'));
+    return {
+      params: { source: content.source_id },
+      props: { scorecard: content }
+    };
+  });
+}
+
+const { scorecard } = Astro.props;
+const { dimensions, accuracy, scoring_window } = scorecard;
+---
+
+<Layout title={`${scorecard.source_name} Scorecard`}>
+  <div style="margin-bottom: 2rem;">
+    <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 0.5rem;">
+      <h1 style="font-size: 2rem; font-weight: 800;">{scorecard.source_name}</h1>
+      <span class="badge" style="background-color: #dbeafe; color: #1e40af; font-size: 0.85rem;">
+        Method v{scorecard.method_version}
+      </span>
+    </div>
+    <p style="color: var(--text-muted); font-size: 0.95rem;">
+      Source ID: <code>{scorecard.source_id}</code> | Scoring window: {new Date(scoring_window.start).toLocaleDateString()} to {new Date(scoring_window.end).toLocaleDateString()} ({scoring_window.snapshot_count} snapshots)
+    </p>
+  </div>
+
+  <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.25rem; margin-bottom: 2.5rem;">
+    <!-- Dimension 1: Freshness Lag -->
+    <div style="border: 1px solid var(--border-color); border-radius: 8px; padding: 1.25rem; background: var(--bg-subtle);">
+      <h3 style="font-size: 1.05rem; font-weight: 700; margin-bottom: 0.5rem;">1. Freshness Lag</h3>
+      <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 0.75rem;">
+        Delay between source event timestamp and fetch time.
+      </p>
+      <div style="display: flex; gap: 1rem;">
+        <div>
+          <div style="font-size: 1.5rem; font-weight: 700;">{dimensions.freshness_lag.p50_seconds}s</div>
+          <div style="font-size: 0.75rem; color: var(--text-muted);">p50 median</div>
+        </div>
+        <div>
+          <div style="font-size: 1.5rem; font-weight: 700;">{dimensions.freshness_lag.p95_seconds}s</div>
+          <div style="font-size: 0.75rem; color: var(--text-muted);">p95 tail</div>
+        </div>
+      </div>
+      <div style="font-size: 0.75rem; color: var(--text-muted); margin-top: 0.5rem;">
+        Sample size: {dimensions.freshness_lag.sample_count} observations
+      </div>
+    </div>
+
+    <!-- Dimension 2: Revision Behavior -->
+    <div style="border: 1px solid var(--border-color); border-radius: 8px; padding: 1.25rem; background: var(--bg-subtle);">
+      <h3 style="font-size: 1.05rem; font-weight: 700; margin-bottom: 0.5rem;">2. Revision Behavior</h3>
+      <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 0.75rem;">
+        Rate at which historically published records are retroactively modified.
+      </p>
+      <div style="font-size: 1.5rem; font-weight: 700;">{dimensions.revision_behavior.revision_rate_pct}%</div>
+      <div style="font-size: 0.75rem; color: var(--text-muted); margin-top: 0.5rem;">
+        {dimensions.revision_behavior.revised_records_count} revisions across {dimensions.revision_behavior.total_records_count} checks
+      </div>
+    </div>
+
+    <!-- Dimension 3: Correction Latency -->
+    <div style="border: 1px solid var(--border-color); border-radius: 8px; padding: 1.25rem; background: var(--bg-subtle);">
+      <h3 style="font-size: 1.05rem; font-weight: 700; margin-bottom: 0.5rem;">3. Correction Latency</h3>
+      <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 0.75rem;">
+        Elapsed time between initial publication and superseding correction.
+      </p>
+      {dimensions.correction_latency.p50_seconds !== null ? (
+        <div style="display: flex; gap: 1rem;">
+          <div>
+            <div style="font-size: 1.5rem; font-weight: 700;">{dimensions.correction_latency.p50_seconds}s</div>
+            <div style="font-size: 0.75rem; color: var(--text-muted);">p50 median</div>
+          </div>
+          <div>
+            <div style="font-size: 1.5rem; font-weight: 700;">{dimensions.correction_latency.p95_seconds}s</div>
+            <div style="font-size: 0.75rem; color: var(--text-muted);">p95 tail</div>
+          </div>
+        </div>
+      ) : (
+        <div style="font-size: 1.15rem; color: var(--text-muted); padding: 0.5rem 0;">None observed in window</div>
+      )}
+      <div style="font-size: 0.75rem; color: var(--text-muted); margin-top: 0.5rem;">
+        Events evaluated: {dimensions.correction_latency.events_evaluated}
+      </div>
+    </div>
+
+    <!-- Dimension 4: Completeness by Segment -->
+    <div style="border: 1px solid var(--border-color); border-radius: 8px; padding: 1.25rem; background: var(--bg-subtle);">
+      <h3 style="font-size: 1.05rem; font-weight: 700; margin-bottom: 0.5rem;">4. Completeness by Segment</h3>
+      <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 0.75rem;">
+        Share of expected records successfully populated across endpoints.
+      </p>
+      <div style="font-size: 1.5rem; font-weight: 700;">{dimensions.completeness_by_segment.overall_pct}%</div>
+      <div style="margin-top: 0.5rem;">
+        {Object.entries(dimensions.completeness_by_segment.segments).map(([segment, score]) => (
+          <div style="display: flex; justify-content: space-between; font-size: 0.8rem; color: var(--text-muted); margin-top: 0.2rem;">
+            <span>{segment}</span>
+            <span>{score}%</span>
+          </div>
+        ))}
+      </div>
+    </div>
+
+    <!-- Dimension 5: Schema Stability -->
+    <div style="border: 1px solid var(--border-color); border-radius: 8px; padding: 1.25rem; background: var(--bg-subtle);">
+      <h3 style="font-size: 1.05rem; font-weight: 700; margin-bottom: 0.5rem;">5. Schema Stability</h3>
+      <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 0.75rem;">
+        Proportion of snapshots without unannounced structural or type mutations.
+      </p>
+      <div style="font-size: 1.5rem; font-weight: 700;">{dimensions.schema_stability.stable_snapshots_pct}%</div>
+      <div style="font-size: 0.75rem; color: var(--text-muted); margin-top: 0.5rem;">
+        {dimensions.schema_stability.schema_changes_count} schema alterations detected
+      </div>
+    </div>
+
+    <!-- Dimension 6: Internal Consistency -->
+    <div style="border: 1px solid var(--border-color); border-radius: 8px; padding: 1.25rem; background: var(--bg-subtle);">
+      <h3 style="font-size: 1.05rem; font-weight: 700; margin-bottom: 0.5rem;">6. Internal Consistency</h3>
+      <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 0.75rem;">
+        Share of responses containing zero logical contradictions or invalid boundaries.
+      </p>
+      <div style="font-size: 1.5rem; font-weight: 700;">{dimensions.internal_consistency.consistent_snapshots_pct}%</div>
+      <div style="font-size: 0.75rem; color: var(--text-muted); margin-top: 0.5rem;">
+        {dimensions.internal_consistency.contradictions_count} contradictions flagged
+      </div>
+    </div>
+  </div>
+
+  <!-- Anchored Accuracy (Rule H1: only with named anchor) -->
+  {accuracy ? (
+    <section style="border: 2px solid #2563eb; border-radius: 8px; padding: 1.5rem; background-color: #f8fafc; margin-bottom: 3rem;">
+      <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 0.75rem;">
+        <h2 style="font-size: 1.25rem; font-weight: 700; color: #1e3a8a;">Anchored Accuracy</h2>
+        <span class="badge" style="background-color: #dbeafe; color: #1e40af;">Rule H1 Compliant</span>
+      </div>
+
+      <div style="margin-bottom: 1rem; padding: 0.75rem; background-color: white; border: 1px solid #bfdbfe; border-radius: 6px;">
+        <strong style="color: #1e40af; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.05em; display: block; margin-bottom: 0.25rem;">
+          Named Ground-Truth Anchor
+        </strong>
+        <p style="font-size: 0.95rem; font-weight: 600; color: #1e293b;">
+          {accuracy.anchor}
+        </p>
+      </div>
+
+      <div style="display: flex; gap: 2rem; flex-wrap: wrap;">
+        <div>
+          <div style="font-size: 0.8rem; color: var(--text-muted);">Metric</div>
+          <div style="font-size: 1.1rem; font-weight: 700;">{accuracy.metric}</div>
+        </div>
+        <div>
+          <div style="font-size: 0.8rem; color: var(--text-muted);">Score</div>
+          <div style="font-size: 1.75rem; font-weight: 800; color: #1d4ed8;">{accuracy.score} {accuracy.unit}</div>
+        </div>
+        <div>
+          <div style="font-size: 0.8rem; color: var(--text-muted);">Sample Size</div>
+          <div style="font-size: 1.1rem; font-weight: 700;">{accuracy.sample_count} settled pairs</div>
+        </div>
+      </div>
+      {accuracy.details && (
+        <p style="font-size: 0.85rem; color: var(--text-muted); margin-top: 0.75rem;">
+          {accuracy.details.notes}
+        </p>
+      )}
+    </section>
+  ) : (
+    <section style="border: 1px dashed var(--border-color); border-radius: 8px; padding: 1.25rem; background-color: var(--bg-subtle); margin-bottom: 3rem;">
+      <h2 style="font-size: 1.1rem; font-weight: 600; color: var(--text-muted); margin-bottom: 0.25rem;">Accuracy Benchmark Not Applicable</h2>
+      <p style="font-size: 0.85rem; color: var(--text-muted);">
+        In accordance with Rule H1, accuracy is strictly published only when an independent ground-truth anchor exists. Because no official settlement authority is designated for this feed, accuracy is omitted. Lineage and disagreement metrics remain active.
+      </p>
+    </section>
+  )}
+
+  <section>
+    <h2 style="font-size: 1.25rem; font-weight: 700; margin-bottom: 0.5rem;">Audit Information</h2>
+    <p style="font-size: 0.9rem; color: var(--text-muted); margin-bottom: 1rem;">
+      Scorecard JSON is available for automated consumption:
+    </p>
+    <a href={`/scorecards/${scorecard.source_id}.json`} target="_blank" style="display: inline-block; background: var(--bg-subtle); border: 1px solid var(--border-color); padding: 0.5rem 1rem; border-radius: 6px; text-decoration: none; font-family: var(--font-mono); font-size: 0.85rem; color: var(--text-color);">
+      GET /scorecards/{scorecard.source_id}.json
+    </a>
+  </section>
+</Layout>

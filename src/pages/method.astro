@@ -1,0 +1,111 @@
+---
+import Layout from '../layouts/Layout.astro';
+---
+
+<Layout title="Scoring Methodology v0.2">
+  <div style="margin-bottom: 2.5rem;">
+    <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 0.5rem;">
+      <h1 style="font-size: 2.25rem; font-weight: 800;">Scoring Methodology</h1>
+      <span class="badge" style="background-color: #dbeafe; color: #1e40af; font-size: 0.85rem;">Version 0.2</span>
+    </div>
+    <p style="font-size: 1.1rem; color: var(--text-muted); max-width: 760px;">
+      How Modafied evaluates data feeds across six objective dimensions and computes anchored accuracy.
+    </p>
+  </div>
+
+  <section style="margin-bottom: 3rem;">
+    <h2 style="font-size: 1.5rem; font-weight: 700; margin-bottom: 1rem;">Core Principles</h2>
+    <ul style="margin-left: 1.5rem; display: flex; flex-direction: column; gap: 0.75rem; color: var(--text-color);">
+      <li><strong>Mechanical computation:</strong> Every score is calculated automatically by open code running against immutable snapshot history. No manual score adjustments exist.</li>
+      <li><strong>No sponsored placement:</strong> Feed evaluations cannot be purchased, sponsored, or altered by commercial agreements.</li>
+      <li><strong>Rule H1 compliance:</strong> Accuracy is never published without an authoritative, independent settlement anchor named on the same card. In the absence of an anchor, accuracy is omitted.</li>
+      <li><strong>Full reproducibility:</strong> Given the snapshot archive and method version stamp, any third party can re-run scoring code to produce byte-identical scorecards.</li>
+    </ul>
+  </section>
+
+  <section style="margin-bottom: 3rem;">
+    <h2 style="font-size: 1.5rem; font-weight: 700; margin-bottom: 1.5rem;">The Six Dimensions</h2>
+
+    <div style="display: flex; flex-direction: column; gap: 1.5rem;">
+      <div style="border-left: 4px solid var(--primary-color); padding-left: 1.25rem;">
+        <h3 style="font-size: 1.2rem; font-weight: 700;">1. Freshness Lag</h3>
+        <p style="color: var(--text-muted); margin-top: 0.25rem;">
+          Computed as the elapsed time between the capture time recorded by Modafied's clock (<code>captured_at</code>) and the event timestamp declared by the source itself (<code>source_timestamp</code>).
+        </p>
+        <p style="font-size: 0.9rem; margin-top: 0.5rem;">
+          Reported as p50 (median) and p95 (tail risk) percentiles in seconds. This reveals real-world ingest latency and distinguishes primary publishers from lagging derivatives.
+        </p>
+      </div>
+
+      <div style="border-left: 4px solid var(--primary-color); padding-left: 1.25rem;">
+        <h3 style="font-size: 1.2rem; font-weight: 700;">2. Revision Behavior</h3>
+        <p style="color: var(--text-muted); margin-top: 0.25rem;">
+          Measures the proportion of historically published values that undergo retroactive modification for previously published event timestamps.
+        </p>
+        <p style="font-size: 0.9rem; margin-top: 0.5rem;">
+          Calculated by diffing consecutive snapshots and identifying field value changes where the reference period or event identifier has not moved forward.
+        </p>
+      </div>
+
+      <div style="border-left: 4px solid var(--primary-color); padding-left: 1.25rem;">
+        <h3 style="font-size: 1.2rem; font-weight: 700;">3. Correction Latency</h3>
+        <p style="color: var(--text-muted); margin-top: 0.25rem;">
+          Measures the time elapsed from an initial incorrect or provisional figure until the source publishes an updated, revised value.
+        </p>
+        <p style="font-size: 0.9rem; margin-top: 0.5rem;">
+          Reported as p50 and p95 in seconds across all detected revisions in the observation window.
+        </p>
+      </div>
+
+      <div style="border-left: 4px solid var(--primary-color); padding-left: 1.25rem;">
+        <h3 style="font-size: 1.2rem; font-weight: 700;">4. Completeness by Segment</h3>
+        <p style="color: var(--text-muted); margin-top: 0.25rem;">
+          Tracks the ratio of expected data fields successfully populated with valid, non-null data across discrete categories or geographic stations.
+        </p>
+        <p style="font-size: 0.9rem; margin-top: 0.5rem;">
+          Prevents aggregate masking where a feed appears reliable globally while dropping essential fields in specific regional endpoints.
+        </p>
+      </div>
+
+      <div style="border-left: 4px solid var(--primary-color); padding-left: 1.25rem;">
+        <h3 style="font-size: 1.2rem; font-weight: 700;">5. Schema Stability</h3>
+        <p style="color: var(--text-muted); margin-top: 0.25rem;">
+          Evaluates structural reliability by detecting key additions, deletions, or data type changes across consecutive snapshots.
+        </p>
+        <p style="font-size: 0.9rem; margin-top: 0.5rem;">
+          Reported as the percentage of snapshots exhibiting zero schema modifications, highlighting feeds that pose operational breaking change risks.
+        </p>
+      </div>
+
+      <div style="border-left: 4px solid var(--primary-color); padding-left: 1.25rem;">
+        <h3 style="font-size: 1.2rem; font-weight: 700;">6. Internal Consistency</h3>
+        <p style="color: var(--text-muted); margin-top: 0.25rem;">
+          Applies domain-specific sanity checks within individual response payloads (such as valid geographical bounding boxes, positive humidity limits, or totals equaling child component sums).
+        </p>
+        <p style="font-size: 0.9rem; margin-top: 0.5rem;">
+          Measures the proportion of snapshots that pass all structural boundary checks without internal contradictions.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <section style="margin-bottom: 3rem;">
+    <h2 style="font-size: 1.5rem; font-weight: 700; margin-bottom: 1rem;">Anchored Accuracy (Rule H1)</h2>
+    <p style="color: var(--text-muted); margin-bottom: 1rem;">
+      Accuracy cannot be claimed in an epistemological vacuum. Modafied strictly adheres to Rule H1:
+    </p>
+    <blockquote style="border-left: 3px solid #2563eb; background: var(--bg-subtle); padding: 1rem; margin-bottom: 1rem; font-style: italic;">
+      "Never publish an accuracy number without naming the anchor on the same page. Lineage and disagreement are always allowed; truth is never claimed."
+    </blockquote>
+    <p style="font-size: 0.95rem; line-height: 1.6;">
+      In Phase 0, National Weather Service terminal forecasts are graded against settled surface observations recorded at Automated Surface Observing System (ASOS) weather stations. The ground-truth anchor is explicitly identified as the NWS MADIS Surface Weather Observation Network.
+    </p>
+  </section>
+
+  <section>
+    <h2 style="font-size: 1.5rem; font-weight: 700; margin-bottom: 0.5rem;">Revisiting and Method Bumps</h2>
+    <p style="color: var(--text-muted); font-size: 0.95rem;">
+      When scoring formulas or normalization steps are refined, the method version is incremented (e.g., from v0.1 to v0.2), and historical scorecards retain their original method stamp for permanent auditability.
+    </p>
+  </section>
+</Layout>

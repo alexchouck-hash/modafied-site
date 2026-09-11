@@ -1,0 +1,123 @@
+---
+import Layout from '../layouts/Layout.astro';
+---
+
+<Layout title="Contributing Sources">
+  <div style="margin-bottom: 2.5rem;">
+    <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 0.5rem;">
+      <h1 style="font-size: 2.25rem; font-weight: 800;">Contributing Data Sources</h1>
+      <span class="badge" style="background-color: #dbeafe; color: #1e40af; font-size: 0.85rem;">
+        Open Contribution Flow
+      </span>
+    </div>
+    <p style="font-size: 1.1rem; color: var(--text-muted);">
+      How community members and data providers add feeds to the Modafied independent benchmark.
+    </p>
+  </div>
+
+  <section style="margin-bottom: 3rem;">
+    <h2 style="font-size: 1.5rem; font-weight: 700; margin-bottom: 1rem;">The 4-Step Onboarding Flow</h2>
+    
+    <div style="display: flex; flex-direction: column; gap: 1.5rem;">
+      <div style="border: 1px solid var(--border-color); border-radius: 8px; padding: 1.25rem; background: var(--bg-subtle);">
+        <h3 style="font-size: 1.15rem; font-weight: 700; margin-bottom: 0.5rem;">
+          1. Open a Pull Request with One YAML File
+        </h3>
+        <p style="font-size: 0.95rem; color: var(--text-muted); margin-bottom: 0.5rem;">
+          Create a single YAML configuration file under <code>catalog/sources/&lt;source-id&gt;.yaml</code> adhering to <code>schema/catalog/v0.2.json</code>.
+        </p>
+        <p style="font-size: 0.9rem; color: var(--text-muted);">
+          Automated CI validates the schema, checks declared license fields, and performs a single probe fetch to verify endpoint connectivity and declarative record paths.
+        </p>
+      </div>
+
+      <div style="border: 1px solid var(--border-color); border-radius: 8px; padding: 1.25rem; background: var(--bg-subtle);">
+        <h3 style="font-size: 1.15rem; font-weight: 700; margin-bottom: 0.5rem;">
+          2. Automated 24-Hour Probation
+        </h3>
+        <p style="font-size: 0.95rem; color: var(--text-muted); margin-bottom: 0.5rem;">
+          The probation runner snapshots the proposed feed on its declared cadence for 24 hours directly from the pull request branch.
+        </p>
+        <p style="font-size: 0.9rem; color: var(--text-muted);">
+          A draft scorecard marked <code>probation</code> is posted as a PR comment to prove mechanical scoring works end-to-end.
+        </p>
+      </div>
+
+      <div style="border: 1px solid var(--border-color); border-radius: 8px; padding: 1.25rem; background: var(--bg-subtle);">
+        <h3 style="font-size: 1.15rem; font-weight: 700; margin-bottom: 0.5rem;">
+          3. License Verification
+        </h3>
+        <p style="font-size: 0.95rem; color: var(--text-muted); margin-bottom: 0.5rem;">
+          Alex (designated CODEOWNER on <code>catalog/</code>) reviews the cited redistribution terms and license URL.
+        </p>
+        <p style="font-size: 0.9rem; color: var(--text-muted);">
+          Nothing else is manual. We verify that redistribution is allowed under free, public terms.
+        </p>
+      </div>
+
+      <div style="border: 1px solid var(--border-color); border-radius: 8px; padding: 1.25rem; background: var(--bg-subtle);">
+        <h3 style="font-size: 1.15rem; font-weight: 700; margin-bottom: 0.5rem;">
+          4. Merge and Baseline Publishing
+        </h3>
+        <p style="font-size: 0.95rem; color: var(--text-muted); margin-bottom: 0.5rem;">
+          Once merged, the source is enrolled into the scheduled cron pipeline and published to the site.
+        </p>
+        <p style="font-size: 0.9rem; color: var(--text-muted);">
+          All metric dimensions display <code>insufficient_data</code> until minimum sample thresholds (Rule H4) are satisfied. No fake numbers are ever published.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <section style="margin-bottom: 3rem;">
+    <h2 style="font-size: 1.5rem; font-weight: 700; margin-bottom: 1rem;">Minimal Source Adapter Template</h2>
+    <p style="font-size: 0.95rem; color: var(--text-muted); margin-bottom: 1rem;">
+      Each source requires declarative mapping for records, event timestamps, segmentation, and usage terms:
+    </p>
+
+    <pre><code>id: "example-feed"
+name: "Example Weather Service"
+description: "Public meteorological observation feed."
+endpoints:
+  - name: "current"
+    url: "https://api.example.com/v1/current"
+    method: "GET"
+auth:
+  type: "none"
+license:
+  spdx: "CC-BY-4.0"
+  name: "Creative Commons Attribution 4.0 International"
+  url: "https://example.com/legal/terms"
+  redistribution_allowed: true
+  attribution_required: true
+  attribution_text: "Data provided by Example Weather Service"
+refresh_cadence: "hourly"
+records:
+  path: "items"
+  key: "station_id"
+  event_time: "timestamp"
+  event_time_format: "rfc3339"
+segments:
+  by: "region"
+use_terms:
+  commercial: "allowed"
+  noncommercial: "allowed"
+  attribution: "Example Weather Service"
+  share_alike: false
+  terms_url: "https://example.com/legal/terms"
+fields:
+  - name: "items[].temperature"
+    type: "number"
+  - name: "items[].humidity"
+    type: "number"</code></pre>
+  </section>
+
+  <section style="border: 1px solid var(--border-color); border-radius: 8px; padding: 1.5rem; background-color: var(--bg-subtle);">
+    <h2 style="font-size: 1.25rem; font-weight: 700; margin-bottom: 0.5rem;">Core Constraints</h2>
+    <ul style="list-style-type: disc; margin-left: 1.5rem; color: var(--text-muted); font-size: 0.95rem; display: flex; flex-direction: column; gap: 0.5rem;">
+      <li><strong>No paid upstreams:</strong> All catalog feeds must have a free tier or be public domain.</li>
+      <li><strong>No secrets in pull requests:</strong> If an endpoint requires an API key, specify the environment variable name in auth.env_var.</li>
+      <li><strong>Contract-first:</strong> If a source structure cannot be expressed with existing fields, open an issue to extend the adapter schema first.</li>
+    </ul>
+  </section>
+</Layout>

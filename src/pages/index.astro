@@ -1,0 +1,102 @@
+---
+import Layout from '../layouts/Layout.astro';
+import fs from 'node:fs';
+import path from 'node:path';
+
+let scorecards = [];
+try {
+  const scorecardsDir = path.resolve('./public/scorecards');
+  if (fs.existsSync(scorecardsDir)) {
+    const files = fs.readdirSync(scorecardsDir).filter(f => f.endsWith('.json') && f !== 'manifest.json');
+    scorecards = files.map(file => {
+      const filePath = path.join(scorecardsDir, file);
+      return JSON.parse(fs.readFileSync(filePath, 'utf-8'));
+    });
+  }
+} catch (e) {
+  console.error(e);
+}
+---
+
+<Layout title="Public Benchmark of Data Sources">
+  <section style="margin-bottom: 3rem;">
+    <h1 style="font-size: 2.25rem; font-weight: 800; line-height: 1.25; margin-bottom: 1rem;">
+      Modafied: Independent Data Benchmarks for Apps and Agents
+    </h1>
+    <p style="font-size: 1.15rem; color: var(--text-muted); max-width: 760px; margin-bottom: 1.5rem;">
+      Modafied snapshots public feeds on a schedule, preserves every snapshot forever, diffs them, and publishes a six-dimension scorecard per source with the exact method and version.
+    </p>
+    <div style="display: flex; gap: 1rem; flex-wrap: wrap;">
+      <a href="/method" style="background-color: var(--primary-color); color: white; padding: 0.65rem 1.25rem; border-radius: 6px; text-decoration: none; font-weight: 600;">
+        Read Methodology
+      </a>
+      <a href="/status" style="background-color: var(--bg-subtle); border: 1px solid var(--border-color); color: var(--text-color); padding: 0.65rem 1.25rem; border-radius: 6px; text-decoration: none; font-weight: 600;">
+        Source Status
+      </a>
+    </div>
+  </section>
+
+  <section style="margin-bottom: 3.5rem;">
+    <h2 style="font-size: 1.5rem; font-weight: 700; margin-bottom: 1.5rem;">Public Scorecards</h2>
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.5rem;">
+      <a href="/scorecards/nws" style="display: block; border: 1px solid var(--border-color); border-radius: 8px; padding: 1.25rem; text-decoration: none; color: inherit; background: var(--bg-subtle);">
+        <h3 style="font-size: 1.2rem; font-weight: 700; margin-bottom: 0.25rem;">National Weather Service (NWS)</h3>
+        <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 0.75rem;">Official US weather observations and forecast grids.</p>
+        <span class="badge" style="background-color: #dbeafe; color: #1e40af;">View Card &rarr;</span>
+      </a>
+      <a href="/scorecards/usgs-earthquake" style="display: block; border: 1px solid var(--border-color); border-radius: 8px; padding: 1.25rem; text-decoration: none; color: inherit; background: var(--bg-subtle);">
+        <h3 style="font-size: 1.2rem; font-weight: 700; margin-bottom: 0.25rem;">USGS Earthquake Hazards</h3>
+        <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 0.75rem;">Real-time global seismic event feeds with revision tracking.</p>
+        <span class="badge" style="background-color: #dbeafe; color: #1e40af;">View Card &rarr;</span>
+      </a>
+      <a href="/scorecards/open-meteo" style="display: block; border: 1px solid var(--border-color); border-radius: 8px; padding: 1.25rem; text-decoration: none; color: inherit; background: var(--bg-subtle);">
+        <h3 style="font-size: 1.2rem; font-weight: 700; margin-bottom: 0.25rem;">Open-Meteo</h3>
+        <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 0.75rem;">Aggregated model forecasts and real-time weather APIs.</p>
+        <span class="badge" style="background-color: #dbeafe; color: #1e40af;">View Card &rarr;</span>
+      </a>
+      <a href="/scorecards/bls" style="display: block; border: 1px solid var(--border-color); border-radius: 8px; padding: 1.25rem; text-decoration: none; color: inherit; background: var(--bg-subtle);">
+        <h3 style="font-size: 1.2rem; font-weight: 700; margin-bottom: 0.25rem;">Bureau of Labor Statistics (BLS)</h3>
+        <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 0.75rem;">CPI, PPI, and employment statistics with release calendar tracking.</p>
+        <span class="badge" style="background-color: #dbeafe; color: #1e40af;">View Card &rarr;</span>
+      </a>
+      <a href="/scorecards/fred" style="display: block; border: 1px solid var(--border-color); border-radius: 8px; padding: 1.25rem; text-decoration: none; color: inherit; background: var(--bg-subtle);">
+        <h3 style="font-size: 1.2rem; font-weight: 700; margin-bottom: 0.25rem;">Federal Reserve Economic Data (FRED)</h3>
+        <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 0.75rem;">Republished macroeconomic time series and republish lag analysis.</p>
+        <span class="badge" style="background-color: #dbeafe; color: #1e40af;">View Card &rarr;</span>
+      </a>
+    </div>
+  </section>
+
+  <section style="margin-bottom: 3rem;">
+    <h2 style="font-size: 1.5rem; font-weight: 700; margin-bottom: 1rem;">The Six Benchmark Dimensions</h2>
+    <p style="color: var(--text-muted); margin-bottom: 1.5rem;">
+      Every feed is evaluated mechanically against these dimensions:
+    </p>
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 1rem;">
+      <div style="border: 1px solid var(--border-color); padding: 1rem; border-radius: 6px;">
+        <strong>1. Freshness Lag</strong>
+        <p style="font-size: 0.85rem; color: var(--text-muted); margin-top: 0.25rem;">p50 and p95 elapsed seconds between declared event time and ingest.</p>
+      </div>
+      <div style="border: 1px solid var(--border-color); padding: 1rem; border-radius: 6px;">
+        <strong>2. Revision Behavior</strong>
+        <p style="font-size: 0.85rem; color: var(--text-muted); margin-top: 0.25rem;">Proportion of historical points updated post-publication.</p>
+      </div>
+      <div style="border: 1px solid var(--border-color); padding: 1rem; border-radius: 6px;">
+        <strong>3. Correction Latency</strong>
+        <p style="font-size: 0.85rem; color: var(--text-muted); margin-top: 0.25rem;">Time elapsed before an erroneous or provisional value is corrected.</p>
+      </div>
+      <div style="border: 1px solid var(--border-color); padding: 1rem; border-radius: 6px;">
+        <strong>4. Completeness</strong>
+        <p style="font-size: 0.85rem; color: var(--text-muted); margin-top: 0.25rem;">Non-null rate across declared fields and segments.</p>
+      </div>
+      <div style="border: 1px solid var(--border-color); padding: 1rem; border-radius: 6px;">
+        <strong>5. Schema Stability</strong>
+        <p style="font-size: 0.85rem; color: var(--text-muted); margin-top: 0.25rem;">Structural payload consistency and field-level breaking changes.</p>
+      </div>
+      <div style="border: 1px solid var(--border-color); padding: 1rem; border-radius: 6px;">
+        <strong>6. Internal Consistency</strong>
+        <p style="font-size: 0.85rem; color: var(--text-muted); margin-top: 0.25rem;">Cross-field sanity validation against declared domain bounds.</p>
+      </div>
+    </div>
+  </section>
+</Layout>

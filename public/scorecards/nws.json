@@ -1,0 +1,75 @@
+{
+  "accuracy": {
+    "anchor": "later_observation_of_same_source",
+    "details": {
+      "target_variable": "temperature",
+      "unit": "fahrenheit"
+    },
+    "metric": "temperature_mae",
+    "sample_count": 5,
+    "score": 1.5,
+    "unit": "degF"
+  },
+  "anchor": {
+    "kind": "later_observation_of_same_source",
+    "mean_absolute_error": 1.5,
+    "paired_samples": 5,
+    "source": "nws",
+    "unit": "degF"
+  },
+  "dimensions": {
+    "completeness_by_segment": {
+      "overall_pct": 40.0,
+      "segments": {
+        "https://api.weather.gov/stations/KJFK": 40.0
+      },
+      "status": "ok"
+    },
+    "correction_latency": {
+      "events_evaluated": 0,
+      "p50_seconds": null,
+      "p95_seconds": null,
+      "status": "insufficient_data"
+    },
+    "freshness_lag": {
+      "p50_seconds": 300.0,
+      "p95_seconds": 300.0,
+      "sample_count": 5,
+      "status": "ok"
+    },
+    "internal_consistency": {
+      "consistent_snapshots_pct": 100.0,
+      "contradictions_count": 0,
+      "status": "ok"
+    },
+    "revision_behavior": {
+      "revised_records_count": 0,
+      "revision_rate_pct": null,
+      "status": "insufficient_data",
+      "total_records_count": 0
+    },
+    "schema_stability": {
+      "schema_changes_count": 0,
+      "stable_snapshots_pct": null,
+      "status": "insufficient_data"
+    }
+  },
+  "generated_at": "2026-09-11T21:41:34Z",
+  "method_version": "0.2",
+  "schema_version": "0.2",
+  "scoring_window": {
+    "end": "2026-09-10T14:05:00Z",
+    "snapshot_count": 10,
+    "start": "2026-09-10T08:00:00Z"
+  },
+  "source_id": "nws",
+  "source_name": "National Weather Service API",
+  "thresholds": {
+    "completeness_samples": 1,
+    "correction_latency_events": 1,
+    "freshness_lag_samples": 5,
+    "internal_consistency_samples": 1,
+    "revision_behavior_diffs": 1,
+    "schema_stability_diffs": 1
+  }
+}

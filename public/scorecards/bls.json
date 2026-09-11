@@ -1,0 +1,55 @@
+{
+  "dimensions": {
+    "completeness_by_segment": {
+      "overall_pct": null,
+      "segments": {},
+      "status": "insufficient_data"
+    },
+    "correction_latency": {
+      "events_evaluated": 0,
+      "p50_seconds": null,
+      "p95_seconds": null,
+      "status": "insufficient_data"
+    },
+    "freshness_lag": {
+      "p50_seconds": null,
+      "p95_seconds": null,
+      "sample_count": 0,
+      "status": "insufficient_data"
+    },
+    "internal_consistency": {
+      "consistent_snapshots_pct": null,
+      "contradictions_count": 0,
+      "status": "insufficient_data"
+    },
+    "revision_behavior": {
+      "revised_records_count": 0,
+      "revision_rate_pct": null,
+      "status": "insufficient_data",
+      "total_records_count": 0
+    },
+    "schema_stability": {
+      "schema_changes_count": 0,
+      "stable_snapshots_pct": null,
+      "status": "insufficient_data"
+    }
+  },
+  "generated_at": "2026-09-11T21:41:34Z",
+  "method_version": "0.2",
+  "schema_version": "0.2",
+  "scoring_window": {
+    "end": "2026-09-11T21:41:34Z",
+    "snapshot_count": 0,
+    "start": "2026-09-11T21:41:34Z"
+  },
+  "source_id": "bls",
+  "source_name": "Bureau of Labor Statistics Public Data API",
+  "thresholds": {
+    "completeness_samples": 1,
+    "correction_latency_events": 1,
+    "freshness_lag_samples": 5,
+    "internal_consistency_samples": 1,
+    "revision_behavior_diffs": 1,
+    "schema_stability_diffs": 1
+  }
+}

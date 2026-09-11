@@ -1,0 +1,191 @@
+---
+import Layout from '../layouts/Layout.astro';
+import fs from 'node:fs';
+import path from 'node:path';
+
+let sourcesStatus = [];
+let lastUpdated = 'Unknown';
+let overallStatus = 'Operational';
+
+const CADENCE_SECONDS = {
+  '15m': 15 * 60,
+  '15min': 15 * 60,
+  'hourly': 3600,
+  'daily': 86400,
+  'monthly': 30 * 86400,
+};
+
+try {
+  const catalogDir = path.resolve('../catalog/sources');
+  const scorecardsDir = path.resolve('./public/scorecards');
+  const v1Dir = path.resolve('./public/v1');
+
+  let manifestPath = path.join(v1Dir, 'manifest.json');
+  if (!fs.existsSync(manifestPath)) {
+    manifestPath = path.join(scorecardsDir, 'manifest.json');
+  }
+
+  if (fs.existsSync(manifestPath)) {
+    const manifest = JSON.parse(fs.readFileSync(manifestPath, 'utf-8'));
+    lastUpdated = manifest.generated_at || manifest.published_at || 'Recently';
+  }
+
+  if (fs.existsSync(catalogDir)) {
+    const catFiles = fs.readdirSync(catalogDir).filter(f => f.endsWith('.yaml'));
+    sourcesStatus = catFiles.map(file => {
+      const rawText = fs.readFileSync(path.join(catalogDir, file), 'utf-8');
+      const idMatch = rawText.match(/id:\s*["']?([^"'\s\r\n]+)["']?/);
+      const nameMatch = rawText.match(/name:\s*["']?([^"'\r\n]+)["']?/);
+      const cadenceMatch = rawText.match(/refresh_cadence:\s*["']?([^"'\s\r\n]+)["']?/);
+
+      const sId = idMatch ? idMatch[1] : path.basename(file, '.yaml');
+      const sName = nameMatch ? nameMatch[1] : sId;
+      const cadence = cadenceMatch ? cadenceMatch[1] : 'hourly';
+      const cadenceSec = CADENCE_SECONDS[cadence] || 3600;
+
+      let lastSnapIso = 'None recorded';
+      let snapCount = 0;
+      let freshnessP50 = 'N/A';
+      let status = 'Down';
+
+      let scFile = path.join(v1Dir, 'scorecards', `${sId}.json`);
+      if (!fs.existsSync(scFile)) {
+        scFile = path.join(scorecardsDir, `${sId}.json`);
+      }
+
+      if (fs.existsSync(scFile)) {
+        const card = JSON.parse(fs.readFileSync(scFile, 'utf-8'));
+        lastSnapIso = card.scoring_window?.end || 'None recorded';
+        snapCount = card.scoring_window?.snapshot_count || 0;
+        const p50 = card.dimensions?.freshness_lag?.p50_seconds;
+        freshnessP50 = p50 !== null && p50 !== undefined ? `${p50}s` : 'insufficient data';
+
+        if (lastSnapIso && lastSnapIso !== 'None recorded') {
+          const snapAgeSec = Math.max(0, (Date.now() - new Date(lastSnapIso).getTime()) / 1000);
+          if (snapAgeSec <= 2 * cadenceSec) {
+            status = 'Operational';
+          } else if (snapAgeSec <= 4 * cadenceSec) {
+            status = 'Degraded';
+          } else {
+            status = 'Down';
+          }
+        }
+      }
+
+      return {
+        id: sId,
+        name: sName,
+        cadence,
+        lastSnapshot: lastSnapIso,
+        snapshotCount: snapCount,
+        freshnessP50,
+        status
+      };
+    });
+
+    if (sourcesStatus.some(s => s.status === 'Down')) {
+      overallStatus = 'Degraded';
+    } else if (sourcesStatus.some(s => s.status === 'Degraded')) {
+      overallStatus = 'Degraded';
+    } else {
+      overallStatus = 'Operational';
+    }
+  }
+} catch (e) {
+  console.error(e);
+}
+---
+
+<Layout title="Feed and System Status">
+  <div style="margin-bottom: 2.5rem;">
+    <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 0.5rem;">
+      <h1 style="font-size: 2.25rem; font-weight: 800;">Feed Status</h1>
+      <span class="badge" style={overallStatus === 'Operational' ? "background-color: #dcfce7; color: #15803d; font-size: 0.85rem;" : "background-color: #fef9c3; color: #854d0e; font-size: 0.85rem;"}>
+        {overallStatus === 'Operational' ? 'All Feeds Operational' : 'Some Feeds Degraded'}
+      </span>
+    </div>
+    <p style="font-size: 1.1rem; color: var(--text-muted);">
+      Dynamic ingestion and snapshot freshness monitoring across all catalog endpoints.
+    </p>
+    <p style="font-size: 0.85rem; color: var(--text-muted); margin-top: 0.25rem;">
+      Last pipeline publication: <code>{lastUpdated}</code>
+    </p>
+  </div>
+
+  <section style="margin-bottom: 3rem;">
+    <div style="overflow-x: auto;">
+      <table>
+        <thead>
+          <tr>
+            <th>Source</th>
+            <th>Cadence</th>
+            <th>Status</th>
+            <th>Last Snapshot (UTC)</th>
+            <th>Freshness p50</th>
+            <th>Archive Depth</th>
+            <th>Scorecard</th>
+          </tr>
+        </thead>
+        <tbody>
+          {sourcesStatus.map(s => (
+            <tr>
+              <td>
+                <strong>{s.name}</strong>
+                <div style="font-size: 0.75rem; color: var(--text-muted);"><code>{s.id}</code></div>
+              </td>
+              <td style="font-size: 0.85rem; color: var(--text-muted);">
+                <code>{s.cadence}</code>
+              </td>
+              <td>
+                <span class="badge" style={
+                  s.status === 'Operational'
+                    ? "background-color: #dcfce7; color: #166534;"
+                    : s.status === 'Degraded'
+                    ? "background-color: #fef9c3; color: #854d0e;"
+                    : "background-color: #fee2e2; color: #991b1b;"
+                }>
+                  {s.status}
+                </span>
+              </td>
+              <td style="font-family: var(--font-mono); font-size: 0.85rem;">
+                {s.lastSnapshot}
+              </td>
+              <td style="font-weight: 600;">
+                {s.freshnessP50}
+              </td>
+              <td style="color: var(--text-muted);">
+                {s.snapshotCount} snapshots
+              </td>
+              <td>
+                <a href={`/scorecards/${s.id}`} style="color: var(--primary-color); font-weight: 600; text-decoration: none;">
+                  View Scorecard &rarr;
+                </a>
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section style="border: 1px solid var(--border-color); border-radius: 8px; padding: 1.5rem; background-color: var(--bg-subtle);">
+    <h2 style="font-size: 1.25rem; font-weight: 700; margin-bottom: 0.5rem;">Pipeline Infrastructure Health</h2>
+    <p style="font-size: 0.95rem; color: var(--text-muted); margin-bottom: 1rem;">
+      Snapshot extraction jobs run on scheduled GitHub Actions runners, writing immutable records to Cloudflare R2 object storage.
+    </p>
+    <div style="display: flex; gap: 2rem; flex-wrap: wrap;">
+      <div>
+        <div style="font-size: 0.8rem; color: var(--text-muted);">Spend Cap</div>
+        <div style="font-size: 1.1rem; font-weight: 700;">$10/mo Hard Cap (Rule H6)</div>
+      </div>
+      <div>
+        <div style="font-size: 0.8rem; color: var(--text-muted);">Cron Frequency</div>
+        <div style="font-size: 1.1rem; font-weight: 700;">Every 30 minutes</div>
+      </div>
+      <div>
+        <div style="font-size: 0.8rem; color: var(--text-muted);">Hosting Platform</div>
+        <div style="font-size: 1.1rem; font-weight: 700;">Cloudflare Pages Static Edge</div>
+      </div>
+    </div>
+  </section>
+</Layout>

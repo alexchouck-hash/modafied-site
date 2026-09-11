@@ -1,0 +1,74 @@
+{
+  "files": [
+    {
+      "bytes": 17597,
+      "path": "catalog.json",
+      "record_count": 5,
+      "sha256": "9deea8e0f5b33875d8107b6a7d2a085d685bcbfb6097cb65b6a5e83cc706970b"
+    },
+    {
+      "bytes": 1493,
+      "path": "scorecards/bls.json",
+      "record_count": 1,
+      "sha256": "56711dbc9156247b3e9224f88aff57368244178cf99a1e5d3608d4291f448cf7"
+    },
+    {
+      "bytes": 1624,
+      "path": "scorecards/fred.json",
+      "record_count": 1,
+      "sha256": "49d83d997578a706a18aebe236cff2a7f2e385e76c51610f283c1b8ec1031b50"
+    },
+    {
+      "bytes": 1946,
+      "path": "scorecards/nws.json",
+      "record_count": 1,
+      "sha256": "2bc088164040930ec2e6619af5fef9bb01ee01ea36920daebdedc32237125cda"
+    },
+    {
+      "bytes": 1600,
+      "path": "scorecards/open-meteo.json",
+      "record_count": 1,
+      "sha256": "4f4f3b6dea16560d3907325cfd91f5bb8e3d399b284f21ce25efb83c2d2e1052"
+    },
+    {
+      "bytes": 1716,
+      "path": "scorecards/usgs-earthquake.json",
+      "record_count": 1,
+      "sha256": "0cdb87cb505bff29e71726ca6f0ebd6b6770a4057017eb2608f74abf3637aff5"
+    },
+    {
+      "bytes": 0,
+      "path": "changes/bls.jsonl",
+      "record_count": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 0,
+      "path": "changes/fred.jsonl",
+      "record_count": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 23554,
+      "path": "changes/nws.jsonl",
+      "record_count": 67,
+      "sha256": "006eabfde168591b97c6061a9d96110665e23de164f1b4012854b41b9cd7f69c"
+    },
+    {
+      "bytes": 10121,
+      "path": "changes/open-meteo.jsonl",
+      "record_count": 2,
+      "sha256": "337fd412ad91627677007d752069ffe6f485040b2d84267e2c7d8ae017879f40"
+    },
+    {
+      "bytes": 233417,
+      "path": "changes/usgs-earthquake.jsonl",
+      "record_count": 413,
+      "sha256": "0f9defd74491816f7e7dbc87be4661c46e0338437c7b9de166404c8a3d695745"
+    }
+  ],
+  "generated_at": "2026-09-11T21:41:20Z",
+  "method_version": "0.2",
+  "schema_version": "0.1",
+  "signing": null
+}
