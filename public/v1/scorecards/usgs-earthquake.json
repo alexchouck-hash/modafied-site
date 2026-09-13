@@ -26,10 +26,10 @@
       "status": "ok"
     },
     "freshness_lag": {
-      "p50_seconds": null,
-      "p95_seconds": null,
-      "sample_count": 4,
-      "status": "insufficient_data"
+      "p50_seconds": 364.95,
+      "p95_seconds": 585.62,
+      "sample_count": 6,
+      "status": "ok"
     },
     "internal_consistency": {
       "consistent_snapshots_pct": 100.0,
@@ -38,22 +38,22 @@
     },
     "revision_behavior": {
       "revised_records_count": 14,
-      "revision_rate_pct": 1.92,
+      "revision_rate_pct": 0.96,
       "status": "ok",
-      "total_records_count": 731
+      "total_records_count": 1457
     },
     "schema_stability": {
       "schema_changes_count": 2,
-      "stable_snapshots_pct": 0.0,
+      "stable_snapshots_pct": 50.0,
       "status": "ok"
     }
   },
-  "generated_at": "2026-09-11T21:41:20Z",
+  "generated_at": "2026-09-13T22:00:39Z",
   "method_version": "0.2",
   "schema_version": "0.2",
   "scoring_window": {
-    "end": "2026-09-11T21:41:17Z",
-    "snapshot_count": 4,
+    "end": "2026-09-13T22:00:13Z",
+    "snapshot_count": 6,
     "start": "2026-09-11T15:58:31Z"
   },
   "source_id": "usgs-earthquake",

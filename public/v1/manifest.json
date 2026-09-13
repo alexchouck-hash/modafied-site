@@ -10,31 +10,31 @@
       "bytes": 1493,
       "path": "scorecards/bls.json",
       "record_count": 1,
-      "sha256": "56711dbc9156247b3e9224f88aff57368244178cf99a1e5d3608d4291f448cf7"
+      "sha256": "4d6bf33cab3a1536eed13df8c817789dc3cb2efc87fb694ceffdf78c4c5b1ed7"
     },
     {
       "bytes": 1624,
       "path": "scorecards/fred.json",
       "record_count": 1,
-      "sha256": "49d83d997578a706a18aebe236cff2a7f2e385e76c51610f283c1b8ec1031b50"
+      "sha256": "4fc6ba7f8e2bf341342946abaf7319f3a60a889ee385c51ac888c50c4a4af9b9"
     },
     {
-      "bytes": 1946,
+      "bytes": 1950,
       "path": "scorecards/nws.json",
       "record_count": 1,
-      "sha256": "2bc088164040930ec2e6619af5fef9bb01ee01ea36920daebdedc32237125cda"
+      "sha256": "36be274fa866bfa6323aaaad96d4137f76f384b34e2c7ce9689adc53558dbb20"
     },
     {
       "bytes": 1600,
       "path": "scorecards/open-meteo.json",
       "record_count": 1,
-      "sha256": "4f4f3b6dea16560d3907325cfd91f5bb8e3d399b284f21ce25efb83c2d2e1052"
+      "sha256": "92fe2d6eb039ff3c1858ec139ddddd109d01e58316d596185dbba74ecd30be23"
     },
     {
-      "bytes": 1716,
+      "bytes": 1707,
       "path": "scorecards/usgs-earthquake.json",
       "record_count": 1,
-      "sha256": "0cdb87cb505bff29e71726ca6f0ebd6b6770a4057017eb2608f74abf3637aff5"
+      "sha256": "c8643e80d774e350d2694d178dac78fd252b81d1cc469818f70e164034bc9bd9"
     },
     {
       "bytes": 0,
@@ -49,25 +49,25 @@
       "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
     },
     {
-      "bytes": 23554,
+      "bytes": 63439,
       "path": "changes/nws.jsonl",
-      "record_count": 67,
-      "sha256": "006eabfde168591b97c6061a9d96110665e23de164f1b4012854b41b9cd7f69c"
+      "record_count": 201,
+      "sha256": "72d4ccdc1060bd201371f6ee79d3b47596599b36e88aa761e7c08054f971791e"
     },
     {
-      "bytes": 10121,
+      "bytes": 20242,
       "path": "changes/open-meteo.jsonl",
-      "record_count": 2,
-      "sha256": "337fd412ad91627677007d752069ffe6f485040b2d84267e2c7d8ae017879f40"
+      "record_count": 4,
+      "sha256": "0794d746dad2d5ece7fd5f6ea1e6019168f448ba37f5c4f21001cfef2a501367"
     },
     {
-      "bytes": 233417,
+      "bytes": 693099,
       "path": "changes/usgs-earthquake.jsonl",
-      "record_count": 413,
-      "sha256": "0f9defd74491816f7e7dbc87be4661c46e0338437c7b9de166404c8a3d695745"
+      "record_count": 926,
+      "sha256": "590487aed8b39fd1e7a333556b76e9306bd7e4a7092df6244661579ca6c7f1f6"
     }
   ],
-  "generated_at": "2026-09-11T21:41:20Z",
+  "generated_at": "2026-09-13T22:00:38Z",
   "method_version": "0.2",
   "schema_version": "0.1",
   "signing": null

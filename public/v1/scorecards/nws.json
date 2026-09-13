@@ -6,36 +6,36 @@
       "unit": "fahrenheit"
     },
     "metric": "temperature_mae",
-    "sample_count": 1,
-    "score": 4.8,
+    "sample_count": 2,
+    "score": 6.8,
     "unit": "degF"
   },
   "anchor": {
     "kind": "later_observation_of_same_source",
-    "mean_absolute_error": 4.8,
-    "paired_samples": 1,
+    "mean_absolute_error": 6.8,
+    "paired_samples": 2,
     "source": "nws",
     "unit": "degF"
   },
   "dimensions": {
     "completeness_by_segment": {
-      "overall_pct": 45.0,
+      "overall_pct": 46.6,
       "segments": {
         "gridpoint_forecast": 0.0,
-        "https://api.weather.gov/stations/KJFK": 90.0
+        "https://api.weather.gov/stations/KJFK": 93.3
       },
       "status": "ok"
     },
     "correction_latency": {
-      "events_evaluated": 65,
-      "p50_seconds": 20566.0,
-      "p95_seconds": 20566.0,
+      "events_evaluated": 197,
+      "p50_seconds": 173933.0,
+      "p95_seconds": 173933.0,
       "status": "ok"
     },
     "freshness_lag": {
       "p50_seconds": null,
       "p95_seconds": null,
-      "sample_count": 2,
+      "sample_count": 3,
       "status": "insufficient_data"
     },
     "internal_consistency": {
@@ -44,10 +44,10 @@
       "status": "ok"
     },
     "revision_behavior": {
-      "revised_records_count": 65,
-      "revision_rate_pct": 48.87,
+      "revised_records_count": 197,
+      "revision_rate_pct": 49.25,
       "status": "ok",
-      "total_records_count": 133
+      "total_records_count": 400
     },
     "schema_stability": {
       "schema_changes_count": 0,
@@ -55,12 +55,12 @@
       "status": "ok"
     }
   },
-  "generated_at": "2026-09-11T21:41:20Z",
+  "generated_at": "2026-09-13T22:00:39Z",
   "method_version": "0.2",
   "schema_version": "0.2",
   "scoring_window": {
-    "end": "2026-09-11T21:41:13Z",
-    "snapshot_count": 4,
+    "end": "2026-09-13T22:00:04Z",
+    "snapshot_count": 6,
     "start": "2026-09-11T15:58:29Z"
   },
   "source_id": "nws",
