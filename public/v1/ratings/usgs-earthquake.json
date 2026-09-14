@@ -280,12 +280,12 @@
       "status": "ok"
     }
   },
-  "generated_at": "2026-09-14T00:55:32Z",
+  "generated_at": "2026-09-14T01:52:25Z",
   "method_version": "0.2",
   "rating_version": "0.1",
   "relationship": "none",
   "schema_version": "0.1",
-  "scorecard_sha256": "bd4ce3fad0317f9ee5f4c0e519560e629ca417dde8b194b4e76b6403a2b9f32d",
+  "scorecard_sha256": "39bde51235d560562a59d13273fc53066ac87ebc2bb59099fb16298602fd195f",
   "source_id": "usgs-earthquake",
   "source_name": "USGS Earthquake Hazards Program",
   "subcategory": "seismic event feeds"
