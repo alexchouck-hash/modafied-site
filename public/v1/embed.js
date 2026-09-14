@@ -85,6 +85,27 @@
     host.appendChild(link);
   }
 
+  /*
+   * The subject is not in Modafied's catalog. A directory will ask about feeds we have never
+   * benchmarked, and the honest answer is to say so in Modafied's own words rather than leave a
+   * broken image that reads as an outage, or worse, let the host page invent a status for us.
+   * "Not benchmarked" is a statement about us, not about the feed.
+   */
+  function renderUnknown(host, sourceId) {
+    host.textContent = '';
+    var chip = el(
+      'span',
+      'display:inline-flex;align-items:center;gap:6px;padding:5px 9px;border:1px dashed #9ca3af;' +
+        'border-radius:5px;font-family:' + SANS + ';font-size:11px;color:#6b7280;line-height:1.4;'
+    );
+    chip.appendChild(el('span', 'font-weight:700;letter-spacing:0.08em;color:#4b5563;', 'MODAFIED'));
+    chip.appendChild(document.createTextNode('not benchmarked'));
+    chip.title =
+      'Modafied has not benchmarked "' + sourceId + '". This says nothing about the feed, only ' +
+      'that we have no measurement of it.';
+    host.appendChild(chip);
+  }
+
   function renderTraced(host, attestation, variant) {
     host.textContent = '';
 
@@ -151,11 +172,17 @@
       cache: 'no-cache',
     })
       .then(function (response) {
+        /* 404 is an answer, not a failure: this subject is not in the catalog. Distinguished from
+           a real outage, because "we have not measured this" and "we are down" must not look the
+           same on somebody else's page. */
+        if (response.status === 404) return null;
         if (!response.ok) throw new Error('attestation ' + response.status);
         return response.json();
       })
       .then(function (attestation) {
-        if (attestation && attestation.trace_id && attestation.emblem) {
+        if (attestation === null) {
+          renderUnknown(host, sourceId);
+        } else if (attestation && attestation.trace_id && attestation.emblem) {
           renderTraced(host, attestation, variant);
         }
       })
