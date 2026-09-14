@@ -1,4 +1,5 @@
 ---
+import { u } from '../lib/data.mjs';
 import Layout from '../layouts/Layout.astro';
 ---
 
@@ -16,7 +17,7 @@ import Layout from '../layouts/Layout.astro';
   </div>
 
   <div style="border: 1px solid var(--border-color); border-left: 3px solid var(--primary-color); border-radius: 6px; padding: 1rem 1.25rem; background: var(--bg-subtle); margin-bottom: 2.5rem; font-size: 0.95rem;">
-    Submitting a feed for the first time? Start at <a href="/submit"><strong>submit a feed</strong></a>, which has
+    Submitting a feed for the first time? Start at <a href={u('/submit')}><strong>submit a feed</strong></a>, which has
     the template, the local validation command, and what we can and cannot accept. This page is the detail behind
     that flow.
   </div>

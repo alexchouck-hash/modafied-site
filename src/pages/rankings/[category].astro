@@ -1,6 +1,7 @@
 ---
 import Layout from '../../layouts/Layout.astro';
 import {
+  u,
   getRankings,
   getRatings,
   getCatalogMap,
@@ -9,8 +10,7 @@ import {
   formatMeasured,
   DIMENSION_ORDER,
   DIMENSION_LABELS,
-  NEUTRAL,
-} from '../../lib/data.mjs';
+  NEUTRAL,} from '../../lib/data.mjs';
 
 export async function getStaticPaths() {
   const rankings = getRankings();
@@ -53,12 +53,12 @@ for (const dimension of DIMENSION_ORDER) {
 
 <Layout title={`${label} feeds compared`}>
   <div style="margin-bottom: 2rem;">
-    <a href="/rankings" style="font-size: 0.85rem; color: var(--primary-color); text-decoration: none;">&larr; All categories</a>
+    <a href={u('/rankings')} style="font-size: 0.85rem; color: var(--primary-color); text-decoration: none;">&larr; All categories</a>
     <h1 style="font-size: 2.25rem; font-weight: 800; margin: 0.5rem 0 0.75rem; text-transform: capitalize;">{label}</h1>
     <p style="color: var(--text-muted); max-width: 780px;">
       {members.length} feed{members.length === 1 ? '' : 's'} measured in this category, compared dimension by
       dimension. Every grade below is printed next to the number that produced it. A band table alone decides
-      the letters, and that table is published at <a href="/protocols">/protocols</a> (v{ratingVersion}).
+      the letters, and that table is published at <a href={u('/protocols')}>/protocols</a> (v{ratingVersion}).
     </p>
   </div>
 
@@ -82,7 +82,7 @@ for (const dimension of DIMENSION_ORDER) {
             Cadence <code>{catalog[rating.source_id]?.refresh_cadence ?? 'unknown'}</code> ·
             Commercial use <code>{catalog[rating.source_id]?.use_terms?.commercial ?? 'unknown'}</code>
           </div>
-          <a href={`/scorecards/${rating.source_id}`} style="display: inline-block; margin-top: 0.75rem; font-size: 0.85rem; font-weight: 600; color: var(--primary-color); text-decoration: none;">
+          <a href={u(`/scorecards/${rating.source_id}`)} style="display: inline-block; margin-top: 0.75rem; font-size: 0.85rem; font-weight: 600; color: var(--primary-color); text-decoration: none;">
             Full scorecard &rarr;
           </a>
         </div>

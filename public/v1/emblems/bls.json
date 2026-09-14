@@ -48,20 +48,20 @@
   },
   "emblem": {
     "alt": "Modafied benchmark: Bureau of Labor Statistics Public Data API has insufficient data for a rating (2 of 6 dimensions measurable)",
-    "compact": "https://modafied.org/v1/emblems/bls-compact.svg",
-    "full": "https://modafied.org/v1/emblems/bls.svg"
+    "compact": "https://alexchouck-hash.github.io/modafied-site/v1/emblems/bls-compact.svg",
+    "full": "https://alexchouck-hash.github.io/modafied-site/v1/emblems/bls.svg"
   },
   "evidence": {
-    "changes_url": "https://modafied.org/v1/changes/bls.jsonl",
-    "ledger_url": "https://modafied.org/v1/trace/bls.jsonl",
-    "manifest_url": "https://modafied.org/v1/manifest.json",
-    "method_url": "https://modafied.org/method",
-    "rating_json_url": "https://modafied.org/v1/ratings/bls.json",
-    "scorecard_json_url": "https://modafied.org/v1/scorecards/bls.json",
-    "scorecard_page_url": "https://modafied.org/scorecards/bls",
-    "scorecard_sha256": "4a72b8820ac44ebe18fbd7fcb248daaf61606b86463bd6670052308d476d12e6"
+    "changes_url": "https://alexchouck-hash.github.io/modafied-site/v1/changes/bls.jsonl",
+    "ledger_url": "https://alexchouck-hash.github.io/modafied-site/v1/trace/bls.jsonl",
+    "manifest_url": "https://alexchouck-hash.github.io/modafied-site/v1/manifest.json",
+    "method_url": "https://alexchouck-hash.github.io/modafied-site/method",
+    "rating_json_url": "https://alexchouck-hash.github.io/modafied-site/v1/ratings/bls.json",
+    "scorecard_json_url": "https://alexchouck-hash.github.io/modafied-site/v1/scorecards/bls.json",
+    "scorecard_page_url": "https://alexchouck-hash.github.io/modafied-site/scorecards/bls",
+    "scorecard_sha256": "30d319f89d678e59dfe43ed4d6064bcab7e6a236203c9b7fb834c2fb8d6c4962"
   },
-  "generated_at": "2026-09-14T00:24:23Z",
+  "generated_at": "2026-09-14T00:28:49Z",
   "method_version": "0.2",
   "notice": "Mechanically computed from public snapshots. This is a measurement, not an endorsement, a verification, or a partnership. It cannot be purchased and it changes without notice when the measurement changes.",
   "rank": null,
@@ -72,6 +72,6 @@
   "source_name": "Bureau of Labor Statistics Public Data API",
   "subcategory": "price and employment statistics",
   "trace_id": "1c36ded3e91c",
-  "trace_url": "https://modafied.org/trace/1c36ded3e91c",
+  "trace_url": "https://alexchouck-hash.github.io/modafied-site/trace/1c36ded3e91c",
   "trace_version": "0.1"
 }

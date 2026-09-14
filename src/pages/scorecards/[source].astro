@@ -3,6 +3,7 @@ import Layout from '../../layouts/Layout.astro';
 import fs from 'node:fs';
 import path from 'node:path';
 import {
+  u,
   getRatingMap,
   getRankPositions,
   getCatalogMap,
@@ -11,8 +12,7 @@ import {
   formatMeasured,
   DIMENSION_ORDER,
   DIMENSION_LABELS,
-  NEUTRAL,
-} from '../../lib/data.mjs';
+  NEUTRAL,} from '../../lib/data.mjs';
 
 export async function getStaticPaths() {
   const scorecardsDir = path.resolve('./public/scorecards');
@@ -73,13 +73,13 @@ const emblemHtml = `<a href="https://modafied.org/scorecards/${scorecard.source_
             </div>
           </div>
           <div style="font-size: 0.85rem; color: var(--text-muted); margin-top: 0.5rem;">
-            <a href={`/rankings/${rating.category}`} style="color: var(--primary-color); text-decoration: none; text-transform: capitalize;">{categoryLabel(rating.category)}</a>
+            <a href={u(`/rankings/${rating.category}`)} style="color: var(--primary-color); text-decoration: none; text-transform: capitalize;">{categoryLabel(rating.category)}</a>
             {position ? ` · ranked ${position.rank} of ${position.of}` : ' · not ranked yet'}
             {rating.relationship !== 'none' ? ` · disclosed relationship: ${rating.relationship}` : ''}
           </div>
         </div>
-        <a href="/emblems">
-          <img src={`/v1/emblems/${scorecard.source_id}.svg`} alt={emblemAlt} height="96" />
+        <a href={u('/emblems')}>
+          <img src={u(`/v1/emblems/${scorecard.source_id}.svg`)} alt={emblemAlt} height="96" />
         </a>
       </div>
 
@@ -102,7 +102,7 @@ const emblemHtml = `<a href="https://modafied.org/scorecards/${scorecard.source_
 
       <p style="font-size: 0.82rem; color: var(--text-muted); margin-top: 1rem; max-width: 760px;">
         Letters come from a published band table, not a judgement. Every grade above is printed next to the number
-        that earned it, and the full table is on the <a href="/protocols">protocols page</a>. Accuracy is never part
+        that earned it, and the full table is on the <a href={u('/protocols')}>protocols page</a>. Accuracy is never part
         of this rating: it is reported separately below, always with its anchor named.
       </p>
     </section>
@@ -261,13 +261,13 @@ const emblemHtml = `<a href="https://modafied.org/scorecards/${scorecard.source_
       Scorecard JSON is available for automated consumption:
     </p>
     <div style="display: flex; gap: 0.75rem; flex-wrap: wrap;">
-      <a href={`/v1/scorecards/${scorecard.source_id}.json`} target="_blank" style="display: inline-block; background: var(--bg-subtle); border: 1px solid var(--border-color); padding: 0.5rem 1rem; border-radius: 6px; text-decoration: none; font-family: var(--font-mono); font-size: 0.85rem; color: var(--text-color);">
+      <a href={u(`/v1/scorecards/${scorecard.source_id}.json`)} target="_blank" style="display: inline-block; background: var(--bg-subtle); border: 1px solid var(--border-color); padding: 0.5rem 1rem; border-radius: 6px; text-decoration: none; font-family: var(--font-mono); font-size: 0.85rem; color: var(--text-color);">
         GET /v1/scorecards/{scorecard.source_id}.json
       </a>
-      <a href={`/v1/ratings/${scorecard.source_id}.json`} target="_blank" style="display: inline-block; background: var(--bg-subtle); border: 1px solid var(--border-color); padding: 0.5rem 1rem; border-radius: 6px; text-decoration: none; font-family: var(--font-mono); font-size: 0.85rem; color: var(--text-color);">
+      <a href={u(`/v1/ratings/${scorecard.source_id}.json`)} target="_blank" style="display: inline-block; background: var(--bg-subtle); border: 1px solid var(--border-color); padding: 0.5rem 1rem; border-radius: 6px; text-decoration: none; font-family: var(--font-mono); font-size: 0.85rem; color: var(--text-color);">
         GET /v1/ratings/{scorecard.source_id}.json
       </a>
-      <a href={`/v1/emblems/${scorecard.source_id}.svg`} target="_blank" style="display: inline-block; background: var(--bg-subtle); border: 1px solid var(--border-color); padding: 0.5rem 1rem; border-radius: 6px; text-decoration: none; font-family: var(--font-mono); font-size: 0.85rem; color: var(--text-color);">
+      <a href={u(`/v1/emblems/${scorecard.source_id}.svg`)} target="_blank" style="display: inline-block; background: var(--bg-subtle); border: 1px solid var(--border-color); padding: 0.5rem 1rem; border-radius: 6px; text-decoration: none; font-family: var(--font-mono); font-size: 0.85rem; color: var(--text-color);">
         GET /v1/emblems/{scorecard.source_id}.svg
       </a>
     </div>
@@ -277,7 +277,7 @@ const emblemHtml = `<a href="https://modafied.org/scorecards/${scorecard.source_
     <h2 style="font-size: 1.25rem; font-weight: 700; margin-bottom: 0.5rem;">Embed this emblem</h2>
     <p style="font-size: 0.9rem; color: var(--text-muted); margin-bottom: 0.75rem; max-width: 780px;">
       Hotlink it. It regenerates on every publish, so it always shows the current measurement, and it can go down
-      as easily as up. Full terms are on the <a href="/emblems">emblems page</a>.
+      as easily as up. Full terms are on the <a href={u('/emblems')}>emblems page</a>.
     </p>
     <pre>{emblemHtml}</pre>
   </section>

@@ -3,21 +3,32 @@
     "completeness_by_segment": {
       "overall_pct": 100.0,
       "segments": {
+        "ak": 100.0,
+        "av": 100.0,
+        "ci": 100.0,
         "hv": 100.0,
-        "us": 100.0
+        "nc": 100.0,
+        "nm": 100.0,
+        "nn": 100.0,
+        "ok": 100.0,
+        "pr": 100.0,
+        "tx": 100.0,
+        "us": 100.0,
+        "uu": 100.0,
+        "uw": 100.0
       },
       "status": "ok"
     },
     "correction_latency": {
-      "events_evaluated": 0,
-      "p50_seconds": null,
-      "p95_seconds": null,
-      "status": "insufficient_data"
+      "events_evaluated": 14,
+      "p50_seconds": 20567.0,
+      "p95_seconds": 20567.0,
+      "status": "ok"
     },
     "freshness_lag": {
-      "p50_seconds": 77814600.0,
-      "p95_seconds": 77829180.0,
-      "sample_count": 10,
+      "p50_seconds": 364.95,
+      "p95_seconds": 585.62,
+      "sample_count": 6,
       "status": "ok"
     },
     "internal_consistency": {
@@ -26,24 +37,24 @@
       "status": "ok"
     },
     "revision_behavior": {
-      "revised_records_count": 0,
-      "revision_rate_pct": null,
-      "status": "insufficient_data",
-      "total_records_count": 0
+      "revised_records_count": 14,
+      "revision_rate_pct": 0.96,
+      "status": "ok",
+      "total_records_count": 1457
     },
     "schema_stability": {
-      "schema_changes_count": 0,
-      "stable_snapshots_pct": null,
-      "status": "insufficient_data"
+      "schema_changes_count": 2,
+      "stable_snapshots_pct": 50.0,
+      "status": "ok"
     }
   },
-  "generated_at": "2026-09-14T00:24:57Z",
+  "generated_at": "2026-09-14T00:28:49Z",
   "method_version": "0.2",
   "schema_version": "0.2",
   "scoring_window": {
-    "end": "2026-09-10T09:00:00Z",
-    "snapshot_count": 10,
-    "start": "2026-09-10T00:00:00Z"
+    "end": "2026-09-13T22:00:13Z",
+    "snapshot_count": 6,
+    "start": "2026-09-11T15:58:31Z"
   },
   "source_id": "usgs-earthquake",
   "source_name": "USGS Earthquake Hazards Program",

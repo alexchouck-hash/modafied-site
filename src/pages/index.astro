@@ -1,14 +1,14 @@
 ---
 import Layout from '../layouts/Layout.astro';
 import {
+  u,
   getRatings,
   getCatalogMap,
   getRankings,
   getRankPositions,
   gradeColor,
   categoryLabel,
-  NEUTRAL,
-} from '../lib/data.mjs';
+  NEUTRAL,} from '../lib/data.mjs';
 
 const catalog = getCatalogMap();
 const positions = getRankPositions();
@@ -35,13 +35,13 @@ const categoriesWithContest = rankings.categories.filter((c) => c.ranked.length 
       their own category, and no placement, grade, or emblem is purchasable.
     </p>
     <div style="display: flex; gap: 1rem; flex-wrap: wrap;">
-      <a href="/rankings" style="background-color: var(--primary-color); color: white; padding: 0.65rem 1.25rem; border-radius: 6px; text-decoration: none; font-weight: 600;">
+      <a href={u('/rankings')} style="background-color: var(--primary-color); color: white; padding: 0.65rem 1.25rem; border-radius: 6px; text-decoration: none; font-weight: 600;">
         See the rankings
       </a>
-      <a href="/method" style="background-color: var(--bg-subtle); border: 1px solid var(--border-color); color: var(--text-color); padding: 0.65rem 1.25rem; border-radius: 6px; text-decoration: none; font-weight: 600;">
+      <a href={u('/method')} style="background-color: var(--bg-subtle); border: 1px solid var(--border-color); color: var(--text-color); padding: 0.65rem 1.25rem; border-radius: 6px; text-decoration: none; font-weight: 600;">
         Read the method
       </a>
-      <a href="/submit" style="background-color: var(--bg-subtle); border: 1px solid var(--border-color); color: var(--text-color); padding: 0.65rem 1.25rem; border-radius: 6px; text-decoration: none; font-weight: 600;">
+      <a href={u('/submit')} style="background-color: var(--bg-subtle); border: 1px solid var(--border-color); color: var(--text-color); padding: 0.65rem 1.25rem; border-radius: 6px; text-decoration: none; font-weight: 600;">
         Submit a feed
       </a>
     </div>
@@ -57,7 +57,7 @@ const categoriesWithContest = rankings.categories.filter((c) => c.ranked.length 
     </div>
     <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 1.5rem; max-width: 780px;">
       A grade is the mean of the dimensions we could actually measure, against the band table published on the
-      <a href="/protocols">protocols page</a>. Where a feed has too little data, it says so instead of guessing.
+      <a href={u('/protocols')}>protocols page</a>. Where a feed has too little data, it says so instead of guessing.
     </p>
 
     <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.25rem;">
@@ -67,7 +67,7 @@ const categoriesWithContest = rankings.categories.filter((c) => c.ranked.length 
         const position = positions[rating.source_id];
         const source = catalog[rating.source_id] ?? {};
         return (
-          <a href={`/scorecards/${rating.source_id}`} style={`display: block; border: 1px solid var(--border-color); border-top: 4px solid ${color.solid}; border-radius: 8px; padding: 1.25rem; text-decoration: none; color: inherit; background: var(--bg-subtle);`}>
+          <a href={u(`/scorecards/${rating.source_id}`)} style={`display: block; border: 1px solid var(--border-color); border-top: 4px solid ${color.solid}; border-radius: 8px; padding: 1.25rem; text-decoration: none; color: inherit; background: var(--bg-subtle);`}>
             <div style="display: flex; align-items: flex-start; justify-content: space-between; gap: 0.75rem;">
               <div>
                 <h3 style="font-size: 1.1rem; font-weight: 700; margin-bottom: 0.2rem;">{rating.source_name}</h3>
@@ -100,7 +100,7 @@ const categoriesWithContest = rankings.categories.filter((c) => c.ranked.length 
         const top = category.ranked[0];
         const color = top ? gradeColor(top.grade) : NEUTRAL;
         return (
-          <a href={`/rankings/${category.category}`} style="display: block; border: 1px solid var(--border-color); border-radius: 8px; padding: 1rem; text-decoration: none; color: inherit;">
+          <a href={u(`/rankings/${category.category}`)} style="display: block; border: 1px solid var(--border-color); border-radius: 8px; padding: 1rem; text-decoration: none; color: inherit;">
             <div style="font-size: 0.78rem; text-transform: uppercase; letter-spacing: 0.06em; color: var(--text-muted); margin-bottom: 0.4rem;">
               {categoryLabel(category.category)}
             </div>

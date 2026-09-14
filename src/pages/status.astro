@@ -1,4 +1,5 @@
 ---
+import { u } from '../lib/data.mjs';
 import Layout from '../layouts/Layout.astro';
 import fs from 'node:fs';
 import path from 'node:path';
@@ -157,7 +158,7 @@ try {
                 {s.snapshotCount} snapshots
               </td>
               <td>
-                <a href={`/scorecards/${s.id}`} style="color: var(--primary-color); font-weight: 600; text-decoration: none;">
+                <a href={u(`/scorecards/${s.id}`)} style="color: var(--primary-color); font-weight: 600; text-decoration: none;">
                   View Scorecard &rarr;
                 </a>
               </td>

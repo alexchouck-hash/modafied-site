@@ -1,6 +1,7 @@
 ---
 import Layout from '../layouts/Layout.astro';
-import { getRankings, getRatingMap, gradeColor, categoryLabel, NEUTRAL } from '../lib/data.mjs';
+import {
+  u, getRankings, getRatingMap, gradeColor, categoryLabel, NEUTRAL} from '../lib/data.mjs';
 
 const rankings = getRankings();
 const ratings = getRatingMap();
@@ -25,14 +26,14 @@ const contested = categories.filter((c) => c.ranked.length > 1);
     {rankings.ordering || 'composite points descending, then coverage, then source id'}. There is no editorial
     placement and no hand ordering. A feed with too little data to rate is listed separately rather than placed
     last, because unmeasured is not the same as bad. Rating band table v{rankings.rating_version} is published
-    in full on the <a href="/protocols">protocols page</a>.
+    in full on the <a href={u('/protocols')}>protocols page</a>.
   </div>
 
   {categories.map((category) => (
     <section style="margin-bottom: 3rem;">
       <div style="display: flex; align-items: baseline; justify-content: space-between; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 1rem;">
         <h2 style="font-size: 1.5rem; font-weight: 700; text-transform: capitalize;">{categoryLabel(category.category)}</h2>
-        <a href={`/rankings/${category.category}`} style="font-size: 0.9rem; font-weight: 600; color: var(--primary-color); text-decoration: none;">
+        <a href={u(`/rankings/${category.category}`)} style="font-size: 0.9rem; font-weight: 600; color: var(--primary-color); text-decoration: none;">
           Head to head comparison &rarr;
         </a>
       </div>
@@ -57,7 +58,7 @@ const contested = categories.filter((c) => c.ranked.length > 1);
                 <tr>
                   <td style="font-weight: 700;">{row.rank}</td>
                   <td>
-                    <a href={`/scorecards/${row.source_id}`} style="font-weight: 600; color: var(--primary-color); text-decoration: none;">{row.source_name}</a>
+                    <a href={u(`/scorecards/${row.source_id}`)} style="font-weight: 600; color: var(--primary-color); text-decoration: none;">{row.source_name}</a>
                     {row.relationship !== 'none' && (
                       <span class="badge" style="margin-left: 0.5rem; background-color: #fef3c7; color: #78350f;">{row.relationship}</span>
                     )}
@@ -79,7 +80,7 @@ const contested = categories.filter((c) => c.ranked.length > 1);
           <div style="font-size: 0.85rem; font-weight: 700; margin-bottom: 0.5rem;">Not yet rateable in this category</div>
           {category.unranked.map((row) => (
             <div style="font-size: 0.85rem; color: var(--text-muted);">
-              <a href={`/scorecards/${row.source_id}`} style="color: var(--primary-color); text-decoration: none;">{row.source_name}</a>
+              <a href={u(`/scorecards/${row.source_id}`)} style="color: var(--primary-color); text-decoration: none;">{row.source_name}</a>
               {' '}&mdash; {row.reason}
             </div>
           ))}
@@ -93,7 +94,7 @@ const contested = categories.filter((c) => c.ranked.length > 1);
     <p style="color: var(--text-muted); font-size: 0.95rem; max-width: 780px;">
       Where a category holds a single ranked feed, rank 1 means only that nothing else is measured yet. The
       honest response to that is to add a competitor, which anyone can do from the
-      <a href="/submit">submit page</a>.
+      <a href={u('/submit')}>submit page</a>.
     </p>
   </section>
 </Layout>

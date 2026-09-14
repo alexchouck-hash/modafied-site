@@ -1,6 +1,7 @@
 ---
 import Layout from '../layouts/Layout.astro';
-import { getCatalog } from '../lib/data.mjs';
+import {
+  u, getCatalog} from '../lib/data.mjs';
 
 const catalog = getCatalog();
 const categories = [...new Set(catalog.map((s) => s.category).filter(Boolean))].sort();
@@ -70,7 +71,7 @@ python jobs/validate_submission.py catalog/sources/my-feed.yaml --probe`}</pre>
           A maintainer opens your cited license URL and reads it. That is the only manual step in the whole
           pipeline, and it exists because a license is a claim about the law, not a field a machine should
           rubber stamp. After merge your feed appears on the site, gets a scorecard, enters its category
-          ranking, and gets an <a href="/emblems">emblem</a> you can embed.
+          ranking, and gets an <a href={u('/emblems')}>emblem</a> you can embed.
         </p>
       </div>
     </div>
@@ -94,7 +95,7 @@ python jobs/validate_submission.py catalog/sources/my-feed.yaml --probe`}</pre>
       </tbody>
     </table>
     <p style="color: var(--text-muted); font-size: 0.9rem;">
-      The full protocol we recommend to feed operators is on the <a href="/protocols">protocols page</a>.
+      The full protocol we recommend to feed operators is on the <a href={u('/protocols')}>protocols page</a>.
     </p>
   </section>
 
@@ -106,7 +107,7 @@ python jobs/validate_submission.py catalog/sources/my-feed.yaml --probe`}</pre>
     </p>
     <div style="display: flex; flex-wrap: wrap; gap: 0.5rem;">
       {categories.map((category) => (
-        <a href={`/rankings/${category}`} class="badge" style="text-decoration: none; text-transform: capitalize; background-color: var(--badge-bg); color: var(--badge-text); border-color: transparent;">
+        <a href={u(`/rankings/${category}`)} class="badge" style="text-decoration: none; text-transform: capitalize; background-color: var(--badge-bg); color: var(--badge-text); border-color: transparent;">
           {category.replace(/-/g, ' ')}
         </a>
       ))}
@@ -129,7 +130,7 @@ python jobs/validate_submission.py catalog/sources/my-feed.yaml --probe`}</pre>
       Perfectly allowed, and it is how most of this catalog will grow. Set
       <code>submitted_by: third_party</code>. We do not ask the operator for permission to measure a public feed,
       and we do not take instruction from them about what the measurement should say. See the
-      <a href="/contribute">contribution details</a> for the full review flow.
+      <a href={u('/contribute')}>contribution details</a> for the full review flow.
     </p>
   </section>
 </Layout>

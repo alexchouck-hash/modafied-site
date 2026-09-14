@@ -1,4 +1,5 @@
 ---
+import { u } from '../lib/data.mjs';
 interface Props {
   title: string;
   description?: string;
@@ -177,16 +178,16 @@ const { title, description = "Modafied - Public Benchmark and Provenance Pipe fo
   <body>
     <header>
       <div class="nav-container">
-        <a href="/" class="brand">Modafied <span>Benchmark v0</span></a>
+        <a href={u('/')} class="brand">Modafied <span>Benchmark v0</span></a>
         <nav>
-          <a href="/">Overview</a>
-          <a href="/rankings">Rankings</a>
-          <a href="/method">Methodology</a>
-          <a href="/protocols">Protocols</a>
-          <a href="/emblems">Emblems</a>
-          <a href="/trace">Trace</a>
-          <a href="/submit">Submit a feed</a>
-          <a href="/status">Status</a>
+          <a href={u('/')}>Overview</a>
+          <a href={u('/rankings')}>Rankings</a>
+          <a href={u('/method')}>Methodology</a>
+          <a href={u('/protocols')}>Protocols</a>
+          <a href={u('/emblems')}>Emblems</a>
+          <a href={u('/trace')}>Trace</a>
+          <a href={u('/submit')}>Submit a feed</a>
+          <a href={u('/status')}>Status</a>
         </nav>
       </div>
     </header>

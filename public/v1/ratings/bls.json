@@ -280,12 +280,12 @@
       "status": "insufficient_data"
     }
   },
-  "generated_at": "2026-09-14T00:24:23Z",
+  "generated_at": "2026-09-14T00:28:49Z",
   "method_version": "0.2",
   "rating_version": "0.1",
   "relationship": "none",
   "schema_version": "0.1",
-  "scorecard_sha256": "4a72b8820ac44ebe18fbd7fcb248daaf61606b86463bd6670052308d476d12e6",
+  "scorecard_sha256": "30d319f89d678e59dfe43ed4d6064bcab7e6a236203c9b7fb834c2fb8d6c4962",
   "source_id": "bls",
   "source_name": "Bureau of Labor Statistics Public Data API",
   "subcategory": "price and employment statistics"

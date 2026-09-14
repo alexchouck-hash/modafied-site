@@ -48,20 +48,20 @@
   },
   "emblem": {
     "alt": "Modafied benchmark grade A for Open-Meteo Weather API, 4.0 of 4 points across 4 of 6 dimensions, ranked 1 of 2 in weather",
-    "compact": "https://modafied.org/v1/emblems/open-meteo-compact.svg",
-    "full": "https://modafied.org/v1/emblems/open-meteo.svg"
+    "compact": "https://alexchouck-hash.github.io/modafied-site/v1/emblems/open-meteo-compact.svg",
+    "full": "https://alexchouck-hash.github.io/modafied-site/v1/emblems/open-meteo.svg"
   },
   "evidence": {
-    "changes_url": "https://modafied.org/v1/changes/open-meteo.jsonl",
-    "ledger_url": "https://modafied.org/v1/trace/open-meteo.jsonl",
-    "manifest_url": "https://modafied.org/v1/manifest.json",
-    "method_url": "https://modafied.org/method",
-    "rating_json_url": "https://modafied.org/v1/ratings/open-meteo.json",
-    "scorecard_json_url": "https://modafied.org/v1/scorecards/open-meteo.json",
-    "scorecard_page_url": "https://modafied.org/scorecards/open-meteo",
-    "scorecard_sha256": "5fe08d9f729dd5327da6829d0786e0550cd9466cb8e3e78974df4ea302c37d57"
+    "changes_url": "https://alexchouck-hash.github.io/modafied-site/v1/changes/open-meteo.jsonl",
+    "ledger_url": "https://alexchouck-hash.github.io/modafied-site/v1/trace/open-meteo.jsonl",
+    "manifest_url": "https://alexchouck-hash.github.io/modafied-site/v1/manifest.json",
+    "method_url": "https://alexchouck-hash.github.io/modafied-site/method",
+    "rating_json_url": "https://alexchouck-hash.github.io/modafied-site/v1/ratings/open-meteo.json",
+    "scorecard_json_url": "https://alexchouck-hash.github.io/modafied-site/v1/scorecards/open-meteo.json",
+    "scorecard_page_url": "https://alexchouck-hash.github.io/modafied-site/scorecards/open-meteo",
+    "scorecard_sha256": "9dc5a6220e801cbb67f625b109c2451efb57e0e15ac2cca14e3e174e9469c771"
   },
-  "generated_at": "2026-09-14T00:24:23Z",
+  "generated_at": "2026-09-14T00:28:49Z",
   "method_version": "0.2",
   "notice": "Mechanically computed from public snapshots. This is a measurement, not an endorsement, a verification, or a partnership. It cannot be purchased and it changes without notice when the measurement changes.",
   "rank": {
@@ -76,6 +76,6 @@
   "source_name": "Open-Meteo Weather API",
   "subcategory": "aggregated model forecasts",
   "trace_id": "7180cb8bf9e2",
-  "trace_url": "https://modafied.org/trace/7180cb8bf9e2",
+  "trace_url": "https://alexchouck-hash.github.io/modafied-site/trace/7180cb8bf9e2",
   "trace_version": "0.1"
 }

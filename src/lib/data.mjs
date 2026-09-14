@@ -3,6 +3,21 @@ import path from 'node:path';
 
 const V1_DIR = path.resolve('./public/v1');
 
+/**
+ * Deployed base path. The site is authored for a root origin but currently served from a GitHub
+ * Pages project path, so every internal link goes through u(). Set MODAFIED_BASE="" when the site
+ * moves to its own domain and the links become root absolute again with no other edit.
+ */
+export const BASE = (process.env.MODAFIED_BASE ?? '/modafied-site').replace(/\/$/, '');
+
+export function u(pathname) {
+  const p = String(pathname ?? '');
+  if (/^[a-z]+:/i.test(p) || p.startsWith('//')) return p;
+  return BASE + (p.startsWith('/') ? p : '/' + p);
+}
+
+
+
 function readJson(filePath, fallback) {
   try {
     if (!fs.existsSync(filePath)) return fallback;

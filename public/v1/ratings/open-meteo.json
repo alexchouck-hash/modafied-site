@@ -280,12 +280,12 @@
       "status": "ok"
     }
   },
-  "generated_at": "2026-09-14T00:24:23Z",
+  "generated_at": "2026-09-14T00:28:49Z",
   "method_version": "0.2",
   "rating_version": "0.1",
   "relationship": "none",
   "schema_version": "0.1",
-  "scorecard_sha256": "5fe08d9f729dd5327da6829d0786e0550cd9466cb8e3e78974df4ea302c37d57",
+  "scorecard_sha256": "9dc5a6220e801cbb67f625b109c2451efb57e0e15ac2cca14e3e174e9469c771",
   "source_id": "open-meteo",
   "source_name": "Open-Meteo Weather API",
   "subcategory": "aggregated model forecasts"

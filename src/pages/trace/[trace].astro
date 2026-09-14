@@ -1,6 +1,7 @@
 ---
 import Layout from '../../layouts/Layout.astro';
 import {
+  u,
   getTraceIndex,
   getTraceLedger,
   gradeColor,
@@ -8,8 +9,7 @@ import {
   NEUTRAL,
   DIMENSION_ORDER,
   DIMENSION_LABELS,
-  humanSeconds,
-} from '../../lib/data.mjs';
+  humanSeconds,} from '../../lib/data.mjs';
 
 export async function getStaticPaths() {
   const index = getTraceIndex();
@@ -63,7 +63,7 @@ const MONO = 'ui-monospace, SFMono-Regular, Menlo, Consolas, monospace';
         {supersededBy ? ' ' : ''}
       </span>
       {supersededBy && (
-        <a href={`/trace/${supersededBy.trace_id}`}>See the claim that replaced it ({supersededBy.trace_id}).</a>
+        <a href={u(`/trace/${supersededBy.trace_id}`)}>See the claim that replaced it ({supersededBy.trace_id}).</a>
       )}
     </section>
   )}
@@ -105,25 +105,25 @@ const MONO = 'ui-monospace, SFMono-Regular, Menlo, Consolas, monospace';
       <tr style="border-bottom: 1px solid var(--border-color);">
         <td style="padding: 0.6rem 0.5rem 0.6rem 0; color: var(--text-muted);">Scorecard</td>
         <td style="padding: 0.6rem 0;">
-          <a href={`/scorecards/${record.source_id}`}>card</a>{' · '}
-          <a href={`/v1/scorecards/${record.source_id}.json`}>json</a>
+          <a href={u(`/scorecards/${record.source_id}`)}>card</a>{' · '}
+          <a href={u(`/v1/scorecards/${record.source_id}.json`)}>json</a>
         </td>
       </tr>
       <tr style="border-bottom: 1px solid var(--border-color);">
         <td style="padding: 0.6rem 0.5rem 0.6rem 0; color: var(--text-muted);">Attestation</td>
-        <td style="padding: 0.6rem 0;"><a href={`/v1/emblems/${record.source_id}.json`}>/v1/emblems/{record.source_id}.json</a></td>
+        <td style="padding: 0.6rem 0;"><a href={u(`/v1/emblems/${record.source_id}.json`)}>/v1/emblems/{record.source_id}.json</a></td>
       </tr>
       <tr style="border-bottom: 1px solid var(--border-color);">
         <td style="padding: 0.6rem 0.5rem 0.6rem 0; color: var(--text-muted);">Claim ledger</td>
-        <td style="padding: 0.6rem 0;"><a href={`/v1/trace/${record.source_id}.jsonl`}>/v1/trace/{record.source_id}.jsonl</a></td>
+        <td style="padding: 0.6rem 0;"><a href={u(`/v1/trace/${record.source_id}.jsonl`)}>/v1/trace/{record.source_id}.jsonl</a></td>
       </tr>
       <tr style="border-bottom: 1px solid var(--border-color);">
         <td style="padding: 0.6rem 0.5rem 0.6rem 0; color: var(--text-muted);">Manifest</td>
-        <td style="padding: 0.6rem 0;"><a href="/v1/manifest.json">/v1/manifest.json</a> — pin this hash</td>
+        <td style="padding: 0.6rem 0;"><a href={u('/v1/manifest.json')}>/v1/manifest.json</a> — pin this hash</td>
       </tr>
       <tr>
         <td style="padding: 0.6rem 0.5rem 0.6rem 0; color: var(--text-muted);">Method</td>
-        <td style="padding: 0.6rem 0;"><a href="/method">method v{record.method_version}</a>{' · '}<a href="/protocols">band table v{record.rating_version}</a></td>
+        <td style="padding: 0.6rem 0;"><a href={u('/method')}>method v{record.method_version}</a>{' · '}<a href={u('/protocols')}>band table v{record.rating_version}</a></td>
       </tr>
     </tbody>
   </table>
@@ -183,7 +183,7 @@ const MONO = 'ui-monospace, SFMono-Regular, Menlo, Consolas, monospace';
       {history.map((row) => (
         <tr style={`border-bottom: 1px solid var(--border-color); ${row.trace_id === traceId ? 'background: var(--bg-subtle);' : ''}`}>
           <td style={`padding: 0.55rem 0; font-family: ${MONO};`}>
-            {row.trace_id === traceId ? row.trace_id : <a href={`/trace/${row.trace_id}`}>{row.trace_id}</a>}
+            {row.trace_id === traceId ? row.trace_id : <a href={u(`/trace/${row.trace_id}`)}>{row.trace_id}</a>}
           </td>
           <td style="padding: 0.55rem 0; color: var(--text-muted);">{row.observed_at}</td>
           <td style="padding: 0.55rem 0;">

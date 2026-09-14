@@ -1,11 +1,15 @@
 ---
 import Layout from '../../layouts/Layout.astro';
-import { getAttestations, getTraceLedger, gradeColor, categoryLabel, NEUTRAL } from '../../lib/data.mjs';
+import {
+  u, BASE, getAttestations, getTraceLedger, gradeColor, categoryLabel, NEUTRAL} from '../../lib/data.mjs';
 
 const attestations = [...getAttestations()].sort((a, b) => a.source_id.localeCompare(b.source_id));
 const ledger = getTraceLedger();
 const superseded = ledger.filter((r) => !attestations.some((a) => a.trace_id === r.trace_id));
 const MONO = 'ui-monospace, SFMono-Regular, Menlo, Consolas, monospace';
+const PUBLIC_URL = (process.env.MODAFIED_PUBLIC_URL ?? 'https://alexchouck-hash.github.io/modafied-site')
+  .replace(/^https?:\/\//, '')
+  .replace(/\/$/, '');
 ---
 
 <Layout title="Trace an emblem">
@@ -13,7 +17,7 @@ const MONO = 'ui-monospace, SFMono-Regular, Menlo, Consolas, monospace';
     <h1 style="font-size: 2.25rem; font-weight: 800; margin-bottom: 0.75rem;">Trace an emblem</h1>
     <p style="font-size: 1.1rem; color: var(--text-muted); max-width: 820px;">
       Every Modafied emblem prints a trace id on its face. Type it into
-      {' '}<code>modafied.org/trace/&lt;id&gt;</code>{' '}
+      {' '}<code>{PUBLIC_URL}/trace/&lt;id&gt;</code>{' '}
       and you get the exact claim that emblem was making, the scorecard digest it was derived from, the method
       and band table versions that produced it, and every claim that emblem has made before.
     </p>
@@ -65,14 +69,14 @@ const MONO = 'ui-monospace, SFMono-Regular, Menlo, Consolas, monospace';
         const color = ok ? gradeColor(a.claim.grade) : NEUTRAL;
         return (
           <tr style="border-bottom: 1px solid var(--border-color);">
-            <td style="padding: 0.6rem 0;"><a href={`/scorecards/${a.source_id}`}>{a.source_name}</a></td>
+            <td style="padding: 0.6rem 0;"><a href={u(`/scorecards/${a.source_id}`)}>{a.source_name}</a></td>
             <td style="padding: 0.6rem 0; color: var(--text-muted);">{categoryLabel(a.category)}</td>
             <td style="padding: 0.6rem 0;">
               <span class="badge" style={`background-color: ${color.bg}; color: ${color.fg}; border-color: transparent;`}>
                 {ok ? `${a.claim.grade} · ${a.claim.points} pts` : 'insufficient data'}
               </span>
             </td>
-            <td style={`padding: 0.6rem 0; font-family: ${MONO};`}><a href={`/trace/${a.trace_id}`}>{a.trace_id}</a></td>
+            <td style={`padding: 0.6rem 0; font-family: ${MONO};`}><a href={u(`/trace/${a.trace_id}`)}>{a.trace_id}</a></td>
           </tr>
         );
       })}
@@ -98,7 +102,7 @@ const MONO = 'ui-monospace, SFMono-Regular, Menlo, Consolas, monospace';
         <tbody>
           {superseded.map((r) => (
             <tr style="border-bottom: 1px solid var(--border-color);">
-              <td style={`padding: 0.6rem 0; font-family: ${MONO};`}><a href={`/trace/${r.trace_id}`}>{r.trace_id}</a></td>
+              <td style={`padding: 0.6rem 0; font-family: ${MONO};`}><a href={u(`/trace/${r.trace_id}`)}>{r.trace_id}</a></td>
               <td style="padding: 0.6rem 0;">{r.source_id}</td>
               <td style="padding: 0.6rem 0;">
                 {r.status === 'ok' ? `${r.grade} · ${r.points} pts · ${r.graded_dimensions}/6` : `insufficient data · ${r.graded_dimensions}/6`}
@@ -117,12 +121,12 @@ const MONO = 'ui-monospace, SFMono-Regular, Menlo, Consolas, monospace';
       <li>Read the trace id off the emblem, or out of its SVG <code>&lt;metadata id="modafied-trace"&gt;</code> block.</li>
       <li>Fetch <code>/v1/emblems/&lt;source&gt;.json</code> and confirm its <code>trace_id</code> matches what the emblem shows. If it does not, the emblem is stale or self hosted, which E2 forbids.</li>
       <li>Fetch the scorecard named in <code>evidence.scorecard_json_url</code>, hash the bytes, and compare with <code>evidence.scorecard_sha256</code>.</li>
-      <li>Confirm that digest appears in <a href="/v1/manifest.json">manifest.json</a>, and pin the manifest hash.</li>
+      <li>Confirm that digest appears in <a href={u('/v1/manifest.json')}>manifest.json</a>, and pin the manifest hash.</li>
       <li>Re run the whole thing yourself: <code>make reproduce SOURCE=&lt;id&gt; AS_OF=&lt;ts&gt;</code> against the public archive.</li>
     </ol>
   </section>
 
-  <script is:inline>
+  <script is:inline define:vars={{ base: BASE }}>
     (function () {
       var form = document.getElementById('trace-form');
       var input = document.getElementById('trace-input');
@@ -136,7 +140,7 @@ const MONO = 'ui-monospace, SFMono-Regular, Menlo, Consolas, monospace';
           return;
         }
         error.hidden = true;
-        window.location.href = '/trace/' + value;
+        window.location.href = base + '/trace/' + value;
       });
     })();
   </script>

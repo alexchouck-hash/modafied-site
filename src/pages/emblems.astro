@@ -1,11 +1,13 @@
 ---
 import Layout from '../layouts/Layout.astro';
-import { getRatings, getRankPositions, getAttestationMap, gradeColor, categoryLabel, NEUTRAL } from '../lib/data.mjs';
+import {
+  u, getRatings, getRankPositions, getAttestationMap, gradeColor, categoryLabel, NEUTRAL} from '../lib/data.mjs';
 
 const ratings = [...getRatings()].sort((a, b) => a.source_id.localeCompare(b.source_id));
 const positions = getRankPositions();
 const attestations = getAttestationMap();
-const ORIGIN = 'https://modafied.org';
+// Same value jobs/trace.py uses, so a snippet copied off this page resolves.
+const ORIGIN = (process.env.MODAFIED_PUBLIC_URL ?? 'https://alexchouck-hash.github.io/modafied-site').replace(/\/$/, '');
 const MONO = 'ui-monospace, SFMono-Regular, Menlo, Consolas, monospace';
 
 function altText(rating) {
@@ -26,7 +28,7 @@ function snippets(rating) {
     card,
     full: `${ORIGIN}/v1/emblems/${rating.source_id}.svg`,
     compact: `${ORIGIN}/v1/emblems/${rating.source_id}-compact.svg`,
-    html: `<a href="${card}" target="_blank" rel="noopener">\n  <img src="${ORIGIN}/v1/emblems/${rating.source_id}.svg" alt="${alt}" height="96">\n</a>`,
+    html: `<a href="${card}" target="_blank" rel="noopener">\n  <img src="${ORIGIN}/v1/emblems/${rating.source_id}.svg" alt="${alt}" height="112">\n</a>`,
     markdown: `[![${alt}](${ORIGIN}/v1/emblems/${rating.source_id}.svg)](${card})`,
   };
 }
@@ -37,7 +39,7 @@ function snippets(rating) {
     <h1 style="font-size: 2.25rem; font-weight: 800; margin-bottom: 0.75rem;">Emblems</h1>
     <p style="font-size: 1.1rem; color: var(--text-muted); max-width: 800px;">
       If your feed is in the catalog, you can put its benchmark emblem on your own site, in your README, or in
-      your API docs. The emblem is served from modafied.org and regenerated on every publish, so it always shows
+      your API docs. The emblem is served from Modafied and regenerated on every publish, so it always shows
       what we currently measure. It links back to the scorecard that produced it.
     </p>
   </div>
@@ -50,7 +52,7 @@ function snippets(rating) {
       <li><strong style="color: var(--text-color);">It can go down.</strong> If your measurement falls, the emblem on your site falls with it the next time we publish. There is no notice period and no advance appeal. If you think a measurement is wrong, open a public issue; the resolution is public too.</li>
       <li><strong style="color: var(--text-color);">An unmeasured feed still gets one.</strong> A feed without enough data reads <em>insufficient data</em>. We do not withhold the emblem, because an honest unknown is the whole point.</li>
       <li><strong style="color: var(--text-color);">Always keep the link.</strong> The snippets below wrap the emblem in a link to your scorecard, so any reader is one click from the evidence. Use them as given.</li>
-      <li><strong style="color: var(--text-color);">It is traceable.</strong> Every emblem prints a trace id on its face and carries the same id in its SVG metadata. Anyone can resolve it at <a href="/trace">modafied.org/trace</a> and get the exact claim, the scorecard digest behind it, and every claim that emblem has made before. A badge nobody can check is decoration; this one is checkable by people who trust neither you nor us.</li>
+      <li><strong style="color: var(--text-color);">It is traceable.</strong> Every emblem prints a trace id on its face and carries the same id in its SVG metadata. Anyone can resolve it at <a href={u('/trace')}>the trace page</a> and get the exact claim, the scorecard digest behind it, and every claim that emblem has made before. A badge nobody can check is decoration; this one is checkable by people who trust neither you nor us.</li>
     </ul>
   </section>
 
@@ -72,12 +74,12 @@ function snippets(rating) {
     <p style="color: var(--text-muted); font-size: 0.9rem; max-width: 820px; margin-top: 0.75rem;">
       The script sets no cookie, reads no storage, and reports nothing back to us. It fetches two static files
       and renders them; if we are unreachable it falls back to a plain linked emblem rather than blanking your
-      page. Read it before you use it: <a href="/v1/embed.js">/v1/embed.js</a>.
+      page. Read it before you use it: <a href={u('/v1/embed.js')}>/v1/embed.js</a>.
     </p>
     <p style="color: var(--text-muted); font-size: 0.9rem; max-width: 820px; margin-top: 0.75rem;">
       If you would rather verify server side, fetch <code>/v1/emblems/&lt;id&gt;.json</code>, check its
       <code>trace_id</code> against the emblem you are serving, then check
-      <code>evidence.scorecard_sha256</code> against <a href="/v1/manifest.json">manifest.json</a> and pin the
+      <code>evidence.scorecard_sha256</code> against <a href={u('/v1/manifest.json')}>manifest.json</a> and pin the
       manifest hash. A consumer that cannot verify the hash should fail closed.
     </p>
     <p style="color: var(--text-muted); font-size: 0.9rem; max-width: 820px; margin-top: 0.75rem;">
@@ -103,11 +105,11 @@ function snippets(rating) {
         </div>
 
         <div style="display: flex; gap: 1.5rem; align-items: center; flex-wrap: wrap; margin-bottom: 1.25rem;">
-          <a href={`/scorecards/${rating.source_id}`}>
-            <img src={`/v1/emblems/${rating.source_id}.svg`} alt={snip.alt} height="96" />
+          <a href={u(`/scorecards/${rating.source_id}`)}>
+            <img src={u(`/v1/emblems/${rating.source_id}.svg`)} alt={snip.alt} height="96" />
           </a>
-          <a href={`/scorecards/${rating.source_id}`}>
-            <img src={`/v1/emblems/${rating.source_id}-compact.svg`} alt={snip.alt} height="28" />
+          <a href={u(`/scorecards/${rating.source_id}`)}>
+            <img src={u(`/v1/emblems/${rating.source_id}-compact.svg`)} alt={snip.alt} height="28" />
           </a>
         </div>
 
@@ -121,11 +123,11 @@ function snippets(rating) {
         {attestations[rating.source_id] && (
           <div style="margin-top: 0.9rem; padding-top: 0.9rem; border-top: 1px solid var(--border-color); font-size: 0.82rem; color: var(--text-muted);">
             Current trace{' '}
-            <a href={`/trace/${attestations[rating.source_id].trace_id}`} style={`font-family: ${MONO};`}>
+            <a href={u(`/trace/${attestations[rating.source_id].trace_id}`)} style={`font-family: ${MONO};`}>
               {attestations[rating.source_id].trace_id}
             </a>
-            {' · attestation '}<a href={`/v1/emblems/${rating.source_id}.json`}>json</a>
-            {' · claim history '}<a href={`/v1/trace/${rating.source_id}.jsonl`}>jsonl</a>
+            {' · attestation '}<a href={u(`/v1/emblems/${rating.source_id}.json`)}>json</a>
+            {' · claim history '}<a href={u(`/v1/trace/${rating.source_id}.jsonl`)}>jsonl</a>
             {' · scorecard sha256 '}
             <code>{String(attestations[rating.source_id].evidence.scorecard_sha256 ?? '').slice(0, 16)}…</code>
           </div>
@@ -138,7 +140,7 @@ function snippets(rating) {
     <h2 style="font-size: 1.15rem; font-weight: 700; margin-bottom: 0.5rem;">Your feed is not listed</h2>
     <p style="color: var(--text-muted); font-size: 0.95rem; max-width: 780px;">
       Emblems exist only for feeds in the catalog, and a feed enters the catalog through a public pull request.
-      Start at <a href="/submit">submit a feed</a>. You can submit your own feed; it takes the identical code
+      Start at <a href={u('/submit')}>submit a feed</a>. You can submit your own feed; it takes the identical code
       path as every other, and any relationship to us is printed on the card.
     </p>
   </section>
