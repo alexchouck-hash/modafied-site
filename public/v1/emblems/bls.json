@@ -1,0 +1,77 @@
+{
+  "category": "economic-indicators",
+  "claim": {
+    "coverage_pct": 33.3,
+    "dimensions": {
+      "completeness_by_segment": {
+        "grade": "E",
+        "measured_unit": "percent_populated",
+        "measured_value": 0.0,
+        "status": "ok"
+      },
+      "correction_latency": {
+        "grade": null,
+        "measured_unit": "seconds",
+        "measured_value": null,
+        "status": "insufficient_data"
+      },
+      "freshness_lag": {
+        "grade": null,
+        "measured_unit": "ratio_of_declared_cadence",
+        "measured_value": null,
+        "status": "insufficient_data"
+      },
+      "internal_consistency": {
+        "grade": "A",
+        "measured_unit": "percent_consistent_snapshots",
+        "measured_value": 100.0,
+        "status": "ok"
+      },
+      "revision_behavior": {
+        "grade": null,
+        "measured_unit": "percent_of_records_revised",
+        "measured_value": null,
+        "status": "insufficient_data"
+      },
+      "schema_stability": {
+        "grade": null,
+        "measured_unit": "percent_stable_snapshots",
+        "measured_value": null,
+        "status": "insufficient_data"
+      }
+    },
+    "grade": null,
+    "graded_dimensions": 2,
+    "points": null,
+    "required_dimensions": 4,
+    "status": "insufficient_data"
+  },
+  "emblem": {
+    "alt": "Modafied benchmark: Bureau of Labor Statistics Public Data API has insufficient data for a rating (2 of 6 dimensions measurable)",
+    "compact": "https://modafied.org/v1/emblems/bls-compact.svg",
+    "full": "https://modafied.org/v1/emblems/bls.svg"
+  },
+  "evidence": {
+    "changes_url": "https://modafied.org/v1/changes/bls.jsonl",
+    "ledger_url": "https://modafied.org/v1/trace/bls.jsonl",
+    "manifest_url": "https://modafied.org/v1/manifest.json",
+    "method_url": "https://modafied.org/method",
+    "rating_json_url": "https://modafied.org/v1/ratings/bls.json",
+    "scorecard_json_url": "https://modafied.org/v1/scorecards/bls.json",
+    "scorecard_page_url": "https://modafied.org/scorecards/bls",
+    "scorecard_sha256": "4a72b8820ac44ebe18fbd7fcb248daaf61606b86463bd6670052308d476d12e6"
+  },
+  "generated_at": "2026-09-14T00:24:23Z",
+  "method_version": "0.2",
+  "notice": "Mechanically computed from public snapshots. This is a measurement, not an endorsement, a verification, or a partnership. It cannot be purchased and it changes without notice when the measurement changes.",
+  "rank": null,
+  "rating_version": "0.1",
+  "relationship": "none",
+  "schema_version": "0.1",
+  "source_id": "bls",
+  "source_name": "Bureau of Labor Statistics Public Data API",
+  "subcategory": "price and employment statistics",
+  "trace_id": "1c36ded3e91c",
+  "trace_url": "https://modafied.org/trace/1c36ded3e91c",
+  "trace_version": "0.1"
+}

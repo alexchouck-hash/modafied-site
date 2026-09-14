@@ -1,0 +1,145 @@
+---
+import Layout from '../layouts/Layout.astro';
+import { getRatings, getRankPositions, getAttestationMap, gradeColor, categoryLabel, NEUTRAL } from '../lib/data.mjs';
+
+const ratings = [...getRatings()].sort((a, b) => a.source_id.localeCompare(b.source_id));
+const positions = getRankPositions();
+const attestations = getAttestationMap();
+const ORIGIN = 'https://modafied.org';
+const MONO = 'ui-monospace, SFMono-Regular, Menlo, Consolas, monospace';
+
+function altText(rating) {
+  const position = positions[rating.source_id];
+  if (rating.composite.status !== 'ok') {
+    return `Modafied benchmark: ${rating.source_name} has insufficient data for a rating (${rating.composite.graded_dimensions} of 6 dimensions measurable)`;
+  }
+  let line = `Modafied benchmark grade ${rating.composite.grade} for ${rating.source_name}, ${rating.composite.points} of 4 points across ${rating.composite.graded_dimensions} of 6 dimensions`;
+  if (position) line += `, ranked ${position.rank} of ${position.of} in ${categoryLabel(rating.category)}`;
+  return line;
+}
+
+function snippets(rating) {
+  const alt = altText(rating);
+  const card = `${ORIGIN}/scorecards/${rating.source_id}`;
+  return {
+    alt,
+    card,
+    full: `${ORIGIN}/v1/emblems/${rating.source_id}.svg`,
+    compact: `${ORIGIN}/v1/emblems/${rating.source_id}-compact.svg`,
+    html: `<a href="${card}" target="_blank" rel="noopener">\n  <img src="${ORIGIN}/v1/emblems/${rating.source_id}.svg" alt="${alt}" height="96">\n</a>`,
+    markdown: `[![${alt}](${ORIGIN}/v1/emblems/${rating.source_id}.svg)](${card})`,
+  };
+}
+---
+
+<Layout title="Emblems">
+  <div style="margin-bottom: 2.5rem;">
+    <h1 style="font-size: 2.25rem; font-weight: 800; margin-bottom: 0.75rem;">Emblems</h1>
+    <p style="font-size: 1.1rem; color: var(--text-muted); max-width: 800px;">
+      If your feed is in the catalog, you can put its benchmark emblem on your own site, in your README, or in
+      your API docs. The emblem is served from modafied.org and regenerated on every publish, so it always shows
+      what we currently measure. It links back to the scorecard that produced it.
+    </p>
+  </div>
+
+  <section style="border: 1px solid var(--border-color); border-left: 3px solid var(--primary-color); border-radius: 6px; padding: 1.25rem; background: var(--bg-subtle); margin-bottom: 2.5rem;">
+    <h2 style="font-size: 1.1rem; font-weight: 700; margin-bottom: 0.75rem;">What an emblem is, and what it can never be</h2>
+    <ul style="color: var(--text-muted); font-size: 0.93rem; padding-left: 1.25rem; display: flex; flex-direction: column; gap: 0.5rem;">
+      <li><strong style="color: var(--text-color);">It states a computed rating and nothing else.</strong> There is no verified emblem, no trusted emblem, no partner emblem. None of those will ever exist here, at any price.</li>
+      <li><strong style="color: var(--text-color);">It updates on its own.</strong> Hotlink it. Every publish regenerates the SVG at the same URL, so the emblem on your site is the current measurement, never a frozen screenshot. Please do not copy the file to your own server; a self hosted emblem is a claim that has stopped being checked.</li>
+      <li><strong style="color: var(--text-color);">It can go down.</strong> If your measurement falls, the emblem on your site falls with it the next time we publish. There is no notice period and no advance appeal. If you think a measurement is wrong, open a public issue; the resolution is public too.</li>
+      <li><strong style="color: var(--text-color);">An unmeasured feed still gets one.</strong> A feed without enough data reads <em>insufficient data</em>. We do not withhold the emblem, because an honest unknown is the whole point.</li>
+      <li><strong style="color: var(--text-color);">Always keep the link.</strong> The snippets below wrap the emblem in a link to your scorecard, so any reader is one click from the evidence. Use them as given.</li>
+      <li><strong style="color: var(--text-color);">It is traceable.</strong> Every emblem prints a trace id on its face and carries the same id in its SVG metadata. Anyone can resolve it at <a href="/trace">modafied.org/trace</a> and get the exact claim, the scorecard digest behind it, and every claim that emblem has made before. A badge nobody can check is decoration; this one is checkable by people who trust neither you nor us.</li>
+    </ul>
+  </section>
+
+  <section style="border: 1px solid var(--border-color); border-radius: 8px; padding: 1.5rem; margin-bottom: 2.5rem;">
+    <h2 style="font-size: 1.15rem; font-weight: 700; margin-bottom: 0.5rem;">For sites that list feeds</h2>
+    <p style="color: var(--text-muted); font-size: 0.95rem; max-width: 820px; margin-bottom: 1rem;">
+      If you run a directory, marketplace, or provider listing, you can show the benchmark emblem next to each
+      feed you list. Plain HTML is enough, and always will be. The optional script below is for listing pages
+      that want the emblem plus its trace line rendered the same way across many feeds, with the claim read
+      from the attestation instead of typed in by hand, so your page cannot drift from what we publish.
+    </p>
+    <div style="font-size: 0.85rem; font-weight: 700; margin-bottom: 0.35rem;">Drop-in for a listing page</div>
+    <pre>{`<!-- once per page -->
+<script src="${ORIGIN}/v1/embed.js" defer><\/script>
+
+<!-- once per listed feed -->
+<span data-modafied="nws"></span>
+<span data-modafied="usgs-earthquake" data-modafied-variant="compact"></span>`}</pre>
+    <p style="color: var(--text-muted); font-size: 0.9rem; max-width: 820px; margin-top: 0.75rem;">
+      The script sets no cookie, reads no storage, and reports nothing back to us. It fetches two static files
+      and renders them; if we are unreachable it falls back to a plain linked emblem rather than blanking your
+      page. Read it before you use it: <a href="/v1/embed.js">/v1/embed.js</a>.
+    </p>
+    <p style="color: var(--text-muted); font-size: 0.9rem; max-width: 820px; margin-top: 0.75rem;">
+      If you would rather verify server side, fetch <code>/v1/emblems/&lt;id&gt;.json</code>, check its
+      <code>trace_id</code> against the emblem you are serving, then check
+      <code>evidence.scorecard_sha256</code> against <a href="/v1/manifest.json">manifest.json</a> and pin the
+      manifest hash. A consumer that cannot verify the hash should fail closed.
+    </p>
+    <p style="color: var(--text-muted); font-size: 0.9rem; max-width: 820px; margin-top: 0.75rem;">
+      One condition, and it is the only one: do not present the emblem as a mark of approval. It is a
+      measurement with a date and a method version on it. There is no listing fee, no application, and nothing
+      to buy — including for Trooth, which funds this benchmark and is measured by identical code.
+    </p>
+  </section>
+
+  {ratings.map((rating) => {
+    const snip = snippets(rating);
+    const ok = rating.composite.status === 'ok';
+    const color = ok ? gradeColor(rating.composite.grade) : NEUTRAL;
+    const position = positions[rating.source_id];
+    return (
+      <section style="border: 1px solid var(--border-color); border-radius: 8px; padding: 1.5rem; margin-bottom: 2rem;">
+        <div style="display: flex; align-items: baseline; justify-content: space-between; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 1rem;">
+          <h2 style="font-size: 1.3rem; font-weight: 700;">{rating.source_name}</h2>
+          <span class="badge" style={`background-color: ${color.bg}; color: ${color.fg}; border-color: transparent;`}>
+            {ok ? `Grade ${rating.composite.grade}` : 'insufficient data'}
+            {position ? ` · rank ${position.rank} of ${position.of} in ${categoryLabel(rating.category)}` : ''}
+          </span>
+        </div>
+
+        <div style="display: flex; gap: 1.5rem; align-items: center; flex-wrap: wrap; margin-bottom: 1.25rem;">
+          <a href={`/scorecards/${rating.source_id}`}>
+            <img src={`/v1/emblems/${rating.source_id}.svg`} alt={snip.alt} height="96" />
+          </a>
+          <a href={`/scorecards/${rating.source_id}`}>
+            <img src={`/v1/emblems/${rating.source_id}-compact.svg`} alt={snip.alt} height="28" />
+          </a>
+        </div>
+
+        <div style="font-size: 0.85rem; font-weight: 700; margin-bottom: 0.35rem;">HTML</div>
+        <pre>{snip.html}</pre>
+        <div style="font-size: 0.85rem; font-weight: 700; margin-bottom: 0.35rem;">Markdown</div>
+        <pre>{snip.markdown}</pre>
+        <div style="font-size: 0.8rem; color: var(--text-muted);">
+          Full emblem <code>{snip.full}</code> · compact <code>{snip.compact}</code>
+        </div>
+        {attestations[rating.source_id] && (
+          <div style="margin-top: 0.9rem; padding-top: 0.9rem; border-top: 1px solid var(--border-color); font-size: 0.82rem; color: var(--text-muted);">
+            Current trace{' '}
+            <a href={`/trace/${attestations[rating.source_id].trace_id}`} style={`font-family: ${MONO};`}>
+              {attestations[rating.source_id].trace_id}
+            </a>
+            {' · attestation '}<a href={`/v1/emblems/${rating.source_id}.json`}>json</a>
+            {' · claim history '}<a href={`/v1/trace/${rating.source_id}.jsonl`}>jsonl</a>
+            {' · scorecard sha256 '}
+            <code>{String(attestations[rating.source_id].evidence.scorecard_sha256 ?? '').slice(0, 16)}…</code>
+          </div>
+        )}
+      </section>
+    );
+  })}
+
+  <section style="border-top: 1px solid var(--border-color); padding-top: 1.5rem;">
+    <h2 style="font-size: 1.15rem; font-weight: 700; margin-bottom: 0.5rem;">Your feed is not listed</h2>
+    <p style="color: var(--text-muted); font-size: 0.95rem; max-width: 780px;">
+      Emblems exist only for feeds in the catalog, and a feed enters the catalog through a public pull request.
+      Start at <a href="/submit">submit a feed</a>. You can submit your own feed; it takes the identical code
+      path as every other, and any relationship to us is printed on the card.
+    </p>
+  </section>
+</Layout>

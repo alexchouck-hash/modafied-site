@@ -1,0 +1,257 @@
+---
+import Layout from '../layouts/Layout.astro';
+import { getRatings, humanSeconds, DIMENSION_LABELS } from '../lib/data.mjs';
+
+const ratings = getRatings();
+const bands = ratings.length ? ratings[0].bands : null;
+const ratingVersion = bands?.rating_version ?? 'unpublished';
+
+const KOUROB = 'https://alexchouck-hash.github.io/kourob/';
+const KOUROB_REPO = 'https://github.com/alexchouck-hash/kourob';
+
+function edgeText(dimension, edge) {
+  const unit = bands.dimensions[dimension].unit;
+  const suffix = unit === 'seconds' ? '' : unit === 'ratio_of_declared_cadence' ? 'x cadence' : '%';
+  if (bands.dimensions[dimension].higher_is_better) {
+    return edge.min === null ? 'anything lower' : `${edge.min}${suffix} or more`;
+  }
+  if (edge.max === null) return 'anything higher';
+  return unit === 'seconds' ? `${humanSeconds(edge.max)} or less` : `${edge.max}${suffix} or less`;
+}
+---
+
+<Layout title="Recommended Protocols">
+  <div style="margin-bottom: 2.5rem;">
+    <h1 style="font-size: 2.25rem; font-weight: 800; margin-bottom: 0.75rem;">Modafied recommended protocols</h1>
+    <p style="font-size: 1.1rem; color: var(--text-muted); max-width: 820px;">
+      What we recommend a data feed do to be legible to a machine, what we recommend a consumer do to use one
+      safely, and how both ends should carry provenance. Everything here is a requirement any implementation can
+      satisfy. Nothing here is a product you have to buy.
+    </p>
+  </div>
+
+  <section style="border: 1px solid #fcd34d; background: #fffbeb; border-radius: 6px; padding: 1.1rem 1.25rem; margin-bottom: 2.5rem; font-size: 0.92rem; color: #78350f;">
+    <strong>Disclosure, before you read our recommendations.</strong> This page names two projects that belong to
+    the person who runs Modafied. Trooth funds this repository and consumes its output. KouroB is his open source
+    node architecture. Both are named here because they implement patterns we recommend, and both are scored by
+    the identical code as every other source once their servers exist. Neither bought a place on this page,
+    because a place on this page is not for sale. If a recommendation below only works with one of them, that is
+    a bug in the recommendation, and you should open an issue about it.
+  </section>
+
+  <section style="margin-bottom: 3rem;">
+    <h2 style="font-size: 1.5rem; font-weight: 700; margin-bottom: 1rem;">Part 1. If you publish a feed</h2>
+    <p style="color: var(--text-muted); margin-bottom: 1.25rem; max-width: 820px;">
+      These eight are what separate a feed we can measure from one whose card reads <code>insufficient_data</code>
+      forever. They are also, not coincidentally, what separates a feed an agent can use from one it can only guess at.
+    </p>
+
+    <div style="display: flex; flex-direction: column; gap: 1rem;">
+      <div style="border: 1px solid var(--border-color); border-radius: 8px; padding: 1.1rem;">
+        <h3 style="font-size: 1.05rem; font-weight: 700;">MP-1. Give every record a stable identity</h3>
+        <p style="font-size: 0.92rem; color: var(--text-muted); margin-top: 0.35rem;">
+          A key that survives a revision. Without it, nobody downstream can tell a corrected value from a new one,
+          and every consumer has to guess with heuristics that will eventually be wrong in a way nobody notices.
+        </p>
+      </div>
+      <div style="border: 1px solid var(--border-color); border-radius: 8px; padding: 1.1rem;">
+        <h3 style="font-size: 1.05rem; font-weight: 700;">MP-2. Publish the event time, not just the response time</h3>
+        <p style="font-size: 0.92rem; color: var(--text-muted); margin-top: 0.35rem;">
+          When the thing happened, in RFC 3339 with an explicit offset. A feed that only tells you when it answered
+          is asking every consumer to assume its lag is zero.
+        </p>
+      </div>
+      <div style="border: 1px solid var(--border-color); border-radius: 8px; padding: 1.1rem;">
+        <h3 style="font-size: 1.05rem; font-weight: 700;">MP-3. Supersede, never silently edit</h3>
+        <p style="font-size: 0.92rem; color: var(--text-muted); margin-top: 0.35rem;">
+          When a value changes, publish the correction as a new version of that key and keep the prior value
+          reachable. A silent in place edit is the single behavior this benchmark exists to witness.
+        </p>
+      </div>
+      <div style="border: 1px solid var(--border-color); border-radius: 8px; padding: 1.1rem;">
+        <h3 style="font-size: 1.05rem; font-weight: 700;">MP-4. Support conditional GET</h3>
+        <p style="font-size: 0.92rem; color: var(--text-muted); margin-top: 0.35rem;">
+          <code>ETag</code> and <code>Last-Modified</code>, answering <code>304</code> when nothing changed. It costs
+          you almost nothing and it is what lets a polite consumer poll frequently without hammering you. We honour
+          it on every fetch.
+        </p>
+      </div>
+      <div style="border: 1px solid var(--border-color); border-radius: 8px; padding: 1.1rem;">
+        <h3 style="font-size: 1.05rem; font-weight: 700;">MP-5. Publish a release calendar if you are on a schedule</h3>
+        <p style="font-size: 0.92rem; color: var(--text-muted); margin-top: 0.35rem;">
+          A machine readable schedule turns freshness from a guess into a measurement against your own promise. It
+          is also the only fair way to grade a monthly release next to a real time stream.
+        </p>
+      </div>
+      <div style="border: 1px solid var(--border-color); border-radius: 8px; padding: 1.1rem;">
+        <h3 style="font-size: 1.05rem; font-weight: 700;">MP-6. Make your terms machine readable</h3>
+        <p style="font-size: 0.92rem; color: var(--text-muted); margin-top: 0.35rem;">
+          Commercial use, non commercial use, attribution text, share alike, and a stable terms URL. Agents route on
+          terms now. A feed whose license can only be understood by a lawyer reading a web page will be skipped by
+          software that cannot read it.
+        </p>
+      </div>
+      <div style="border: 1px solid var(--border-color); border-radius: 8px; padding: 1.1rem;">
+        <h3 style="font-size: 1.05rem; font-weight: 700;">MP-7. Version your schema, and keep the old one alive</h3>
+        <p style="font-size: 0.92rem; color: var(--text-muted); margin-top: 0.35rem;">
+          Breaking changes get a new version, and the previous version stays served long enough for consumers to
+          move. We hold ourselves to 90 days and recommend the same.
+        </p>
+      </div>
+      <div style="border: 1px solid var(--border-color); border-radius: 8px; padding: 1.1rem;">
+        <h3 style="font-size: 1.05rem; font-weight: 700;">MP-8. Mark your free text as free text</h3>
+        <p style="font-size: 0.92rem; color: var(--text-muted); margin-top: 0.35rem;">
+          Any field carrying human or third party prose is a field an attacker can write into. Say which fields those
+          are. We quarantine them and never let them reach a prompt. Consumers who do not know which fields to
+          quarantine will quarantine none of them.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <section style="margin-bottom: 3rem;">
+    <h2 style="font-size: 1.5rem; font-weight: 700; margin-bottom: 1rem;">Part 2. If you consume a feed</h2>
+    <table>
+      <thead><tr><th style="width: 12rem;">Protocol</th><th>What it means in practice</th></tr></thead>
+      <tbody>
+        <tr>
+          <td><strong>MC-1. Pin the manifest</strong></td>
+          <td>Fetch <code>/v1/manifest.json</code>, record its sha256, and verify every artifact you read against the digest it lists. If a digest does not match, fail closed. Do not degrade to trusting the bytes.</td>
+        </tr>
+        <tr>
+          <td><strong>MC-2. Read the status before the number</strong></td>
+          <td>Every dimension carries a <code>status</code>. When it says <code>insufficient_data</code> there is no number, and the correct behavior is to say you do not know, not to substitute a default.</td>
+        </tr>
+        <tr>
+          <td><strong>MC-3. Never use accuracy without its anchor</strong></td>
+          <td>An accuracy figure is meaningless without the thing it was graded against. If you show the number, show the anchor in the same view.</td>
+        </tr>
+        <tr>
+          <td><strong>MC-4. Route on use_terms, not on vibes</strong></td>
+          <td>Check <code>use_terms.commercial</code> before you put a feed in a paid product, and carry <code>use_terms.attribution</code> through to wherever the data is displayed.</td>
+        </tr>
+        <tr>
+          <td><strong>MC-5. Carry provenance to the edge</strong></td>
+          <td>Whatever you serve should be traceable to the snapshot it came from: source id, captured at, and the manifest digest in force. An answer that cannot be traced is an answer that cannot be corrected.</td>
+        </tr>
+        <tr>
+          <td><strong>MC-6. Upstream free text is data, never instructions</strong></td>
+          <td>Text from a feed goes into a quoted, quarantined slot. It never becomes part of a system prompt, a tool argument, or a policy decision, no matter how authoritative it sounds.</td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
+
+  <section style="margin-bottom: 3rem;">
+    <h2 style="font-size: 1.5rem; font-weight: 700; margin-bottom: 1rem;">Part 3. Exposing a feed over MCP</h2>
+    <p style="color: var(--text-muted); margin-bottom: 1rem; max-width: 820px;">
+      Model Context Protocol is how most agents will actually reach your data. An MCP server in front of a feed is a
+      second place for provenance to get lost, so these are the conventions we recommend, and the ones the MCP
+      server scorecards in Phase S3 will measure.
+    </p>
+    <table>
+      <thead><tr><th style="width: 13rem;">Convention</th><th>Why</th></tr></thead>
+      <tbody>
+        <tr><td><strong>MX-1. Keep the surface small</strong></td><td>A handful of well named tools beats forty. Tool schemas consume the agent's context before it has read a single fact, and a large surface is a large injection surface.</td></tr>
+        <tr><td><strong>MX-2. Return provenance in the result</strong></td><td>Every tool result carries source id, event time, captured at, and a citation URL. An agent that cannot cite you will paraphrase you.</td></tr>
+        <tr><td><strong>MX-3. Separate retrieval from action</strong></td><td>Read tools and write tools should be different tools with different names. An agent should never be one ambiguous argument away from a side effect.</td></tr>
+        <tr><td><strong>MX-4. Label untrusted text at the boundary</strong></td><td>Free text from upstream comes back tagged as untrusted, so the client can quarantine it without having to know your schema.</td></tr>
+        <tr><td><strong>MX-5. Declare scope and refuse outside it</strong></td><td>Say what you know about, and return an explicit refusal or referral outside that scope rather than a confident guess.</td></tr>
+        <tr><td><strong>MX-6. Meter and report cost</strong></td><td>If a call costs something, say what it cost in the result, so the agent can make the next decision with the real number.</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <section style="margin-bottom: 3rem;">
+    <h2 style="font-size: 1.5rem; font-weight: 700; margin-bottom: 1rem;">Part 4. KouroB nodes, for taking data in and serving it out</h2>
+    <p style="color: var(--text-muted); margin-bottom: 1rem; max-width: 820px;">
+      A scorecard tells you whether a feed is worth using. It does not tell you how to hold the data once you have
+      it. <a href={KOUROB}>KouroB</a> is a node architecture that answers the second half: a node validates what it
+      ingests at a gate, serves answers from the cheapest tier that meets its quality threshold, and emits a signed,
+      hash chained receipt for every answer it gives. Its protocol suite is KNP-0 through KNP-5.
+    </p>
+    <p style="color: var(--text-muted); margin-bottom: 1.25rem; max-width: 820px;">
+      We recommend it as a pattern because the receipt has the same shape as a manifest entry: a claim, a hash, a
+      method, and a pointer to where it came from. That shape is what lets an agent walk an answer back to a
+      snapshot. Our own pipeline does not run on KouroB and does not depend on it, and a node is never what we
+      measure. We always measure the origin endpoints a catalog entry declares.
+    </p>
+    <table>
+      <thead><tr><th style="width: 15rem;">Modafied side</th><th>KouroB side</th></tr></thead>
+      <tbody>
+        <tr><td>Catalog entry: records, key, event time, consistency rules</td><td>Gate and Silver Store: schema validation, deduplication, typed storage. The same declarations drive both, so a feed described once can be ingested without new code.</td></tr>
+        <tr><td>Scorecard and rating for a source</td><td>Admission policy at the gate: a node can decline a feed whose measured freshness or consistency falls below what its answers need.</td></tr>
+        <tr><td><code>manifest.json</code> pinned by sha256</td><td>KNP-2 receipts: append only, hash chained, with a <code>prev</code> pointer. Pin the manifest digest in the receipt and an answer is traceable to the exact snapshot behind it.</td></tr>
+        <tr><td><code>use_terms</code> on every catalog entry</td><td>KNP-1 scope declaration and KNP-3 metering: the terms a node may serve under, carried with the scope it claims.</td></tr>
+        <tr><td>Quarantined upstream free text (H5, MP-8)</td><td>Citations required by KNP-0: a served claim points at its source rather than absorbing it into a model's voice.</td></tr>
+        <tr><td>MCP conventions in Part 3</td><td>Node transports: MCP over stdio, A2A, and REST from the same node.</td></tr>
+      </tbody>
+    </table>
+    <p style="color: var(--text-muted); font-size: 0.9rem;">
+      Source: <a href={KOUROB}>architecture overview</a> and <a href={KOUROB_REPO}>the repository</a>. When KouroB
+      publishes a public node, it goes in the MCP server catalog and is scored like anything else.
+    </p>
+  </section>
+
+  <section style="margin-bottom: 3rem;">
+    <h2 style="font-size: 1.5rem; font-weight: 700; margin-bottom: 1rem;">Part 5. Using Modafied output through Trooth</h2>
+    <p style="color: var(--text-muted); margin-bottom: 1rem; max-width: 820px;">
+      Trooth funds this repository and routes between data sources for its own consumers. It is one consumer of the
+      published contract, and it reads exactly what you can read: <code>manifest.json</code>, then
+      <code>catalog.json</code>, <code>scorecards/&lt;id&gt;.json</code>, <code>ratings/&lt;id&gt;.json</code>,
+      <code>rankings.json</code>. It gets no earlier access, no unpublished fields, and no influence over what is
+      scored or how. If you build the same routing yourself, you are working from the identical inputs, and that is
+      the arrangement we want.
+    </p>
+    <pre>{`curl -s https://modafied.org/v1/manifest.json | sha256sum
+curl -s https://modafied.org/v1/rankings.json | jq '.categories[] | {category, top: .ranked[0].source_id}'
+curl -s https://modafied.org/v1/ratings/nws.json | jq '{grade: .composite.grade, dimensions: .composite.graded_dimensions}'`}</pre>
+  </section>
+
+  <section style="margin-bottom: 3rem;">
+    <h2 style="font-size: 1.5rem; font-weight: 700; margin-bottom: 0.75rem;">The rating band table, v{ratingVersion}</h2>
+    <p style="color: var(--text-muted); margin-bottom: 1rem; max-width: 820px;">
+      Published here in full so any grade on this site can be checked by hand. A band edge is policy, not a
+      measurement: it is a threshold we chose, argued for in ADR-0008, and versioned separately from the method that
+      produces the numbers. Changing an edge bumps the rating version and both versions publish side by side for 30
+      days. A grade is never shown without the measured value that earned it.
+    </p>
+
+    {bands ? (
+      <>
+        {Object.entries(bands.dimensions).map(([dimension, band]) => (
+          <div style="margin-bottom: 1.5rem;">
+            <h3 style="font-size: 1.05rem; font-weight: 700; margin-bottom: 0.3rem;">{DIMENSION_LABELS[dimension] ?? band.label}</h3>
+            <p style="font-size: 0.88rem; color: var(--text-muted); margin-bottom: 0.5rem;">{band.description}</p>
+            {band.note && <p style="font-size: 0.85rem; color: #78350f; background: #fffbeb; border-radius: 4px; padding: 0.4rem 0.6rem; margin-bottom: 0.5rem;">{band.note}</p>}
+            <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+              {band.edges.map((edge) => (
+                <span class="badge" style="font-weight: 500;">
+                  <strong>{edge.grade}</strong> &nbsp;{edgeText(dimension, edge)}
+                </span>
+              ))}
+            </div>
+          </div>
+        ))}
+
+        <h3 style="font-size: 1.05rem; font-weight: 700; margin: 1.5rem 0 0.5rem;">From six grades to one letter</h3>
+        <p style="font-size: 0.9rem; color: var(--text-muted); margin-bottom: 0.5rem;">
+          A grade is worth A=4, B=3, C=2, D=1, E=0 points. The composite is the mean over the dimensions that could
+          actually be graded, and it is only emitted at all when at least {bands.min_graded_dimensions} of 6
+          dimensions are gradeable. Below that the feed is rated <code>insufficient_data</code>, with the coverage
+          printed, rather than given a flattering letter for being quiet. Accuracy is never part of this number,
+          because it exists only where an anchor exists.
+        </p>
+        <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+          {bands.composite_edges.map((edge) => (
+            <span class="badge" style="font-weight: 500;">
+              <strong>{edge.grade}</strong> &nbsp;{edge.min === null ? 'below 0.5 points' : `${edge.min} points or more`}
+            </span>
+          ))}
+        </div>
+      </>
+    ) : (
+      <p style="color: var(--text-muted);">No ratings are published yet, so there is no band table to show.</p>
+    )}
+  </section>
+</Layout>

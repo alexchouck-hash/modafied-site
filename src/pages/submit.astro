@@ -1,0 +1,135 @@
+---
+import Layout from '../layouts/Layout.astro';
+import { getCatalog } from '../lib/data.mjs';
+
+const catalog = getCatalog();
+const categories = [...new Set(catalog.map((s) => s.category).filter(Boolean))].sort();
+const repoUrl = 'https://github.com/alexchouck-hash/modafied';
+---
+
+<Layout title="Submit a Feed">
+  <div style="margin-bottom: 2.5rem;">
+    <h1 style="font-size: 2.25rem; font-weight: 800; margin-bottom: 0.75rem;">Submit a feed for benchmarking</h1>
+    <p style="font-size: 1.1rem; color: var(--text-muted); max-width: 820px;">
+      Anyone can put a public data feed into this benchmark: the people who operate it, the people who depend on
+      it, and the people who are annoyed by it. A submission is one YAML file in a public pull request. There is
+      no form on this page, no inbox, and no fee, and that is deliberate.
+    </p>
+  </div>
+
+  <section style="border: 1px solid var(--border-color); border-left: 3px solid var(--primary-color); border-radius: 6px; padding: 1.25rem; background: var(--bg-subtle); margin-bottom: 2.5rem;">
+    <h2 style="font-size: 1.05rem; font-weight: 700; margin-bottom: 0.6rem;">Before you start, the terms</h2>
+    <ul style="color: var(--text-muted); font-size: 0.93rem; padding-left: 1.25rem; display: flex; flex-direction: column; gap: 0.45rem;">
+      <li>Submitting does not buy a score, influence a score, or delay a bad one. Same code path for every feed.</li>
+      <li>Submitting your own feed is welcome and is disclosed on the card as <code>submitted_by: source_owner</code>. It changes nothing about the measurement.</li>
+      <li>We will snapshot your feed on its declared cadence and keep every snapshot permanently. Your license must allow that. If it does not, we cannot list you.</li>
+      <li>Your card will say <code>insufficient_data</code> until enough samples exist. That is not a penalty and we will not paper over it with a default number.</li>
+      <li>If the measurement is unflattering, it publishes anyway. Disputes are public issues, resolved in public.</li>
+    </ul>
+  </section>
+
+  <section style="margin-bottom: 3rem;">
+    <h2 style="font-size: 1.5rem; font-weight: 700; margin-bottom: 1.25rem;">Four steps</h2>
+
+    <div style="display: flex; flex-direction: column; gap: 1.25rem;">
+      <div style="border: 1px solid var(--border-color); border-radius: 8px; padding: 1.25rem;">
+        <h3 style="font-size: 1.1rem; font-weight: 700; margin-bottom: 0.5rem;">1. Describe the feed in one YAML file</h3>
+        <p style="font-size: 0.93rem; color: var(--text-muted); margin-bottom: 0.75rem;">
+          Copy <code>catalog/TEMPLATE.yaml</code> to <code>catalog/sources/&lt;your-id&gt;.yaml</code> and fill it in.
+          The file declares where the records are, what identifies a record, which timestamp is the event time,
+          what the license permits, and which category you compete in. Adding a source never requires writing code;
+          if your feed cannot be described by these fields, that is a gap in our schema and we fix the schema first.
+        </p>
+        <pre>{`git clone ${repoUrl}
+cd modafied
+cp catalog/TEMPLATE.yaml catalog/sources/my-feed.yaml`}</pre>
+      </div>
+
+      <div style="border: 1px solid var(--border-color); border-radius: 8px; padding: 1.25rem;">
+        <h3 style="font-size: 1.1rem; font-weight: 700; margin-bottom: 0.5rem;">2. Run the checks yourself</h3>
+        <p style="font-size: 0.93rem; color: var(--text-muted); margin-bottom: 0.75rem;">
+          The same checks CI will run. <code>--probe</code> fetches each endpoint once and confirms your declared
+          record path actually resolves to records.
+        </p>
+        <pre>{`make validate-submission FILE=catalog/sources/my-feed.yaml
+python jobs/validate_submission.py catalog/sources/my-feed.yaml --probe`}</pre>
+      </div>
+
+      <div style="border: 1px solid var(--border-color); border-radius: 8px; padding: 1.25rem;">
+        <h3 style="font-size: 1.1rem; font-weight: 700; margin-bottom: 0.5rem;">3. Open the pull request</h3>
+        <p style="font-size: 0.93rem; color: var(--text-muted);">
+          CI validates the schema, the license block, and the endpoint probe. The probation runner then snapshots
+          your feed on its declared cadence for 24 hours from your branch and posts a draft scorecard marked
+          <code>probation</code> as a comment, so you can see exactly what will be published before anything is.
+        </p>
+      </div>
+
+      <div style="border: 1px solid var(--border-color); border-radius: 8px; padding: 1.25rem;">
+        <h3 style="font-size: 1.1rem; font-weight: 700; margin-bottom: 0.5rem;">4. One human step, then merge</h3>
+        <p style="font-size: 0.93rem; color: var(--text-muted);">
+          A maintainer opens your cited license URL and reads it. That is the only manual step in the whole
+          pipeline, and it exists because a license is a claim about the law, not a field a machine should
+          rubber stamp. After merge your feed appears on the site, gets a scorecard, enters its category
+          ranking, and gets an <a href="/emblems">emblem</a> you can embed.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <section style="margin-bottom: 3rem;">
+    <h2 style="font-size: 1.5rem; font-weight: 700; margin-bottom: 0.75rem;">What makes a feed measurable</h2>
+    <p style="color: var(--text-muted); margin-bottom: 1rem; max-width: 820px;">
+      Four things decide whether your card carries real numbers or reads <code>insufficient_data</code> forever.
+      None of them require you to change your API. They require you to tell us what is already true about it.
+    </p>
+    <table>
+      <thead>
+        <tr><th style="width: 14rem;">You declare</th><th>Without it</th></tr>
+      </thead>
+      <tbody>
+        <tr><td><code>records.key</code></td><td>We cannot tell a revised record from a new one, so revision behavior and correction latency stay unmeasured.</td></tr>
+        <tr><td><code>records.event_time</code></td><td>Freshness lag is unmeasurable, because there is nothing to subtract our fetch time from.</td></tr>
+        <tr><td><code>consistency_rules</code></td><td>Internal consistency grades against nothing. Declare the bounds you already know.</td></tr>
+        <tr><td><code>fields</code> and <code>segments.by</code></td><td>Completeness has no field list and no segment breakdown, so one busy segment can hide an empty one.</td></tr>
+      </tbody>
+    </table>
+    <p style="color: var(--text-muted); font-size: 0.9rem;">
+      The full protocol we recommend to feed operators is on the <a href="/protocols">protocols page</a>.
+    </p>
+  </section>
+
+  <section style="margin-bottom: 3rem;">
+    <h2 style="font-size: 1.5rem; font-weight: 700; margin-bottom: 0.75rem;">Categories currently open</h2>
+    <p style="color: var(--text-muted); margin-bottom: 1rem;">
+      You are ranked only against feeds in your own category. These are in use today; the full vocabulary lives in
+      <code>schema/catalog/v0.3.json</code>, and adding a new category is itself a small pull request.
+    </p>
+    <div style="display: flex; flex-wrap: wrap; gap: 0.5rem;">
+      {categories.map((category) => (
+        <a href={`/rankings/${category}`} class="badge" style="text-decoration: none; text-transform: capitalize; background-color: var(--badge-bg); color: var(--badge-text); border-color: transparent;">
+          {category.replace(/-/g, ' ')}
+        </a>
+      ))}
+    </div>
+  </section>
+
+  <section style="margin-bottom: 3rem;">
+    <h2 style="font-size: 1.5rem; font-weight: 700; margin-bottom: 0.75rem;">Self registration, coming in Phase S3</h2>
+    <p style="color: var(--text-muted); margin-bottom: 1rem; max-width: 820px;">
+      Rather than opening a pull request, you will be able to host the same description at a well known path on
+      your own domain. Our crawler reads it and opens the pull request for you. Hosting the file is also a
+      statement of ownership, which is the point.
+    </p>
+    <pre>{`GET https://your-domain.example/.well-known/sourcecard.json`}</pre>
+  </section>
+
+  <section style="border-top: 1px solid var(--border-color); padding-top: 1.5rem;">
+    <h2 style="font-size: 1.15rem; font-weight: 700; margin-bottom: 0.5rem;">Nominating someone else's feed</h2>
+    <p style="color: var(--text-muted); font-size: 0.95rem; max-width: 820px;">
+      Perfectly allowed, and it is how most of this catalog will grow. Set
+      <code>submitted_by: third_party</code>. We do not ask the operator for permission to measure a public feed,
+      and we do not take instruction from them about what the measurement should say. See the
+      <a href="/contribute">contribution details</a> for the full review flow.
+    </p>
+  </section>
+</Layout>

@@ -1,21 +1,27 @@
 ---
 import Layout from '../layouts/Layout.astro';
-import fs from 'node:fs';
-import path from 'node:path';
+import {
+  getRatings,
+  getCatalogMap,
+  getRankings,
+  getRankPositions,
+  gradeColor,
+  categoryLabel,
+  NEUTRAL,
+} from '../lib/data.mjs';
 
-let scorecards = [];
-try {
-  const scorecardsDir = path.resolve('./public/scorecards');
-  if (fs.existsSync(scorecardsDir)) {
-    const files = fs.readdirSync(scorecardsDir).filter(f => f.endsWith('.json') && f !== 'manifest.json');
-    scorecards = files.map(file => {
-      const filePath = path.join(scorecardsDir, file);
-      return JSON.parse(fs.readFileSync(filePath, 'utf-8'));
-    });
-  }
-} catch (e) {
-  console.error(e);
-}
+const catalog = getCatalogMap();
+const positions = getRankPositions();
+const rankings = getRankings();
+
+const ratings = [...getRatings()].sort((a, b) => {
+  const pa = a.composite.status === 'ok' ? -a.composite.points : 99;
+  const pb = b.composite.status === 'ok' ? -b.composite.points : 99;
+  return pa - pb || a.source_id.localeCompare(b.source_id);
+});
+
+const rated = ratings.filter((r) => r.composite.status === 'ok').length;
+const categoriesWithContest = rankings.categories.filter((c) => c.ranked.length > 1).length;
 ---
 
 <Layout title="Public Benchmark of Data Sources">
@@ -23,47 +29,95 @@ try {
     <h1 style="font-size: 2.25rem; font-weight: 800; line-height: 1.25; margin-bottom: 1rem;">
       Modafied: Independent Data Benchmarks for Apps and Agents
     </h1>
-    <p style="font-size: 1.15rem; color: var(--text-muted); max-width: 760px; margin-bottom: 1.5rem;">
-      Modafied snapshots public feeds on a schedule, preserves every snapshot forever, diffs them, and publishes a six-dimension scorecard per source with the exact method and version.
+    <p style="font-size: 1.15rem; color: var(--text-muted); max-width: 780px; margin-bottom: 1.5rem;">
+      Modafied snapshots public feeds on a schedule, preserves every snapshot forever, diffs them, and publishes a
+      six-dimension scorecard per source with the exact method and version. Feeds compete only against feeds in
+      their own category, and no placement, grade, or emblem is purchasable.
     </p>
     <div style="display: flex; gap: 1rem; flex-wrap: wrap;">
-      <a href="/method" style="background-color: var(--primary-color); color: white; padding: 0.65rem 1.25rem; border-radius: 6px; text-decoration: none; font-weight: 600;">
-        Read Methodology
+      <a href="/rankings" style="background-color: var(--primary-color); color: white; padding: 0.65rem 1.25rem; border-radius: 6px; text-decoration: none; font-weight: 600;">
+        See the rankings
       </a>
-      <a href="/status" style="background-color: var(--bg-subtle); border: 1px solid var(--border-color); color: var(--text-color); padding: 0.65rem 1.25rem; border-radius: 6px; text-decoration: none; font-weight: 600;">
-        Source Status
+      <a href="/method" style="background-color: var(--bg-subtle); border: 1px solid var(--border-color); color: var(--text-color); padding: 0.65rem 1.25rem; border-radius: 6px; text-decoration: none; font-weight: 600;">
+        Read the method
+      </a>
+      <a href="/submit" style="background-color: var(--bg-subtle); border: 1px solid var(--border-color); color: var(--text-color); padding: 0.65rem 1.25rem; border-radius: 6px; text-decoration: none; font-weight: 600;">
+        Submit a feed
       </a>
     </div>
   </section>
 
   <section style="margin-bottom: 3.5rem;">
-    <h2 style="font-size: 1.5rem; font-weight: 700; margin-bottom: 1.5rem;">Public Scorecards</h2>
-    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.5rem;">
-      <a href="/scorecards/nws" style="display: block; border: 1px solid var(--border-color); border-radius: 8px; padding: 1.25rem; text-decoration: none; color: inherit; background: var(--bg-subtle);">
-        <h3 style="font-size: 1.2rem; font-weight: 700; margin-bottom: 0.25rem;">National Weather Service (NWS)</h3>
-        <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 0.75rem;">Official US weather observations and forecast grids.</p>
-        <span class="badge" style="background-color: #dbeafe; color: #1e40af;">View Card &rarr;</span>
-      </a>
-      <a href="/scorecards/usgs-earthquake" style="display: block; border: 1px solid var(--border-color); border-radius: 8px; padding: 1.25rem; text-decoration: none; color: inherit; background: var(--bg-subtle);">
-        <h3 style="font-size: 1.2rem; font-weight: 700; margin-bottom: 0.25rem;">USGS Earthquake Hazards</h3>
-        <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 0.75rem;">Real-time global seismic event feeds with revision tracking.</p>
-        <span class="badge" style="background-color: #dbeafe; color: #1e40af;">View Card &rarr;</span>
-      </a>
-      <a href="/scorecards/open-meteo" style="display: block; border: 1px solid var(--border-color); border-radius: 8px; padding: 1.25rem; text-decoration: none; color: inherit; background: var(--bg-subtle);">
-        <h3 style="font-size: 1.2rem; font-weight: 700; margin-bottom: 0.25rem;">Open-Meteo</h3>
-        <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 0.75rem;">Aggregated model forecasts and real-time weather APIs.</p>
-        <span class="badge" style="background-color: #dbeafe; color: #1e40af;">View Card &rarr;</span>
-      </a>
-      <a href="/scorecards/bls" style="display: block; border: 1px solid var(--border-color); border-radius: 8px; padding: 1.25rem; text-decoration: none; color: inherit; background: var(--bg-subtle);">
-        <h3 style="font-size: 1.2rem; font-weight: 700; margin-bottom: 0.25rem;">Bureau of Labor Statistics (BLS)</h3>
-        <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 0.75rem;">CPI, PPI, and employment statistics with release calendar tracking.</p>
-        <span class="badge" style="background-color: #dbeafe; color: #1e40af;">View Card &rarr;</span>
-      </a>
-      <a href="/scorecards/fred" style="display: block; border: 1px solid var(--border-color); border-radius: 8px; padding: 1.25rem; text-decoration: none; color: inherit; background: var(--bg-subtle);">
-        <h3 style="font-size: 1.2rem; font-weight: 700; margin-bottom: 0.25rem;">Federal Reserve Economic Data (FRED)</h3>
-        <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 0.75rem;">Republished macroeconomic time series and republish lag analysis.</p>
-        <span class="badge" style="background-color: #dbeafe; color: #1e40af;">View Card &rarr;</span>
-      </a>
+    <div style="display: flex; align-items: baseline; justify-content: space-between; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 0.5rem;">
+      <h2 style="font-size: 1.5rem; font-weight: 700;">Every feed in the catalog</h2>
+      <span style="font-size: 0.85rem; color: var(--text-muted);">
+        {ratings.length} source{ratings.length === 1 ? '' : 's'} · {rated} currently rateable ·
+        {' '}{rankings.categories.length} categories · {categoriesWithContest} contested
+      </span>
+    </div>
+    <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 1.5rem; max-width: 780px;">
+      A grade is the mean of the dimensions we could actually measure, against the band table published on the
+      <a href="/protocols">protocols page</a>. Where a feed has too little data, it says so instead of guessing.
+    </p>
+
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.25rem;">
+      {ratings.map((rating) => {
+        const ok = rating.composite.status === 'ok';
+        const color = ok ? gradeColor(rating.composite.grade) : NEUTRAL;
+        const position = positions[rating.source_id];
+        const source = catalog[rating.source_id] ?? {};
+        return (
+          <a href={`/scorecards/${rating.source_id}`} style={`display: block; border: 1px solid var(--border-color); border-top: 4px solid ${color.solid}; border-radius: 8px; padding: 1.25rem; text-decoration: none; color: inherit; background: var(--bg-subtle);`}>
+            <div style="display: flex; align-items: flex-start; justify-content: space-between; gap: 0.75rem;">
+              <div>
+                <h3 style="font-size: 1.1rem; font-weight: 700; margin-bottom: 0.2rem;">{rating.source_name}</h3>
+                <div style="font-size: 0.78rem; color: var(--text-muted); text-transform: capitalize;">
+                  {categoryLabel(rating.category)}{position ? ` · rank ${position.rank} of ${position.of}` : ''}
+                </div>
+              </div>
+              <div style={`font-size: 2rem; font-weight: 800; line-height: 1; color: ${color.solid};`}>
+                {ok ? rating.composite.grade : '—'}
+              </div>
+            </div>
+            <p style="font-size: 0.85rem; color: var(--text-muted); margin: 0.75rem 0;">
+              {source.description ? source.description.slice(0, 110) + (source.description.length > 110 ? '…' : '') : ''}
+            </p>
+            <div style="font-size: 0.78rem; color: var(--text-muted);">
+              {ok
+                ? `${rating.composite.points.toFixed(2)} / 4.00 across ${rating.composite.graded_dimensions} of 6 dimensions`
+                : `insufficient data · ${rating.composite.graded_dimensions} of 6 dimensions measurable`}
+            </div>
+          </a>
+        );
+      })}
+    </div>
+  </section>
+
+  <section style="margin-bottom: 3.5rem;">
+    <h2 style="font-size: 1.5rem; font-weight: 700; margin-bottom: 1rem;">Top of each category</h2>
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 1rem;">
+      {rankings.categories.map((category) => {
+        const top = category.ranked[0];
+        const color = top ? gradeColor(top.grade) : NEUTRAL;
+        return (
+          <a href={`/rankings/${category.category}`} style="display: block; border: 1px solid var(--border-color); border-radius: 8px; padding: 1rem; text-decoration: none; color: inherit;">
+            <div style="font-size: 0.78rem; text-transform: uppercase; letter-spacing: 0.06em; color: var(--text-muted); margin-bottom: 0.4rem;">
+              {categoryLabel(category.category)}
+            </div>
+            {top ? (
+              <>
+                <div style="font-weight: 700; font-size: 1rem;">{top.source_name}</div>
+                <div style="font-size: 0.8rem; color: var(--text-muted); margin-top: 0.2rem;">
+                  <span style={`font-weight: 700; color: ${color.solid};`}>{top.grade}</span>
+                  {' '}· {top.points.toFixed(2)} / 4.00 · {category.ranked.length === 1 ? 'only ranked feed so far' : `ahead of ${category.ranked.length - 1} other${category.ranked.length - 1 === 1 ? '' : 's'}`}
+                </div>
+              </>
+            ) : (
+              <div style="font-size: 0.85rem; color: var(--text-muted);">No feed here has enough data to rate yet.</div>
+            )}
+          </a>
+        );
+      })}
     </div>
   </section>
 
@@ -98,5 +152,8 @@ try {
         <p style="font-size: 0.85rem; color: var(--text-muted); margin-top: 0.25rem;">Cross-field sanity validation against declared domain bounds.</p>
       </div>
     </div>
+    <p style="color: var(--text-muted); font-size: 0.9rem; margin-top: 1rem;">
+      Accuracy is published only where a named anchor exists, and it is never folded into the letter grade.
+    </p>
   </section>
 </Layout>

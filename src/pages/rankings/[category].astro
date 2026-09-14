@@ -1,0 +1,167 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import {
+  getRankings,
+  getRatings,
+  getCatalogMap,
+  gradeColor,
+  categoryLabel,
+  formatMeasured,
+  DIMENSION_ORDER,
+  DIMENSION_LABELS,
+  NEUTRAL,
+} from '../../lib/data.mjs';
+
+export async function getStaticPaths() {
+  const rankings = getRankings();
+  const ratings = getRatings();
+  return rankings.categories.map((category) => ({
+    params: { category: category.category },
+    props: {
+      category,
+      ratings: ratings.filter((r) => r.category === category.category),
+      ratingVersion: rankings.rating_version,
+    },
+  }));
+}
+
+const { category, ratings, ratingVersion } = Astro.props;
+const catalog = getCatalogMap();
+
+const order = new Map(category.ranked.map((row) => [row.source_id, row.rank]));
+const members = [...ratings].sort((a, b) => {
+  const ra = order.get(a.source_id) ?? Infinity;
+  const rb = order.get(b.source_id) ?? Infinity;
+  return ra - rb || a.source_id.localeCompare(b.source_id);
+});
+
+const label = categoryLabel(category.category);
+
+/** Best grade per dimension, used only to mark a leader, never to reorder anything. */
+const leaders = {};
+for (const dimension of DIMENSION_ORDER) {
+  let best = null;
+  for (const rating of members) {
+    const entry = rating.dimensions[dimension];
+    if (!entry || entry.status !== 'ok') continue;
+    if (best === null || entry.points > best.points) best = { points: entry.points, ids: [rating.source_id] };
+    else if (entry.points === best.points) best.ids.push(rating.source_id);
+  }
+  leaders[dimension] = best && best.ids.length < members.length ? best.ids : [];
+}
+---
+
+<Layout title={`${label} feeds compared`}>
+  <div style="margin-bottom: 2rem;">
+    <a href="/rankings" style="font-size: 0.85rem; color: var(--primary-color); text-decoration: none;">&larr; All categories</a>
+    <h1 style="font-size: 2.25rem; font-weight: 800; margin: 0.5rem 0 0.75rem; text-transform: capitalize;">{label}</h1>
+    <p style="color: var(--text-muted); max-width: 780px;">
+      {members.length} feed{members.length === 1 ? '' : 's'} measured in this category, compared dimension by
+      dimension. Every grade below is printed next to the number that produced it. A band table alone decides
+      the letters, and that table is published at <a href="/protocols">/protocols</a> (v{ratingVersion}).
+    </p>
+  </div>
+
+  <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 1.25rem; margin-bottom: 2.5rem;">
+    {members.map((rating) => {
+      const ok = rating.composite.status === 'ok';
+      const color = gradeColor(rating.composite.grade);
+      const rank = order.get(rating.source_id);
+      return (
+        <div style={`border: 1px solid var(--border-color); border-top: 4px solid ${ok ? color.solid : NEUTRAL.solid}; border-radius: 8px; padding: 1.1rem; background: var(--bg-subtle);`}>
+          <div style="display: flex; align-items: center; justify-content: space-between; gap: 0.5rem;">
+            <div style="font-weight: 700; font-size: 1.05rem;">{rating.source_name}</div>
+            <div style={`font-size: 1.75rem; font-weight: 800; color: ${ok ? color.solid : NEUTRAL.solid};`}>{ok ? rating.composite.grade : '—'}</div>
+          </div>
+          <div style="font-size: 0.85rem; color: var(--text-muted); margin-top: 0.35rem;">
+            {ok
+              ? `Rank ${rank} of ${category.ranked.length} · ${rating.composite.points.toFixed(2)} / 4.00 · ${rating.composite.graded_dimensions} of 6 dimensions`
+              : `Insufficient data · ${rating.composite.graded_dimensions} of 6 dimensions measurable`}
+          </div>
+          <div style="font-size: 0.8rem; color: var(--text-muted); margin-top: 0.6rem;">
+            Cadence <code>{catalog[rating.source_id]?.refresh_cadence ?? 'unknown'}</code> ·
+            Commercial use <code>{catalog[rating.source_id]?.use_terms?.commercial ?? 'unknown'}</code>
+          </div>
+          <a href={`/scorecards/${rating.source_id}`} style="display: inline-block; margin-top: 0.75rem; font-size: 0.85rem; font-weight: 600; color: var(--primary-color); text-decoration: none;">
+            Full scorecard &rarr;
+          </a>
+        </div>
+      );
+    })}
+  </div>
+
+  <h2 style="font-size: 1.35rem; font-weight: 700; margin-bottom: 0.75rem;">Dimension by dimension</h2>
+  <div style="overflow-x: auto;">
+    <table>
+      <thead>
+        <tr>
+          <th style="min-width: 12rem;">Dimension</th>
+          {members.map((rating) => <th style="min-width: 10rem;">{rating.source_name}</th>)}
+        </tr>
+      </thead>
+      <tbody>
+        {DIMENSION_ORDER.map((dimension) => (
+          <tr>
+            <td style="font-weight: 600;">{DIMENSION_LABELS[dimension]}</td>
+            {members.map((rating) => {
+              const entry = rating.dimensions[dimension];
+              const ok = entry && entry.status === 'ok';
+              const color = gradeColor(entry?.grade);
+              const isLeader = leaders[dimension].includes(rating.source_id);
+              return (
+                <td>
+                  <span class="badge" style={`background-color: ${ok ? color.bg : NEUTRAL.bg}; color: ${ok ? color.fg : NEUTRAL.fg}; border-color: transparent;`}>
+                    {ok ? entry.grade : 'n/a'}
+                  </span>
+                  <div style="font-size: 0.8rem; color: var(--text-muted); margin-top: 0.3rem;">{formatMeasured(dimension, entry)}</div>
+                  {isLeader && <div style="font-size: 0.7rem; font-weight: 700; color: #15803d; margin-top: 0.2rem;">best in category</div>}
+                </td>
+              );
+            })}
+          </tr>
+        ))}
+        <tr>
+          <td style="font-weight: 600;">Accuracy against a named anchor</td>
+          {members.map((rating) => (
+            <td style="font-size: 0.85rem; color: var(--text-muted);">
+              {rating.accuracy
+                ? `${rating.accuracy.metric} ${rating.accuracy.score} ${rating.accuracy.unit} (anchor: ${rating.accuracy.anchor}, n=${rating.accuracy.sample_count})`
+                : 'no anchor, so no accuracy claim'}
+            </td>
+          ))}
+        </tr>
+        <tr>
+          <td style="font-weight: 600;">License</td>
+          {members.map((rating) => (
+            <td style="font-size: 0.85rem;">
+              <code>{catalog[rating.source_id]?.license?.spdx ?? 'unknown'}</code>
+              {catalog[rating.source_id]?.license?.url && (
+                <div><a href={catalog[rating.source_id].license.url} style="font-size: 0.78rem; color: var(--primary-color);">citation</a></div>
+              )}
+            </td>
+          ))}
+        </tr>
+        <tr>
+          <td style="font-weight: 600;">Attribution required</td>
+          {members.map((rating) => (
+            <td style="font-size: 0.85rem; color: var(--text-muted);">
+              {catalog[rating.source_id]?.use_terms?.attribution ? 'yes' : 'no'}
+            </td>
+          ))}
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <section style="margin-top: 2.5rem; border: 1px solid var(--border-color); border-radius: 8px; padding: 1.25rem; background: var(--bg-subtle);">
+    <h2 style="font-size: 1.1rem; font-weight: 700; margin-bottom: 0.5rem;">Reading this table honestly</h2>
+    <ul style="color: var(--text-muted); font-size: 0.92rem; padding-left: 1.25rem; display: flex; flex-direction: column; gap: 0.4rem;">
+      <li>A feed rated on four dimensions and a feed rated on six are not directly comparable. The dimension
+        count is printed on every card above for exactly that reason.</li>
+      <li>A high revision rate is not dishonesty. An economic series that revises as better data arrives is
+        behaving correctly; the grade measures churn a caching consumer has to absorb, nothing more.</li>
+      <li>Accuracy appears only where an anchor exists, and it is never folded into the letter grade.</li>
+      <li>Disagree with a placement? Open an issue. Resolutions are public, never a quiet edit.</li>
+    </ul>
+  </section>
+</Layout>

@@ -1,11 +1,9 @@
 {
   "dimensions": {
     "completeness_by_segment": {
-      "overall_pct": 100.0,
-      "segments": {
-        "current_weather": 100.0
-      },
-      "status": "ok"
+      "overall_pct": null,
+      "segments": {},
+      "status": "insufficient_data"
     },
     "correction_latency": {
       "events_evaluated": 0,
@@ -20,23 +18,23 @@
       "status": "insufficient_data"
     },
     "internal_consistency": {
-      "consistent_snapshots_pct": 100.0,
+      "consistent_snapshots_pct": null,
       "contradictions_count": 0,
-      "status": "ok"
+      "status": "insufficient_data"
     },
     "revision_behavior": {
       "revised_records_count": 0,
-      "revision_rate_pct": 0.0,
-      "status": "ok",
-      "total_records_count": 6
+      "revision_rate_pct": null,
+      "status": "insufficient_data",
+      "total_records_count": 0
     },
     "schema_stability": {
       "schema_changes_count": 0,
-      "stable_snapshots_pct": 100.0,
-      "status": "ok"
+      "stable_snapshots_pct": null,
+      "status": "insufficient_data"
     }
   },
-  "generated_at": "2026-09-13T22:00:39Z",
+  "generated_at": "2026-09-14T00:24:57Z",
   "lineage": {
     "republish_lag_seconds": null,
     "samples": 0,
@@ -46,9 +44,9 @@
   "method_version": "0.2",
   "schema_version": "0.2",
   "scoring_window": {
-    "end": "2026-09-13T22:00:10Z",
-    "snapshot_count": 3,
-    "start": "2026-09-11T15:58:30Z"
+    "end": "2026-09-14T00:24:57Z",
+    "snapshot_count": 0,
+    "start": "2026-09-14T00:24:57Z"
   },
   "source_id": "open-meteo",
   "source_name": "Open-Meteo Weather API",

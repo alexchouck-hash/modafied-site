@@ -4,6 +4,7 @@
       "notes": "v1 API is public without registration (up to 25 queries/day, 10 years per query). v2 API supports free registered registration key for 500 queries/day.",
       "type": "none"
     },
+    "category": "economic-indicators",
     "cost": {
       "model": "free",
       "pricing_url": "https://www.bls.gov/developers/api_faqs.htm",
@@ -44,6 +45,7 @@
       }
     ],
     "freshness_field": "Results.series[0].data[0].year",
+    "homepage": "https://www.bls.gov/developers/",
     "id": "bls",
     "license": {
       "attribution_required": false,
@@ -67,10 +69,13 @@
       "path": "Results.series[0].data"
     },
     "refresh_cadence": "monthly",
+    "relationship": "none",
     "release_schedule": {
       "rule": "monthly; second Tuesday 08:30 America/New_York",
       "url": "https://www.bls.gov/schedule/news_release/cpi.htm"
     },
+    "subcategory": "price and employment statistics",
+    "submitted_by": "modafied",
     "use_terms": {
       "attribution": "U.S. Bureau of Labor Statistics",
       "commercial": "allowed",
@@ -86,6 +91,7 @@
       "notes": "Requires a free 32-character API key registered at research.stlouisfed.org.",
       "type": "api_key"
     },
+    "category": "economic-indicators",
     "cost": {
       "model": "free",
       "pricing_url": "https://fred.stlouisfed.org/docs/api/terms_of_use.html",
@@ -125,6 +131,7 @@
       }
     ],
     "freshness_field": "observations[0].date",
+    "homepage": "https://fred.stlouisfed.org/docs/api/fred/",
     "id": "fred",
     "license": {
       "attribution_required": true,
@@ -148,10 +155,13 @@
       "path": "observations"
     },
     "refresh_cadence": "monthly",
+    "relationship": "none",
     "release_schedule": {
       "rule": "monthly; second Tuesday 08:30 America/New_York (republish tracking)",
       "url": "https://fred.stlouisfed.org/series/CPIAUCSL"
     },
+    "subcategory": "republished macroeconomic series",
+    "submitted_by": "modafied",
     "use_terms": {
       "attribution": "Federal Reserve Bank of St. Louis, Federal Reserve Economic Data (FRED)",
       "commercial": "allowed",
@@ -174,6 +184,7 @@
       "notes": "Requires a custom User-Agent header with contact info. No API key needed.",
       "type": "none"
     },
+    "category": "weather",
     "consistency_rules": [
       {
         "field": "properties.temperature.value",
@@ -249,6 +260,7 @@
       }
     ],
     "freshness_field": "properties.timestamp",
+    "homepage": "https://www.weather.gov/documentation/services-web-api",
     "id": "nws",
     "license": {
       "attribution_required": false,
@@ -272,9 +284,12 @@
       "path": "."
     },
     "refresh_cadence": "hourly",
+    "relationship": "none",
     "segments": {
       "by": "properties.station"
     },
+    "subcategory": "national observations and gridpoint forecasts",
+    "submitted_by": "modafied",
     "use_terms": {
       "attribution": "Data provided by the National Oceanic and Atmospheric Administration (NOAA) National Weather Service",
       "commercial": "allowed",
@@ -289,6 +304,7 @@
       "notes": "Free for non-commercial and open use without API key up to 10,000 daily API calls.",
       "type": "none"
     },
+    "category": "weather",
     "consistency_rules": [
       {
         "field": "current.temperature_2m",
@@ -358,6 +374,7 @@
       }
     ],
     "freshness_field": "current.time",
+    "homepage": "https://open-meteo.com/",
     "id": "open-meteo",
     "license": {
       "attribution_required": true,
@@ -380,6 +397,9 @@
       "path": "."
     },
     "refresh_cadence": "hourly",
+    "relationship": "none",
+    "subcategory": "aggregated model forecasts",
+    "submitted_by": "modafied",
     "use_terms": {
       "attribution": "Weather data by Open-Meteo.com",
       "commercial": "requires_paid_plan",
@@ -394,6 +414,7 @@
       "notes": "No API key or authentication required.",
       "type": "none"
     },
+    "category": "geophysical-hazards",
     "consistency_rules": [
       {
         "field": "properties.mag",
@@ -456,6 +477,7 @@
       }
     ],
     "freshness_field": "features[0].properties.time",
+    "homepage": "https://earthquake.usgs.gov/earthquakes/feed/",
     "id": "usgs-earthquake",
     "license": {
       "attribution_required": false,
@@ -479,9 +501,12 @@
       "path": "features"
     },
     "refresh_cadence": "15m",
+    "relationship": "none",
     "segments": {
       "by": "properties.net"
     },
+    "subcategory": "seismic event feeds",
+    "submitted_by": "modafied",
     "use_terms": {
       "attribution": "Data courtesy of the U.S. Geological Survey",
       "commercial": "allowed",

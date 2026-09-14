@@ -1,0 +1,207 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import {
+  getTraceIndex,
+  getTraceLedger,
+  gradeColor,
+  categoryLabel,
+  NEUTRAL,
+  DIMENSION_ORDER,
+  DIMENSION_LABELS,
+  humanSeconds,
+} from '../../lib/data.mjs';
+
+export async function getStaticPaths() {
+  const index = getTraceIndex();
+  return Object.entries(index).map(([traceId, entry]) => ({
+    params: { trace: traceId },
+    props: { traceId, ...entry },
+  }));
+}
+
+const { traceId, record, attestation, current } = Astro.props;
+
+const ok = record.status === 'ok';
+const color = ok ? gradeColor(record.grade) : NEUTRAL;
+
+// The whole claim history for this feed, so a reader landing on a superseded id can see what
+// replaced it and what it replaced. Newest first.
+const history = getTraceLedger()
+  .filter((r) => r.source_id === record.source_id)
+  .sort((a, b) => String(b.observed_at).localeCompare(String(a.observed_at)));
+
+const supersededBy = history.find((r) => r.previous_trace_id === traceId) ?? null;
+
+function measured(entry) {
+  if (!entry || entry.status !== 'ok' || entry.measured_value === null) return 'insufficient data';
+  if (entry.measured_unit === 'seconds') return humanSeconds(entry.measured_value);
+  if (entry.measured_unit === 'ratio_of_declared_cadence') return `${entry.measured_value.toFixed(2)}x cadence`;
+  return `${entry.measured_value}%`;
+}
+
+const MONO = 'ui-monospace, SFMono-Regular, Menlo, Consolas, monospace';
+---
+
+<Layout title={`Trace ${traceId}`}>
+  <div style="margin-bottom: 2rem;">
+    <div style="font-size: 0.8rem; font-weight: 700; letter-spacing: 0.1em; color: var(--text-muted); margin-bottom: 0.5rem;">
+      EMBLEM TRACE
+    </div>
+    <h1 style={`font-size: 2rem; font-weight: 800; margin-bottom: 0.75rem; font-family: ${MONO};`}>{traceId}</h1>
+    <p style="font-size: 1.05rem; color: var(--text-muted); max-width: 820px;">
+      This page answers one question: what exactly was an emblem claiming, and what evidence produced it.
+      If you found this id on an emblem anywhere on the web, everything below is what stands behind that picture.
+    </p>
+  </div>
+
+  {!current && (
+    <section style="border: 1px solid var(--border-color); border-left: 3px solid #b45309; border-radius: 6px; padding: 1rem 1.25rem; margin-bottom: 2rem; background: var(--bg-subtle);">
+      <strong>This trace is superseded.</strong>
+      <span style="color: var(--text-muted);">
+        {' '}It is a claim we used to make about {record.source_id}, kept because an emblem carrying it may still be
+        sitting in a screenshot, a slide, or a cached page. It is no longer what the live emblem says.
+        {supersededBy ? ' ' : ''}
+      </span>
+      {supersededBy && (
+        <a href={`/trace/${supersededBy.trace_id}`}>See the claim that replaced it ({supersededBy.trace_id}).</a>
+      )}
+    </section>
+  )}
+
+  <section style="border: 1px solid var(--border-color); border-radius: 8px; padding: 1.5rem; margin-bottom: 2rem;">
+    <div style="display: flex; align-items: center; gap: 1.5rem; flex-wrap: wrap;">
+      <div style={`background: ${color.solid}; color: #fff; width: 72px; height: 72px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: ${ok ? '2.25rem' : '1rem'}; font-weight: 800;`}>
+        {ok ? record.grade : 'n/a'}
+      </div>
+      <div>
+        <div style="font-size: 1.35rem; font-weight: 700; margin-bottom: 0.25rem;">
+          {attestation?.source_name ?? record.source_id}
+        </div>
+        <div style="color: var(--text-muted); font-size: 0.95rem;">
+          {ok
+            ? `${record.points} of 4.0 points across ${record.graded_dimensions} of 6 dimensions`
+            : `insufficient data · ${record.graded_dimensions} of 6 dimensions measurable`}
+        </div>
+        <div style="color: var(--text-muted); font-size: 0.9rem; margin-top: 0.25rem;">
+          {categoryLabel(attestation?.category ?? '')} · claimed from {record.observed_at}
+          {' '}· method v{record.method_version} · rating v{record.rating_version}
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <h2 style="font-size: 1.25rem; font-weight: 700; margin-bottom: 0.75rem;">The evidence</h2>
+  <p style="color: var(--text-muted); margin-bottom: 1rem; max-width: 820px;">
+    The digest below is the scorecard this grade was mapped from. Fetch that scorecard, hash the bytes, and
+    compare. If they differ, the grade on the emblem was not derived from the card we publish, and you should
+    trust neither until the difference is explained in public.
+  </p>
+  <table style="width: 100%; border-collapse: collapse; margin-bottom: 2rem; font-size: 0.92rem;">
+    <tbody>
+      <tr style="border-bottom: 1px solid var(--border-color);">
+        <td style="padding: 0.6rem 0.5rem 0.6rem 0; color: var(--text-muted); width: 220px;">Scorecard sha256</td>
+        <td style={`padding: 0.6rem 0; font-family: ${MONO}; word-break: break-all;`}>{record.scorecard_sha256 ?? 'not recorded'}</td>
+      </tr>
+      <tr style="border-bottom: 1px solid var(--border-color);">
+        <td style="padding: 0.6rem 0.5rem 0.6rem 0; color: var(--text-muted);">Scorecard</td>
+        <td style="padding: 0.6rem 0;">
+          <a href={`/scorecards/${record.source_id}`}>card</a>{' · '}
+          <a href={`/v1/scorecards/${record.source_id}.json`}>json</a>
+        </td>
+      </tr>
+      <tr style="border-bottom: 1px solid var(--border-color);">
+        <td style="padding: 0.6rem 0.5rem 0.6rem 0; color: var(--text-muted);">Attestation</td>
+        <td style="padding: 0.6rem 0;"><a href={`/v1/emblems/${record.source_id}.json`}>/v1/emblems/{record.source_id}.json</a></td>
+      </tr>
+      <tr style="border-bottom: 1px solid var(--border-color);">
+        <td style="padding: 0.6rem 0.5rem 0.6rem 0; color: var(--text-muted);">Claim ledger</td>
+        <td style="padding: 0.6rem 0;"><a href={`/v1/trace/${record.source_id}.jsonl`}>/v1/trace/{record.source_id}.jsonl</a></td>
+      </tr>
+      <tr style="border-bottom: 1px solid var(--border-color);">
+        <td style="padding: 0.6rem 0.5rem 0.6rem 0; color: var(--text-muted);">Manifest</td>
+        <td style="padding: 0.6rem 0;"><a href="/v1/manifest.json">/v1/manifest.json</a> — pin this hash</td>
+      </tr>
+      <tr>
+        <td style="padding: 0.6rem 0.5rem 0.6rem 0; color: var(--text-muted);">Method</td>
+        <td style="padding: 0.6rem 0;"><a href="/method">method v{record.method_version}</a>{' · '}<a href="/protocols">band table v{record.rating_version}</a></td>
+      </tr>
+    </tbody>
+  </table>
+
+  {current && attestation && (
+    <>
+      <h2 style="font-size: 1.25rem; font-weight: 700; margin-bottom: 0.75rem;">What each dimension contributed</h2>
+      <p style="color: var(--text-muted); margin-bottom: 1rem;">
+        Every grade is printed next to the number that produced it. A letter with no number beside it is not
+        something this benchmark publishes.
+      </p>
+      <table style="width: 100%; border-collapse: collapse; margin-bottom: 2rem; font-size: 0.92rem;">
+        <thead>
+          <tr style="border-bottom: 2px solid var(--border-color); text-align: left;">
+            <th style="padding: 0.5rem 0;">Dimension</th>
+            <th style="padding: 0.5rem 0;">Measured</th>
+            <th style="padding: 0.5rem 0;">Grade</th>
+          </tr>
+        </thead>
+        <tbody>
+          {DIMENSION_ORDER.map((key) => {
+            const entry = attestation.claim.dimensions[key];
+            if (!entry) return null;
+            const dColor = entry.grade ? gradeColor(entry.grade) : NEUTRAL;
+            return (
+              <tr style="border-bottom: 1px solid var(--border-color);">
+                <td style="padding: 0.55rem 0;">{DIMENSION_LABELS[key]}</td>
+                <td style="padding: 0.55rem 0; color: var(--text-muted);">{measured(entry)}</td>
+                <td style="padding: 0.55rem 0;">
+                  <span class="badge" style={`background-color: ${dColor.bg}; color: ${dColor.fg}; border-color: transparent;`}>
+                    {entry.grade ?? 'insufficient data'}
+                  </span>
+                </td>
+              </tr>
+            );
+          })}
+        </tbody>
+      </table>
+    </>
+  )}
+
+  <h2 style="font-size: 1.25rem; font-weight: 700; margin-bottom: 0.75rem;">Every claim this emblem has made</h2>
+  <p style="color: var(--text-muted); margin-bottom: 1rem; max-width: 820px;">
+    Append-only. A downgrade appends a row; it never edits one. This is how you check whether an emblem has
+    always said what it says today.
+  </p>
+  <table style="width: 100%; border-collapse: collapse; margin-bottom: 2rem; font-size: 0.9rem;">
+    <thead>
+      <tr style="border-bottom: 2px solid var(--border-color); text-align: left;">
+        <th style="padding: 0.5rem 0;">Trace</th>
+        <th style="padding: 0.5rem 0;">From</th>
+        <th style="padding: 0.5rem 0;">Claim</th>
+        <th style="padding: 0.5rem 0;">Change</th>
+      </tr>
+    </thead>
+    <tbody>
+      {history.map((row) => (
+        <tr style={`border-bottom: 1px solid var(--border-color); ${row.trace_id === traceId ? 'background: var(--bg-subtle);' : ''}`}>
+          <td style={`padding: 0.55rem 0; font-family: ${MONO};`}>
+            {row.trace_id === traceId ? row.trace_id : <a href={`/trace/${row.trace_id}`}>{row.trace_id}</a>}
+          </td>
+          <td style="padding: 0.55rem 0; color: var(--text-muted);">{row.observed_at}</td>
+          <td style="padding: 0.55rem 0;">
+            {row.status === 'ok' ? `${row.grade} · ${row.points} pts · ${row.graded_dimensions}/6` : `insufficient data · ${row.graded_dimensions}/6`}
+          </td>
+          <td style="padding: 0.55rem 0; color: var(--text-muted);">{row.direction}</td>
+        </tr>
+      ))}
+    </tbody>
+  </table>
+
+  <section style="border: 1px solid var(--border-color); border-left: 3px solid var(--primary-color); border-radius: 6px; padding: 1.25rem; background: var(--bg-subtle);">
+    <h2 style="font-size: 1.05rem; font-weight: 700; margin-bottom: 0.5rem;">What this trace is not</h2>
+    <p style="color: var(--text-muted); font-size: 0.93rem; margin: 0;">
+      It is provenance for a measurement, and nothing more. It does not say the feed is endorsed, verified,
+      partnered, or safe to use for your purpose. It says: this number came from this card, computed this way,
+      on this date, and here is where to check. Modafied is funded by Trooth, scores Trooth's own sources with
+      identical code, and sells nothing to anyone it measures.
+    </p>
+  </section>
+</Layout>

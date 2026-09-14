@@ -1,0 +1,292 @@
+{
+  "bands": {
+    "cadence_interval_seconds": 3600,
+    "composite_edges": [
+      {
+        "grade": "A",
+        "min": 3.5
+      },
+      {
+        "grade": "B",
+        "min": 2.5
+      },
+      {
+        "grade": "C",
+        "min": 1.5
+      },
+      {
+        "grade": "D",
+        "min": 0.5
+      },
+      {
+        "grade": "E",
+        "min": null
+      }
+    ],
+    "dimensions": {
+      "completeness_by_segment": {
+        "description": "Mean share of declared fields actually populated, averaged across segments so one busy segment cannot mask an empty one.",
+        "edges": [
+          {
+            "grade": "A",
+            "min": 99.0
+          },
+          {
+            "grade": "B",
+            "min": 95.0
+          },
+          {
+            "grade": "C",
+            "min": 85.0
+          },
+          {
+            "grade": "D",
+            "min": 70.0
+          },
+          {
+            "grade": "E",
+            "min": null
+          }
+        ],
+        "higher_is_better": true,
+        "label": "Completeness by segment",
+        "measures": "dimensions.completeness_by_segment.overall_pct",
+        "relative_to_cadence": false,
+        "unit": "percent_populated"
+      },
+      "correction_latency": {
+        "description": "Median elapsed time between a value first appearing and being superseded by a corrected value.",
+        "edges": [
+          {
+            "grade": "A",
+            "max": 3600
+          },
+          {
+            "grade": "B",
+            "max": 21600
+          },
+          {
+            "grade": "C",
+            "max": 86400
+          },
+          {
+            "grade": "D",
+            "max": 604800
+          },
+          {
+            "grade": "E",
+            "max": null
+          }
+        ],
+        "higher_is_better": false,
+        "label": "Correction latency",
+        "measures": "dimensions.correction_latency.p50_seconds",
+        "relative_to_cadence": false,
+        "unit": "seconds"
+      },
+      "freshness_lag": {
+        "description": "Median lag between the source's own event time and our fetch, divided by the publication interval the source declares. A ratio of 1.0 means the median record is one full cadence old when it becomes visible.",
+        "edges": [
+          {
+            "grade": "A",
+            "max": 0.5
+          },
+          {
+            "grade": "B",
+            "max": 1.0
+          },
+          {
+            "grade": "C",
+            "max": 2.0
+          },
+          {
+            "grade": "D",
+            "max": 5.0
+          },
+          {
+            "grade": "E",
+            "max": null
+          }
+        ],
+        "higher_is_better": false,
+        "label": "Freshness lag",
+        "measures": "dimensions.freshness_lag.p50_seconds",
+        "relative_to_cadence": true,
+        "unit": "ratio_of_declared_cadence"
+      },
+      "internal_consistency": {
+        "description": "Share of snapshots with no value outside the domain bounds the catalog entry declares for that source.",
+        "edges": [
+          {
+            "grade": "A",
+            "min": 99.9
+          },
+          {
+            "grade": "B",
+            "min": 99.0
+          },
+          {
+            "grade": "C",
+            "min": 95.0
+          },
+          {
+            "grade": "D",
+            "min": 90.0
+          },
+          {
+            "grade": "E",
+            "min": null
+          }
+        ],
+        "higher_is_better": true,
+        "label": "Internal consistency",
+        "measures": "dimensions.internal_consistency.consistent_snapshots_pct",
+        "relative_to_cadence": false,
+        "unit": "percent_consistent_snapshots"
+      },
+      "revision_behavior": {
+        "description": "Share of records that changed value after first publication. A high rate is not automatically a defect: revising an estimate as better data arrives is correct behavior for an economic series. It is graded because a consumer that caches needs to know how often what it cached stopped being true.",
+        "edges": [
+          {
+            "grade": "A",
+            "max": 1.0
+          },
+          {
+            "grade": "B",
+            "max": 5.0
+          },
+          {
+            "grade": "C",
+            "max": 15.0
+          },
+          {
+            "grade": "D",
+            "max": 40.0
+          },
+          {
+            "grade": "E",
+            "max": null
+          }
+        ],
+        "higher_is_better": false,
+        "label": "Revision behavior",
+        "measures": "dimensions.revision_behavior.revision_rate_pct",
+        "note": "Grade churn, not honesty. Read this dimension next to correction latency.",
+        "relative_to_cadence": false,
+        "unit": "percent_of_records_revised"
+      },
+      "schema_stability": {
+        "description": "Share of consecutive snapshot pairs with no field added, removed, or retyped.",
+        "edges": [
+          {
+            "grade": "A",
+            "min": 100.0
+          },
+          {
+            "grade": "B",
+            "min": 99.0
+          },
+          {
+            "grade": "C",
+            "min": 95.0
+          },
+          {
+            "grade": "D",
+            "min": 90.0
+          },
+          {
+            "grade": "E",
+            "min": null
+          }
+        ],
+        "higher_is_better": true,
+        "label": "Schema stability",
+        "measures": "dimensions.schema_stability.stable_snapshots_pct",
+        "relative_to_cadence": false,
+        "unit": "percent_stable_snapshots"
+      }
+    },
+    "min_graded_dimensions": 4,
+    "rating_version": "0.1"
+  },
+  "category": "weather",
+  "composite": {
+    "coverage_pct": 66.7,
+    "grade": "A",
+    "graded_dimensions": 4,
+    "points": 4.0,
+    "required_dimensions": 4,
+    "status": "ok"
+  },
+  "dimensions": {
+    "completeness_by_segment": {
+      "band_applied": ">= 99.0 percent_populated",
+      "grade": "A",
+      "higher_is_better": true,
+      "measured_unit": "percent_populated",
+      "measured_value": 100.0,
+      "note": null,
+      "points": 4.0,
+      "status": "ok"
+    },
+    "correction_latency": {
+      "band_applied": null,
+      "grade": null,
+      "higher_is_better": false,
+      "measured_unit": "seconds",
+      "measured_value": null,
+      "note": null,
+      "points": null,
+      "status": "insufficient_data"
+    },
+    "freshness_lag": {
+      "band_applied": null,
+      "grade": null,
+      "higher_is_better": false,
+      "measured_unit": "ratio_of_declared_cadence",
+      "measured_value": null,
+      "note": null,
+      "points": null,
+      "status": "insufficient_data"
+    },
+    "internal_consistency": {
+      "band_applied": ">= 99.9 percent_consistent_snapshots",
+      "grade": "A",
+      "higher_is_better": true,
+      "measured_unit": "percent_consistent_snapshots",
+      "measured_value": 100.0,
+      "note": null,
+      "points": 4.0,
+      "status": "ok"
+    },
+    "revision_behavior": {
+      "band_applied": "<= 1.0 percent_of_records_revised",
+      "grade": "A",
+      "higher_is_better": false,
+      "measured_unit": "percent_of_records_revised",
+      "measured_value": 0.0,
+      "note": "Grade churn, not honesty. Read this dimension next to correction latency.",
+      "points": 4.0,
+      "status": "ok"
+    },
+    "schema_stability": {
+      "band_applied": ">= 100.0 percent_stable_snapshots",
+      "grade": "A",
+      "higher_is_better": true,
+      "measured_unit": "percent_stable_snapshots",
+      "measured_value": 100.0,
+      "note": null,
+      "points": 4.0,
+      "status": "ok"
+    }
+  },
+  "generated_at": "2026-09-14T00:24:23Z",
+  "method_version": "0.2",
+  "rating_version": "0.1",
+  "relationship": "none",
+  "schema_version": "0.1",
+  "scorecard_sha256": "5fe08d9f729dd5327da6829d0786e0550cd9466cb8e3e78974df4ea302c37d57",
+  "source_id": "open-meteo",
+  "source_name": "Open-Meteo Weather API",
+  "subcategory": "aggregated model forecasts"
+}

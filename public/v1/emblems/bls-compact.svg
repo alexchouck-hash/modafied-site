@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="156" height="28" viewBox="0 0 156 28" role="img" aria-label="Modafied benchmark: Bureau of Labor Statistics Public Data API has insufficient data for a rating (2 of 6 dimensions measurable)">
+  <title>Modafied benchmark: Bureau of Labor Statistics Public Data API has insufficient data for a rating (2 of 6 dimensions measurable)</title>
+  <metadata id="modafied-trace" data-trace-id="1c36ded3e91c">{"attestation_url": "https://modafied.org/v1/emblems/bls.json", "generated_at": "2026-09-14T00:24:23Z", "grade": null, "graded_dimensions": 2, "method_version": "0.2", "points": null, "rating_version": "0.1", "scorecard_sha256": "4a72b8820ac44ebe18fbd7fcb248daaf61606b86463bd6670052308d476d12e6", "scorecard_url": "https://modafied.org/scorecards/bls", "source_id": "bls", "status": "insufficient_data", "trace_id": "1c36ded3e91c", "trace_url": "https://modafied.org/trace/1c36ded3e91c"}</metadata>
+  <rect width="104" height="28" rx="4" fill="#111827"/>
+  <rect x="100" width="52" height="28" rx="4" fill="#4b5563"/>
+  <rect x="100" width="6" height="28" fill="#4b5563"/>
+  <g font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif" font-size="11" font-weight="700">
+    <text x="12" y="18" fill="#ffffff" letter-spacing="1.2">MODAFIED</text>
+    <text x="126.0" y="18" fill="#ffffff" text-anchor="middle" font-size="11">n/a</text>
+  </g>
+  <desc>Updated 2026-09-14. Trace 1c36ded3e91c, resolvable at https://modafied.org/trace/1c36ded3e91c. Mechanically computed. See modafied.org for the method and the band table.</desc>
+</svg>

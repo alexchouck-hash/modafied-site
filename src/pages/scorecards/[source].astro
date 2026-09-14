@@ -2,6 +2,17 @@
 import Layout from '../../layouts/Layout.astro';
 import fs from 'node:fs';
 import path from 'node:path';
+import {
+  getRatingMap,
+  getRankPositions,
+  getCatalogMap,
+  gradeColor,
+  categoryLabel,
+  formatMeasured,
+  DIMENSION_ORDER,
+  DIMENSION_LABELS,
+  NEUTRAL,
+} from '../../lib/data.mjs';
 
 export async function getStaticPaths() {
   const scorecardsDir = path.resolve('./public/scorecards');
@@ -21,6 +32,18 @@ export async function getStaticPaths() {
 
 const { scorecard } = Astro.props;
 const { dimensions, accuracy, scoring_window } = scorecard;
+
+const rating = getRatingMap()[scorecard.source_id] ?? null;
+const position = getRankPositions()[scorecard.source_id] ?? null;
+const source = getCatalogMap()[scorecard.source_id] ?? {};
+const ratedOk = rating && rating.composite.status === 'ok';
+const compositeColor = ratedOk ? gradeColor(rating.composite.grade) : NEUTRAL;
+const emblemAlt = ratedOk
+  ? `Modafied benchmark grade ${rating.composite.grade} for ${scorecard.source_name}`
+  : `Modafied benchmark: ${scorecard.source_name} has insufficient data for a rating`;
+const emblemHtml = `<a href="https://modafied.org/scorecards/${scorecard.source_id}" target="_blank" rel="noopener">
+  <img src="https://modafied.org/v1/emblems/${scorecard.source_id}.svg" alt="${emblemAlt}" height="96">
+</a>`;
 ---
 
 <Layout title={`${scorecard.source_name} Scorecard`}>
@@ -35,6 +58,55 @@ const { dimensions, accuracy, scoring_window } = scorecard;
       Source ID: <code>{scorecard.source_id}</code> | Scoring window: {new Date(scoring_window.start).toLocaleDateString()} to {new Date(scoring_window.end).toLocaleDateString()} ({scoring_window.snapshot_count} snapshots)
     </p>
   </div>
+
+  {rating && (
+    <section style={`border: 1px solid var(--border-color); border-left: 5px solid ${compositeColor.solid}; border-radius: 8px; padding: 1.5rem; margin-bottom: 2rem; background: var(--bg-subtle);`}>
+      <div style="display: flex; gap: 1.5rem; align-items: flex-start; flex-wrap: wrap; justify-content: space-between;">
+        <div>
+          <div style="font-size: 0.78rem; text-transform: uppercase; letter-spacing: 0.06em; color: var(--text-muted);">Rating v{rating.rating_version}</div>
+          <div style="display: flex; align-items: baseline; gap: 0.75rem; margin-top: 0.3rem;">
+            <div style={`font-size: 2.75rem; font-weight: 800; line-height: 1; color: ${compositeColor.solid};`}>{ratedOk ? rating.composite.grade : '—'}</div>
+            <div style="font-size: 0.95rem; color: var(--text-muted);">
+              {ratedOk
+                ? `${rating.composite.points.toFixed(2)} / 4.00 across ${rating.composite.graded_dimensions} of 6 dimensions`
+                : `insufficient data · ${rating.composite.graded_dimensions} of 6 dimensions measurable, ${rating.composite.required_dimensions} required`}
+            </div>
+          </div>
+          <div style="font-size: 0.85rem; color: var(--text-muted); margin-top: 0.5rem;">
+            <a href={`/rankings/${rating.category}`} style="color: var(--primary-color); text-decoration: none; text-transform: capitalize;">{categoryLabel(rating.category)}</a>
+            {position ? ` · ranked ${position.rank} of ${position.of}` : ' · not ranked yet'}
+            {rating.relationship !== 'none' ? ` · disclosed relationship: ${rating.relationship}` : ''}
+          </div>
+        </div>
+        <a href="/emblems">
+          <img src={`/v1/emblems/${scorecard.source_id}.svg`} alt={emblemAlt} height="96" />
+        </a>
+      </div>
+
+      <div style="display: flex; flex-wrap: wrap; gap: 0.6rem; margin-top: 1.25rem;">
+        {DIMENSION_ORDER.map((dimension) => {
+          const entry = rating.dimensions[dimension];
+          const ok = entry && entry.status === 'ok';
+          const color = ok ? gradeColor(entry.grade) : NEUTRAL;
+          return (
+            <div style={`border: 1px solid var(--border-color); border-radius: 6px; padding: 0.5rem 0.75rem; background: var(--bg-color); min-width: 9rem;`}>
+              <div style="font-size: 0.72rem; color: var(--text-muted);">{DIMENSION_LABELS[dimension]}</div>
+              <div style="display: flex; align-items: baseline; gap: 0.4rem;">
+                <span style={`font-size: 1.1rem; font-weight: 800; color: ${color.solid};`}>{ok ? entry.grade : 'n/a'}</span>
+                <span style="font-size: 0.75rem; color: var(--text-muted);">{formatMeasured(dimension, entry)}</span>
+              </div>
+            </div>
+          );
+        })}
+      </div>
+
+      <p style="font-size: 0.82rem; color: var(--text-muted); margin-top: 1rem; max-width: 760px;">
+        Letters come from a published band table, not a judgement. Every grade above is printed next to the number
+        that earned it, and the full table is on the <a href="/protocols">protocols page</a>. Accuracy is never part
+        of this rating: it is reported separately below, always with its anchor named.
+      </p>
+    </section>
+  )}
 
   <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.25rem; margin-bottom: 2.5rem;">
     <!-- Dimension 1: Freshness Lag -->
@@ -188,8 +260,25 @@ const { dimensions, accuracy, scoring_window } = scorecard;
     <p style="font-size: 0.9rem; color: var(--text-muted); margin-bottom: 1rem;">
       Scorecard JSON is available for automated consumption:
     </p>
-    <a href={`/scorecards/${scorecard.source_id}.json`} target="_blank" style="display: inline-block; background: var(--bg-subtle); border: 1px solid var(--border-color); padding: 0.5rem 1rem; border-radius: 6px; text-decoration: none; font-family: var(--font-mono); font-size: 0.85rem; color: var(--text-color);">
-      GET /scorecards/{scorecard.source_id}.json
-    </a>
+    <div style="display: flex; gap: 0.75rem; flex-wrap: wrap;">
+      <a href={`/v1/scorecards/${scorecard.source_id}.json`} target="_blank" style="display: inline-block; background: var(--bg-subtle); border: 1px solid var(--border-color); padding: 0.5rem 1rem; border-radius: 6px; text-decoration: none; font-family: var(--font-mono); font-size: 0.85rem; color: var(--text-color);">
+        GET /v1/scorecards/{scorecard.source_id}.json
+      </a>
+      <a href={`/v1/ratings/${scorecard.source_id}.json`} target="_blank" style="display: inline-block; background: var(--bg-subtle); border: 1px solid var(--border-color); padding: 0.5rem 1rem; border-radius: 6px; text-decoration: none; font-family: var(--font-mono); font-size: 0.85rem; color: var(--text-color);">
+        GET /v1/ratings/{scorecard.source_id}.json
+      </a>
+      <a href={`/v1/emblems/${scorecard.source_id}.svg`} target="_blank" style="display: inline-block; background: var(--bg-subtle); border: 1px solid var(--border-color); padding: 0.5rem 1rem; border-radius: 6px; text-decoration: none; font-family: var(--font-mono); font-size: 0.85rem; color: var(--text-color);">
+        GET /v1/emblems/{scorecard.source_id}.svg
+      </a>
+    </div>
+  </section>
+
+  <section style="margin-top: 2.5rem;">
+    <h2 style="font-size: 1.25rem; font-weight: 700; margin-bottom: 0.5rem;">Embed this emblem</h2>
+    <p style="font-size: 0.9rem; color: var(--text-muted); margin-bottom: 0.75rem; max-width: 780px;">
+      Hotlink it. It regenerates on every publish, so it always shows the current measurement, and it can go down
+      as easily as up. Full terms are on the <a href="/emblems">emblems page</a>.
+    </p>
+    <pre>{emblemHtml}</pre>
   </section>
 </Layout>

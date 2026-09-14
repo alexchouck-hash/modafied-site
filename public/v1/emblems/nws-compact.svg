@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="144" height="28" viewBox="0 0 144 28" role="img" aria-label="Modafied benchmark grade C for National Weather Service API, 1.8 of 4 points across 5 of 6 dimensions, ranked 2 of 2 in weather">
+  <title>Modafied benchmark grade C for National Weather Service API, 1.8 of 4 points across 5 of 6 dimensions, ranked 2 of 2 in weather</title>
+  <metadata id="modafied-trace" data-trace-id="07b2f3a9567b">{"attestation_url": "https://modafied.org/v1/emblems/nws.json", "generated_at": "2026-09-14T00:24:23Z", "grade": "C", "graded_dimensions": 5, "method_version": "0.2", "points": 1.8, "rating_version": "0.1", "scorecard_sha256": "b8d43236fe14980871d5ede0b0467191f5f2640db30e911bd705fb331f253fa2", "scorecard_url": "https://modafied.org/scorecards/nws", "source_id": "nws", "status": "ok", "trace_id": "07b2f3a9567b", "trace_url": "https://modafied.org/trace/07b2f3a9567b"}</metadata>
+  <rect width="104" height="28" rx="4" fill="#111827"/>
+  <rect x="100" width="40" height="28" rx="4" fill="#b45309"/>
+  <rect x="100" width="6" height="28" fill="#b45309"/>
+  <g font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif" font-size="11" font-weight="700">
+    <text x="12" y="18" fill="#ffffff" letter-spacing="1.2">MODAFIED</text>
+    <text x="120.0" y="18" fill="#ffffff" text-anchor="middle" font-size="13">C</text>
+  </g>
+  <desc>Updated 2026-09-14. Trace 07b2f3a9567b, resolvable at https://modafied.org/trace/07b2f3a9567b. Mechanically computed. See modafied.org for the method and the band table.</desc>
+</svg>

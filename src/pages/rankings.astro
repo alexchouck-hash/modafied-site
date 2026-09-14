@@ -1,0 +1,99 @@
+---
+import Layout from '../layouts/Layout.astro';
+import { getRankings, getRatingMap, gradeColor, categoryLabel, NEUTRAL } from '../lib/data.mjs';
+
+const rankings = getRankings();
+const ratings = getRatingMap();
+const categories = [...rankings.categories].sort((a, b) => b.ranked.length - a.ranked.length || a.category.localeCompare(b.category));
+const totalSources = categories.reduce((sum, c) => sum + c.source_count, 0);
+const contested = categories.filter((c) => c.ranked.length > 1);
+---
+
+<Layout title="Category Rankings">
+  <div style="margin-bottom: 2.5rem;">
+    <h1 style="font-size: 2.25rem; font-weight: 800; margin-bottom: 0.75rem;">Rankings by Category</h1>
+    <p style="font-size: 1.1rem; color: var(--text-muted); max-width: 780px;">
+      Feeds are ranked only against other feeds in the same category, because a monthly economic release
+      and a 15 minute seismic feed are not competitors. {totalSources} source{totalSources === 1 ? '' : 's'} across
+      {categories.length} categor{categories.length === 1 ? 'y' : 'ies'}, {contested.length} of which currently
+      {contested.length === 1 ? 'has' : 'have'} more than one ranked feed.
+    </p>
+  </div>
+
+  <div style="border: 1px solid var(--border-color); border-left: 3px solid var(--primary-color); border-radius: 6px; padding: 1rem 1.25rem; background: var(--bg-subtle); margin-bottom: 2.5rem; font-size: 0.9rem; color: var(--text-muted);">
+    <strong style="color: var(--text-color);">How the order is produced.</strong>
+    {rankings.ordering || 'composite points descending, then coverage, then source id'}. There is no editorial
+    placement and no hand ordering. A feed with too little data to rate is listed separately rather than placed
+    last, because unmeasured is not the same as bad. Rating band table v{rankings.rating_version} is published
+    in full on the <a href="/protocols">protocols page</a>.
+  </div>
+
+  {categories.map((category) => (
+    <section style="margin-bottom: 3rem;">
+      <div style="display: flex; align-items: baseline; justify-content: space-between; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 1rem;">
+        <h2 style="font-size: 1.5rem; font-weight: 700; text-transform: capitalize;">{categoryLabel(category.category)}</h2>
+        <a href={`/rankings/${category.category}`} style="font-size: 0.9rem; font-weight: 600; color: var(--primary-color); text-decoration: none;">
+          Head to head comparison &rarr;
+        </a>
+      </div>
+
+      {category.ranked.length === 0 ? (
+        <p style="color: var(--text-muted); font-size: 0.95rem;">No feed in this category has enough data for a composite rating yet.</p>
+      ) : (
+        <table>
+          <thead>
+            <tr>
+              <th style="width: 3.5rem;">Rank</th>
+              <th>Feed</th>
+              <th style="width: 5rem;">Grade</th>
+              <th style="width: 7rem;">Points</th>
+              <th style="width: 9rem;">Dimensions rated</th>
+            </tr>
+          </thead>
+          <tbody>
+            {category.ranked.map((row) => {
+              const color = gradeColor(row.grade);
+              return (
+                <tr>
+                  <td style="font-weight: 700;">{row.rank}</td>
+                  <td>
+                    <a href={`/scorecards/${row.source_id}`} style="font-weight: 600; color: var(--primary-color); text-decoration: none;">{row.source_name}</a>
+                    {row.relationship !== 'none' && (
+                      <span class="badge" style="margin-left: 0.5rem; background-color: #fef3c7; color: #78350f;">{row.relationship}</span>
+                    )}
+                  </td>
+                  <td>
+                    <span class="badge" style={`background-color: ${color.bg}; color: ${color.fg}; border-color: ${color.bg}; font-size: 0.85rem;`}>{row.grade}</span>
+                  </td>
+                  <td style="font-variant-numeric: tabular-nums;">{row.points.toFixed(2)} / 4.00</td>
+                  <td style="font-size: 0.9rem; color: var(--text-muted);">{row.graded_dimensions} of 6</td>
+                </tr>
+              );
+            })}
+          </tbody>
+        </table>
+      )}
+
+      {category.unranked.length > 0 && (
+        <div style="margin-top: 1rem; border: 1px dashed var(--border-color); border-radius: 6px; padding: 0.9rem 1.1rem; background: var(--bg-subtle);">
+          <div style="font-size: 0.85rem; font-weight: 700; margin-bottom: 0.5rem;">Not yet rateable in this category</div>
+          {category.unranked.map((row) => (
+            <div style="font-size: 0.85rem; color: var(--text-muted);">
+              <a href={`/scorecards/${row.source_id}`} style="color: var(--primary-color); text-decoration: none;">{row.source_name}</a>
+              {' '}&mdash; {row.reason}
+            </div>
+          ))}
+        </div>
+      )}
+    </section>
+  ))}
+
+  <section style="border-top: 1px solid var(--border-color); padding-top: 1.5rem;">
+    <h2 style="font-size: 1.15rem; font-weight: 700; margin-bottom: 0.5rem;">A category with one feed is not a winner</h2>
+    <p style="color: var(--text-muted); font-size: 0.95rem; max-width: 780px;">
+      Where a category holds a single ranked feed, rank 1 means only that nothing else is measured yet. The
+      honest response to that is to add a competitor, which anyone can do from the
+      <a href="/submit">submit page</a>.
+    </p>
+  </section>
+</Layout>
