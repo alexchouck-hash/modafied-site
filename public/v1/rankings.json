@@ -55,7 +55,7 @@
           "coverage_pct": 83.3,
           "grade": "C",
           "graded_dimensions": 5,
-          "points": 1.8,
+          "points": 2.4,
           "rank": 2,
           "relationship": "none",
           "source_id": "nws",
@@ -66,7 +66,7 @@
       "unranked": []
     }
   ],
-  "generated_at": "2026-09-14T00:28:49Z",
+  "generated_at": "2026-09-14T00:55:32Z",
   "method_version": "0.2",
   "ordering": "composite points descending, then coverage_pct descending, then source_id ascending",
   "rating_version": "0.1",

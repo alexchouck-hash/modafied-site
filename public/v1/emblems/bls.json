@@ -59,9 +59,9 @@
     "rating_json_url": "https://alexchouck-hash.github.io/modafied-site/v1/ratings/bls.json",
     "scorecard_json_url": "https://alexchouck-hash.github.io/modafied-site/v1/scorecards/bls.json",
     "scorecard_page_url": "https://alexchouck-hash.github.io/modafied-site/scorecards/bls",
-    "scorecard_sha256": "30d319f89d678e59dfe43ed4d6064bcab7e6a236203c9b7fb834c2fb8d6c4962"
+    "scorecard_sha256": "9c40c18020f9dee2b052ef3b8111917ea63f7111d033d711ad6d8612d7773b67"
   },
-  "generated_at": "2026-09-14T00:28:49Z",
+  "generated_at": "2026-09-14T00:55:32Z",
   "method_version": "0.2",
   "notice": "Mechanically computed from public snapshots. This is a measurement, not an endorsement, a verification, or a partnership. It cannot be purchased and it changes without notice when the measurement changes.",
   "rank": null,

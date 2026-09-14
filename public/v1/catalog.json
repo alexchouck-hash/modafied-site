@@ -235,27 +235,56 @@
     "fields": [
       {
         "description": "ISO 8601 observation timestamp as recorded by the weather station.",
+        "endpoint": "latest_observations",
         "name": "properties.timestamp",
         "type": "string"
       },
       {
         "description": "Air temperature in degrees Celsius.",
+        "endpoint": "latest_observations",
         "name": "properties.temperature.value",
         "type": "number"
       },
       {
         "description": "Relative humidity percentage (0-100).",
+        "endpoint": "latest_observations",
         "name": "properties.relativeHumidity.value",
         "type": "number"
       },
       {
         "description": "Wind speed in kilometers per hour.",
+        "endpoint": "latest_observations",
         "name": "properties.windSpeed.value",
         "type": "number"
       },
       {
         "description": "Textual description of weather conditions (quarantined as untrusted text).",
+        "endpoint": "latest_observations",
         "name": "properties.textDescription",
+        "type": "string"
+      },
+      {
+        "description": "Ordered list of forecast periods returned for the gridpoint.",
+        "endpoint": "gridpoint_forecast",
+        "name": "properties.periods",
+        "type": "array"
+      },
+      {
+        "description": "RFC 3339 start of the first forecast period, used to pair a forecast with a later observation.",
+        "endpoint": "gridpoint_forecast",
+        "name": "properties.periods[0].startTime",
+        "type": "string"
+      },
+      {
+        "description": "Forecast temperature for the first period, graded against the observation that settles it.",
+        "endpoint": "gridpoint_forecast",
+        "name": "properties.periods[0].temperature",
+        "type": "number"
+      },
+      {
+        "description": "Unit of the forecast temperature, F or C. Absent means the value cannot be compared safely.",
+        "endpoint": "gridpoint_forecast",
+        "name": "properties.periods[0].temperatureUnit",
         "type": "string"
       }
     ],

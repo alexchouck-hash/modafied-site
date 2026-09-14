@@ -19,9 +19,9 @@
   },
   "dimensions": {
     "completeness_by_segment": {
-      "overall_pct": 46.6,
+      "overall_pct": 96.7,
       "segments": {
-        "gridpoint_forecast": 0.0,
+        "gridpoint_forecast": 100.0,
         "https://api.weather.gov/stations/KJFK": 93.3
       },
       "status": "ok"
@@ -55,7 +55,7 @@
       "status": "ok"
     }
   },
-  "generated_at": "2026-09-14T00:28:49Z",
+  "generated_at": "2026-09-14T00:55:32Z",
   "method_version": "0.2",
   "schema_version": "0.2",
   "scoring_window": {

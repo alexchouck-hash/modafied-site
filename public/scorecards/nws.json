@@ -6,37 +6,36 @@
       "unit": "fahrenheit"
     },
     "metric": "temperature_mae",
-    "sample_count": 2,
-    "score": 6.8,
+    "sample_count": 5,
+    "score": 1.5,
     "unit": "degF"
   },
   "anchor": {
     "kind": "later_observation_of_same_source",
-    "mean_absolute_error": 6.8,
-    "paired_samples": 2,
+    "mean_absolute_error": 1.5,
+    "paired_samples": 5,
     "source": "nws",
     "unit": "degF"
   },
   "dimensions": {
     "completeness_by_segment": {
-      "overall_pct": 46.6,
+      "overall_pct": 88.9,
       "segments": {
-        "gridpoint_forecast": 0.0,
-        "https://api.weather.gov/stations/KJFK": 93.3
+        "https://api.weather.gov/stations/KJFK": 88.9
       },
       "status": "ok"
     },
     "correction_latency": {
-      "events_evaluated": 197,
-      "p50_seconds": 173933.0,
-      "p95_seconds": 173933.0,
-      "status": "ok"
-    },
-    "freshness_lag": {
+      "events_evaluated": 0,
       "p50_seconds": null,
       "p95_seconds": null,
-      "sample_count": 3,
       "status": "insufficient_data"
+    },
+    "freshness_lag": {
+      "p50_seconds": 300.0,
+      "p95_seconds": 300.0,
+      "sample_count": 5,
+      "status": "ok"
     },
     "internal_consistency": {
       "consistent_snapshots_pct": 100.0,
@@ -44,24 +43,24 @@
       "status": "ok"
     },
     "revision_behavior": {
-      "revised_records_count": 197,
-      "revision_rate_pct": 49.25,
-      "status": "ok",
-      "total_records_count": 400
+      "revised_records_count": 0,
+      "revision_rate_pct": null,
+      "status": "insufficient_data",
+      "total_records_count": 0
     },
     "schema_stability": {
       "schema_changes_count": 0,
-      "stable_snapshots_pct": 100.0,
-      "status": "ok"
+      "stable_snapshots_pct": null,
+      "status": "insufficient_data"
     }
   },
-  "generated_at": "2026-09-14T00:28:49Z",
+  "generated_at": "2026-09-14T00:59:28Z",
   "method_version": "0.2",
   "schema_version": "0.2",
   "scoring_window": {
-    "end": "2026-09-13T22:00:04Z",
-    "snapshot_count": 6,
-    "start": "2026-09-11T15:58:29Z"
+    "end": "2026-09-10T14:05:00Z",
+    "snapshot_count": 10,
+    "start": "2026-09-10T08:00:00Z"
   },
   "source_id": "nws",
   "source_name": "National Weather Service API",

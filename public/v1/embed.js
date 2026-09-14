@@ -30,7 +30,29 @@
 (function () {
   'use strict';
 
-  var ORIGIN = 'https://modafied.org';
+  /*
+   * Where Modafied lives is read from this script's own URL, never hardcoded. A host page loads
+   * this file from wherever the benchmark is actually served, so that URL is the one address we
+   * can be certain about. Hardcoding it means every emblem breaks the day the site moves, on
+   * pages we do not control and cannot fix.
+   */
+  var ORIGIN = (function () {
+    var src = '';
+    if (document.currentScript && document.currentScript.src) {
+      src = document.currentScript.src;
+    } else {
+      var scripts = document.getElementsByTagName('script');
+      for (var i = scripts.length - 1; i >= 0; i--) {
+        if (scripts[i].src && scripts[i].src.indexOf('/v1/embed.js') !== -1) {
+          src = scripts[i].src;
+          break;
+        }
+      }
+    }
+    var marker = src.indexOf('/v1/embed.js');
+    if (marker === -1) return 'https://modafied.org';
+    return src.slice(0, marker);
+  })();
   var MONO = 'ui-monospace, SFMono-Regular, Menlo, Consolas, monospace';
   var SANS =
     "-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif";
