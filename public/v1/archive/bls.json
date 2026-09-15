@@ -1,0 +1,16 @@
+{
+  "base_url": null,
+  "generated_at": "2026-09-15T05:57:22Z",
+  "schema_version": "0.1",
+  "snapshot_count": 1,
+  "snapshots": [
+    {
+      "captured_at": "2026-09-11T15:58:26Z",
+      "content_hash": "sha256:040fb9fffb50a833615e2aeaca98079fa05292f494a6657d77e38b585e9c9bd0",
+      "endpoint": "cpi_u_series",
+      "key": "snapshots/bls/cpi_u_series/20260911T155829Z.json",
+      "status_code": 200
+    }
+  ],
+  "source_id": "bls"
+}

@@ -1,0 +1,30 @@
+{
+  "base_url": null,
+  "generated_at": "2026-09-15T05:57:22Z",
+  "schema_version": "0.1",
+  "snapshot_count": 3,
+  "snapshots": [
+    {
+      "captured_at": "2026-09-11T15:58:30Z",
+      "content_hash": "sha256:1913661f3031372e089c6e4f709df447491986a10fb24f9b760445dc73fd95bf",
+      "endpoint": "current_weather",
+      "key": "snapshots/open-meteo/current_weather/20260911T155830Z.json",
+      "status_code": 200
+    },
+    {
+      "captured_at": "2026-09-11T21:41:16Z",
+      "content_hash": "sha256:65e1bbce295bf34cf17c44692c55a76f69af15588e882578c5feb9e525fec630",
+      "endpoint": "current_weather",
+      "key": "snapshots/open-meteo/current_weather/20260911T214117Z.json",
+      "status_code": 200
+    },
+    {
+      "captured_at": "2026-09-13T22:00:10Z",
+      "content_hash": "sha256:9dfb4c8c003c5fc8af6d87b200968656c2e16ea476a07d07ff96373f8f0a086d",
+      "endpoint": "current_weather",
+      "key": "snapshots/open-meteo/current_weather/20260913T220013Z.json",
+      "status_code": 200
+    }
+  ],
+  "source_id": "open-meteo"
+}

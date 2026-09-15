@@ -1,0 +1,15 @@
+{
+  "attestation_url_template": "https://alexchouck-hash.github.io/modafied-site/v1/emblems/{id}.json",
+  "count": 5,
+  "emblem_url_template": "https://alexchouck-hash.github.io/modafied-site/v1/emblems/{id}.svg",
+  "generated_at": "2026-09-15T05:57:22Z",
+  "notice": "Membership only. A subject listed here has been measured; a subject absent from here has not, which is a statement about Modafied and not about the feed. This file carries no grade on purpose: fetch v1/emblems/<id>.json for the current claim, every time.",
+  "schema_version": "0.1",
+  "subjects": [
+    "bls",
+    "fred",
+    "nws",
+    "open-meteo",
+    "usgs-earthquake"
+  ]
+}

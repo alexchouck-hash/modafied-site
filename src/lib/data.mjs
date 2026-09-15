@@ -67,10 +67,20 @@ export function getCatalogMap() {
   return map;
 }
 
-/** Emblem attestations, one per source, published at v1/emblems/<id>.json (ADR-0009 E7). */
+/**
+ * Emblem attestations, one per source, published at v1/emblems/<id>.json (ADR-0009 E7).
+ *
+ * index.json lives in the same directory and is not an attestation: it carries membership and no
+ * claim at all (ADR-0015 E8). Skipped by name, and then everything left is required to look like an
+ * attestation, so a future non-attestation dropped in here surfaces as a missing card rather than
+ * as an undefined source_id halfway through rendering.
+ */
 export function getAttestations() {
   const dir = path.join(V1_DIR, 'emblems');
-  return readDir(dir).map((f) => readJson(path.join(dir, f), null)).filter(Boolean);
+  return readDir(dir)
+    .filter((f) => f !== 'index.json')
+    .map((f) => readJson(path.join(dir, f), null))
+    .filter((doc) => doc && doc.source_id && doc.trace_id);
 }
 
 export function getAttestationMap() {

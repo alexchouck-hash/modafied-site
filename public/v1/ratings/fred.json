@@ -280,12 +280,12 @@
       "status": "insufficient_data"
     }
   },
-  "generated_at": "2026-09-15T05:14:23Z",
+  "generated_at": "2026-09-15T05:57:22Z",
   "method_version": "0.2",
   "rating_version": "0.1",
   "relationship": "none",
   "schema_version": "0.1",
-  "scorecard_sha256": "7e64bf8e6897c4ab473615dca0670c5367fcdb6f6cc77160c7680f8524e03557",
+  "scorecard_sha256": "dcfac64a85856d70f62c733080e27f19a58353e89463de32e1dd924fa6bb0f3a",
   "source_id": "fred",
   "source_name": "Federal Reserve Economic Data (FRED)",
   "subcategory": "republished macroeconomic series"

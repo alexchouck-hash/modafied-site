@@ -1,0 +1,51 @@
+{
+  "base_url": null,
+  "generated_at": "2026-09-15T05:57:22Z",
+  "schema_version": "0.1",
+  "snapshot_count": 6,
+  "snapshots": [
+    {
+      "captured_at": "2026-09-11T15:58:31Z",
+      "content_hash": "sha256:8b5c9bfbb1eafeea3aad4756cfef8ccd53e318b398abc1ef948cf61e517df61f",
+      "endpoint": "all_day",
+      "key": "snapshots/usgs-earthquake/all_day/20260911T155831Z.json",
+      "status_code": 200
+    },
+    {
+      "captured_at": "2026-09-11T21:41:18Z",
+      "content_hash": "sha256:4fcaa54f74aa16b64b4acef9eb990d9054f4b3f26efafcc89cb3e2ccf694b643",
+      "endpoint": "all_day",
+      "key": "snapshots/usgs-earthquake/all_day/20260911T214119Z.json",
+      "status_code": 200
+    },
+    {
+      "captured_at": "2026-09-13T22:00:15Z",
+      "content_hash": "sha256:fc00b56ca9bb744ae0beb02fc9210a5aa43b08c9ba08de769d774b79458d0ba3",
+      "endpoint": "all_day",
+      "key": "snapshots/usgs-earthquake/all_day/20260913T220017Z.json",
+      "status_code": 200
+    },
+    {
+      "captured_at": "2026-09-11T15:58:30Z",
+      "content_hash": "sha256:4b3493c300097880598d6acfa3212c5588d4b37d2afdede27f643553944f1b27",
+      "endpoint": "all_hour",
+      "key": "snapshots/usgs-earthquake/all_hour/20260911T155831Z.json",
+      "status_code": 200
+    },
+    {
+      "captured_at": "2026-09-11T21:41:17Z",
+      "content_hash": "sha256:02691b839f212882fac081c988ba4a443084eeaf93aa0b513b074d5d8fe6b8c6",
+      "endpoint": "all_hour",
+      "key": "snapshots/usgs-earthquake/all_hour/20260911T214118Z.json",
+      "status_code": 200
+    },
+    {
+      "captured_at": "2026-09-13T22:00:13Z",
+      "content_hash": "sha256:7bb32299511d2eeab6276467bd766c522ac0e3964696911b5b72c0e2015cac6e",
+      "endpoint": "all_hour",
+      "key": "snapshots/usgs-earthquake/all_hour/20260913T220015Z.json",
+      "status_code": 200
+    }
+  ],
+  "source_id": "usgs-earthquake"
+}

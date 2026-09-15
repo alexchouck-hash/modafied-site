@@ -55,9 +55,45 @@
       "status": "ok"
     }
   },
-  "generated_at": "2026-09-15T05:14:23Z",
+  "generated_at": "2026-09-15T05:57:22Z",
+  "inputs": {
+    "digest": "sha256:7b2a24830741a277e6294ec249e4a9206f1a615486b59ba1ff427f872b02ee6f",
+    "snapshot_count": 6,
+    "snapshots": [
+      {
+        "captured_at": "2026-09-11T15:58:29Z",
+        "content_hash": "sha256:d269392118dc69a99104952e30ba5aac5c8e6d2719f3a2d40a093a63daccf253",
+        "key": "snapshots/nws/gridpoint_forecast/20260911T155830Z.json"
+      },
+      {
+        "captured_at": "2026-09-11T21:41:15Z",
+        "content_hash": "sha256:129fa56d8e8b683da701fa19bf8efd5f395cf3c214d9d7647671e884364581be",
+        "key": "snapshots/nws/gridpoint_forecast/20260911T214116Z.json"
+      },
+      {
+        "captured_at": "2026-09-13T22:00:08Z",
+        "content_hash": "sha256:5aeff4175605212d7f520b8092407e4820b45ecf37a157083803ace230e48a46",
+        "key": "snapshots/nws/gridpoint_forecast/20260913T220010Z.json"
+      },
+      {
+        "captured_at": "2026-09-11T15:58:29Z",
+        "content_hash": "sha256:65863db39ec018a2277a182fac31a0ad2493aa0cd04370b30c5ffd2d9439477a",
+        "key": "snapshots/nws/latest_observations/20260911T155829Z.json"
+      },
+      {
+        "captured_at": "2026-09-11T21:41:13Z",
+        "content_hash": "sha256:1d5d3825f5441e87aa830d55f6d3e66190e56e61cbccd207009bd3edf42399e9",
+        "key": "snapshots/nws/latest_observations/20260911T214115Z.json"
+      },
+      {
+        "captured_at": "2026-09-13T22:00:04Z",
+        "content_hash": "sha256:7f7673bd0d2d160c57f1fd3b936ec40d6c6ee3a07b0ff51b793e89c61e3fe94b",
+        "key": "snapshots/nws/latest_observations/20260913T220008Z.json"
+      }
+    ]
+  },
   "method_version": "0.2",
-  "schema_version": "0.2",
+  "schema_version": "0.3",
   "scoring_window": {
     "end": "2026-09-13T22:00:04Z",
     "snapshot_count": 6,

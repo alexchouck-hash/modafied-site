@@ -59,9 +59,9 @@
     "rating_json_url": "https://alexchouck-hash.github.io/modafied-site/v1/ratings/usgs-earthquake.json",
     "scorecard_json_url": "https://alexchouck-hash.github.io/modafied-site/v1/scorecards/usgs-earthquake.json",
     "scorecard_page_url": "https://alexchouck-hash.github.io/modafied-site/scorecards/usgs-earthquake",
-    "scorecard_sha256": "af9a873d71a872f2c82b83160ef657d79dcd33007f0869626e658fdd279b75d7"
+    "scorecard_sha256": "7f8285542bad76cb5f972d7f01617c05c5ae133f729f9c94ff892fdc6c4785bf"
   },
-  "generated_at": "2026-09-15T05:14:23Z",
+  "generated_at": "2026-09-15T05:57:22Z",
   "method_version": "0.2",
   "notice": "Mechanically computed from public snapshots. This is a measurement, not an endorsement, a verification, or a partnership. It cannot be purchased and it changes without notice when the measurement changes.",
   "rank": {

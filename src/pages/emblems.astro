@@ -64,6 +64,13 @@ function snippets(rating) {
       that want the emblem plus its trace line rendered the same way across many feeds, with the claim read
       from the attestation instead of typed in by hand, so your page cannot drift from what we publish.
     </p>
+    <p style="color: var(--text-muted); font-size: 0.95rem; max-width: 820px; margin-bottom: 1rem;">
+      It is built for the size directories actually are. On a page listing a thousand feeds of which we have
+      benchmarked a handful, the script asks us once which subjects we hold — <a href={u('/v1/emblems/index.json')}>
+      /v1/emblems/index.json</a> — and answers every other row <em>not benchmarked</em> from that single
+      response, with no request of its own. It then fetches a claim only for rows a reader scrolls to. Put it on
+      a 1,300-row directory today and it costs one request plus five.
+    </p>
     <div style="font-size: 0.85rem; font-weight: 700; margin-bottom: 0.35rem;">Drop-in for a listing page</div>
     <pre>{`<!-- once per page -->
 <script src="${ORIGIN}/v1/embed.js" defer><\/script>
@@ -75,6 +82,20 @@ function snippets(rating) {
       The script sets no cookie, reads no storage, and reports nothing back to us. It fetches two static files
       and renders them; if we are unreachable it falls back to a plain linked emblem rather than blanking your
       page. Read it before you use it: <a href={u('/v1/embed.js')}>/v1/embed.js</a>.
+    </p>
+    <div style="font-size: 0.85rem; font-weight: 700; margin-top: 1.25rem; margin-bottom: 0.35rem;">What the index does and does not carry</div>
+    <p style="color: var(--text-muted); font-size: 0.9rem; max-width: 820px;">
+      <code>index.json</code> is a list of subject ids and nothing else. No grade, no status, no points, no rank.
+      That is a rule, not an omission (ADR-0015): a file we invite you to fetch once and hold for a page render
+      must not contain a claim, or the emblem on your site stops falling when the measurement falls. Membership
+      is safe to cache because it is not a measurement — knowing we have measured NWS tells you nothing about how
+      NWS scored. The claim always comes from that subject's own attestation, fetched live, every time.
+    </p>
+    <p style="color: var(--text-muted); font-size: 0.9rem; max-width: 820px; margin-top: 0.75rem;">
+      A subject missing from the index means we have not benchmarked it. That is a statement about us, not about
+      the feed, and the script renders it in those words. If the index itself cannot be reached, the script falls
+      back to asking per subject rather than declaring everything unmeasured; our outage is not evidence about
+      anybody's data.
     </p>
     <p style="color: var(--text-muted); font-size: 0.9rem; max-width: 820px; margin-top: 0.75rem;">
       If you would rather verify server side, fetch <code>/v1/emblems/&lt;id&gt;.json</code>, check its

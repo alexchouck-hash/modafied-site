@@ -15,6 +15,18 @@
  *   <span data-modafied="usgs-earthquake" data-modafied-variant="compact"></span>
  *   <script src="https://modafied.org/v1/embed.js" defer></script>
  *
+ * It is built for directories, which means it has to behave on a page listing a thousand feeds of
+ * which we have benchmarked five. Two things make that work (ADR-0015):
+ *
+ * - It asks once, not once per row. /v1/emblems/index.json says which subjects we have measured at
+ *   all. Every row not in it is answered "not benchmarked" from that single response, with no
+ *   request of its own and no broken image while it waits.
+ * - It fetches a claim only for rows a reader can actually see, via IntersectionObserver. A row
+ *   nobody scrolls to costs nothing.
+ *
+ * The index carries membership and nothing else: no grade, no status, no points. So the claim on
+ * any row still comes from that row's own live attestation, fetched fresh, exactly as before.
+ *
  * What it deliberately does not do:
  * - It sets no cookie, reads no storage, and reports nothing back. It fetches two static
  *   files from modafied.org and renders them. There is no analytics in it and there will
@@ -157,16 +169,80 @@
     host.appendChild(wrap);
   }
 
-  function mount(host) {
-    var sourceId = host.getAttribute('data-modafied');
-    if (!sourceId || host.getAttribute('data-modafied-mounted') === 'true') return;
-    host.setAttribute('data-modafied-mounted', 'true');
+  /*
+   * The membership index, fetched at most once per page no matter how many rows are on it. The
+   * promise is memoised rather than the result, so a thousand rows mounting in the same tick share
+   * one request instead of racing to start a thousand.
+   *
+   * Resolves to an object of ids for O(1) lookup, or null if we could not get the index at all.
+   * Null is not "no subjects": it means we do not know, and the caller falls back to asking per
+   * subject, which is what this script did before the index existed. An older deployment of
+   * Modafied that has no index.json must not turn every emblem on someone's page into "not
+   * benchmarked" - that would be us reporting our own gap as their absence.
+   */
+  var indexPromise = null;
 
-    var variant = host.getAttribute('data-modafied-variant') === 'compact' ? 'compact' : 'full';
-    renderPlain(host, sourceId, variant);
+  function subjectIndex() {
+    if (indexPromise) return indexPromise;
+    if (typeof fetch !== 'function') {
+      indexPromise = Promise.resolve(null);
+      return indexPromise;
+    }
+    indexPromise = fetch(ORIGIN + '/v1/emblems/index.json', {
+      credentials: 'omit',
+      cache: 'no-cache',
+    })
+      .then(function (response) {
+        if (!response.ok) return null;
+        return response.json();
+      })
+      .then(function (doc) {
+        if (!doc || !doc.subjects || typeof doc.subjects.length !== 'number') return null;
+        var members = {};
+        for (var i = 0; i < doc.subjects.length; i++) members[doc.subjects[i]] = true;
+        return members;
+      })
+      .catch(function () {
+        return null;
+      });
+    return indexPromise;
+  }
 
-    if (typeof fetch !== 'function') return;
+  /*
+   * Defers the per-subject work until the row is close to the viewport. A feed directory is a long
+   * page; fetching a claim for a row nobody has scrolled to spends the reader's bandwidth and our
+   * request budget on something nobody will read. Where IntersectionObserver is missing we simply
+   * do the work now, because a correct emblem late is worse than a correct emblem eagerly.
+   */
+  var observer = null;
 
+  function whenVisible(host, run) {
+    if (typeof IntersectionObserver !== 'function') {
+      run();
+      return;
+    }
+    if (!observer) {
+      observer = new IntersectionObserver(
+        function (entries) {
+          for (var i = 0; i < entries.length; i++) {
+            if (!entries[i].isIntersecting) continue;
+            var node = entries[i].target;
+            observer.unobserve(node);
+            var pending = node.modafiedResolve;
+            node.modafiedResolve = null;
+            if (pending) pending();
+          }
+        },
+        { rootMargin: '400px 0px' }
+      );
+    }
+    host.modafiedResolve = run;
+    observer.observe(host);
+  }
+
+  /* Fetches and renders one subject's live claim. Called only for subjects we know we hold, or
+     for every subject when the index could not be read. */
+  function resolveClaim(host, sourceId, variant) {
     fetch(ORIGIN + '/v1/emblems/' + encodeURIComponent(sourceId) + '.json', {
       credentials: 'omit',
       cache: 'no-cache',
@@ -187,9 +263,43 @@
         }
       })
       .catch(function () {
-        /* Keep the plain emblem already rendered. Silent by design: a listing page should not
-           fill its console with our outage. */
+        /* Keep whatever is already rendered. Silent by design: a listing page should not fill its
+           console with our outage. */
+        if (!host.firstChild) renderPlain(host, sourceId, variant);
       });
+  }
+
+  function mount(host) {
+    var sourceId = host.getAttribute('data-modafied');
+    if (!sourceId || host.getAttribute('data-modafied-mounted') === 'true') return;
+    host.setAttribute('data-modafied-mounted', 'true');
+
+    var variant = host.getAttribute('data-modafied-variant') === 'compact' ? 'compact' : 'full';
+
+    if (typeof fetch !== 'function') {
+      /* No fetch means no index and no attestation. The linked emblem is still correct and still
+         live, because the SVG is regenerated at its URL on every publish. */
+      renderPlain(host, sourceId, variant);
+      return;
+    }
+
+    subjectIndex().then(function (members) {
+      if (members && !members[sourceId]) {
+        /* Answered from the one index response. No request for this row, and no <img> pointed at
+           an emblem that does not exist, which is what used to make a directory page issue a
+           thousand failing image requests before settling on the right answer. */
+        renderUnknown(host, sourceId);
+        return;
+      }
+
+      /* Either we know we hold this subject, or we could not read the index and have to ask. Show
+         the linked emblem straight away so the row is never blank, then upgrade it to the traced
+         rendering when the reader gets near it. */
+      renderPlain(host, sourceId, variant);
+      whenVisible(host, function () {
+        resolveClaim(host, sourceId, variant);
+      });
+    });
   }
 
   function mountAll() {

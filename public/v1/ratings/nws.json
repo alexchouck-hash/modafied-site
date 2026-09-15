@@ -287,12 +287,12 @@
       "status": "ok"
     }
   },
-  "generated_at": "2026-09-15T05:14:23Z",
+  "generated_at": "2026-09-15T05:57:22Z",
   "method_version": "0.2",
   "rating_version": "0.1",
   "relationship": "none",
   "schema_version": "0.1",
-  "scorecard_sha256": "dfd5c2ac409f31f541c1fa91783594e448a9de068ff4a2f64007a7f32e426ea9",
+  "scorecard_sha256": "20947a950285964ed4eeb100f4a63d762f33d1919c88ab366ba0d3d59bdfa17f",
   "source_id": "nws",
   "source_name": "National Weather Service API",
   "subcategory": "national observations and gridpoint forecasts"
