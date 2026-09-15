@@ -1,13 +1,13 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="340" height="112" viewBox="0 0 340 112" role="img" aria-label="Modafied benchmark grade B for USGS Earthquake Hazards Program, 3.17 of 4 points across 6 of 6 dimensions, ranked 1 of 1 in geophysical hazards">
   <title>Modafied benchmark grade B for USGS Earthquake Hazards Program, 3.17 of 4 points across 6 of 6 dimensions, ranked 1 of 1 in geophysical hazards</title>
-  <metadata id="modafied-trace" data-trace-id="6ebbd7d1f2eb">{"attestation_url": "https://alexchouck-hash.github.io/modafied-site/v1/emblems/usgs-earthquake.json", "generated_at": "2026-09-14T01:52:25Z", "grade": "B", "graded_dimensions": 6, "method_version": "0.2", "points": 3.17, "rating_version": "0.1", "scorecard_sha256": "39bde51235d560562a59d13273fc53066ac87ebc2bb59099fb16298602fd195f", "scorecard_url": "https://alexchouck-hash.github.io/modafied-site/scorecards/usgs-earthquake", "source_id": "usgs-earthquake", "status": "ok", "trace_id": "6ebbd7d1f2eb", "trace_url": "https://alexchouck-hash.github.io/modafied-site/trace/6ebbd7d1f2eb"}</metadata>
+  <metadata id="modafied-trace" data-trace-id="6ebbd7d1f2eb">{"attestation_url": "https://alexchouck-hash.github.io/modafied-site/v1/emblems/usgs-earthquake.json", "generated_at": "2026-09-15T05:14:23Z", "grade": "B", "graded_dimensions": 6, "method_version": "0.2", "points": 3.17, "rating_version": "0.1", "scorecard_sha256": "af9a873d71a872f2c82b83160ef657d79dcd33007f0869626e658fdd279b75d7", "scorecard_url": "https://alexchouck-hash.github.io/modafied-site/scorecards/usgs-earthquake", "source_id": "usgs-earthquake", "status": "ok", "trace_id": "6ebbd7d1f2eb", "trace_url": "https://alexchouck-hash.github.io/modafied-site/trace/6ebbd7d1f2eb"}</metadata>
   <rect x="0.5" y="0.5" width="339" height="111" rx="8" fill="#ffffff" stroke="#e5e7eb"/>
   <rect x="0.5" y="0.5" width="6" height="111" rx="3" fill="#4d7c0f"/>
   <g font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif">
     <text x="22" y="24" font-size="10" font-weight="700" letter-spacing="1.4" fill="#111827">MODAFIED BENCHMARK</text>
     <text x="22" y="46" font-size="14" font-weight="700" fill="#111827">USGS Earthquake Hazards Program</text>
     <text x="22" y="64" font-size="11" fill="#4b5563">3.17 / 4.0 across 6 of 6 dimensions</text>
-    <text x="22" y="80" font-size="10" fill="#6b7280">Rank 1 of 1 in geophysical hazards · updated 2026-09-14</text>
+    <text x="22" y="80" font-size="10" fill="#6b7280">Rank 1 of 1 in geophysical hazards · updated 2026-09-15</text>
     <rect x="258" y="18" width="60" height="56" rx="6" fill="#4d7c0f"/>
     <text x="288" y="58" font-size="34" font-weight="800" fill="#ffffff" text-anchor="middle">B</text>
     <text x="288" y="86" font-size="8" fill="#6b7280" text-anchor="middle">rating v0.1</text>

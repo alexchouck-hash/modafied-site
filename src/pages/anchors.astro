@@ -1,0 +1,175 @@
+---
+import Layout from '../layouts/Layout.astro';
+import { u, getAnchors, getCatalog, ANCHOR_KINDS, anchorSlug, categoryLabel } from '../lib/data.mjs';
+
+const anchors = getAnchors();
+const catalog = getCatalog();
+const withoutAnchor = catalog.filter((s) => !s.anchor);
+const settled = anchors.filter((a) => a.accuracy);
+---
+
+<Layout title="Anchor Registry">
+  <div style="margin-bottom: 2.5rem;">
+    <h1 style="font-size: 2.25rem; font-weight: 800; margin-bottom: 0.75rem;">The anchor registry</h1>
+    <p style="font-size: 1.1rem; color: var(--text-muted); max-width: 820px;">
+      An accuracy number is a claim that something was right, and right against what is the entire question. This
+      page is the list of things we are willing to call settleable, what settles them, and how strong each one
+      actually is. Every accuracy figure on this site links back to an entry here; a figure that cannot is not
+      published at all.
+    </p>
+  </div>
+
+  <section style="border: 1px solid var(--border-color); border-left: 5px solid var(--primary-color); border-radius: 8px; padding: 1.25rem 1.5rem; background: var(--bg-subtle); margin-bottom: 2.5rem;">
+    <p style="margin-bottom: 0.5rem;">
+      <strong>Rule H1.</strong> Never publish an accuracy number without naming the anchor on the same page.
+    </p>
+    <p style="font-size: 0.92rem; color: var(--text-muted);">
+      The five other things a card measures need no anchor: freshness, revisions, corrections, completeness, schema
+      stability and internal consistency are all properties of the feed's own behaviour over time, and the archive
+      settles them by itself. Accuracy is the only dimension that needs an outside fact, which is why it is the only
+      one kept out of the letter grade.
+    </p>
+  </section>
+
+  <section style="margin-bottom: 3rem;">
+    <h2 style="font-size: 1.5rem; font-weight: 700; margin-bottom: 1rem;">Anchor kinds</h2>
+    <div style="display: flex; flex-direction: column; gap: 1rem;">
+      {Object.entries(ANCHOR_KINDS).map(([kind, spec]) => (
+        <div style="border: 1px solid var(--border-color); border-radius: 8px; padding: 1.1rem;">
+          <h3 style="font-size: 1.05rem; font-weight: 700;">{spec.label}</h3>
+          <p style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 0.5rem;"><code>{kind}</code></p>
+          <p style="font-size: 0.92rem; margin-bottom: 0.5rem;"><strong>Settle rule.</strong> {spec.settle_rule}</p>
+          <p style="font-size: 0.92rem; color: var(--text-muted);"><strong>How independent it is.</strong> {spec.independence}</p>
+        </div>
+      ))}
+    </div>
+  </section>
+
+  <section style="margin-bottom: 3rem;">
+    <div style="display: flex; align-items: baseline; justify-content: space-between; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 1rem;">
+      <h2 style="font-size: 1.5rem; font-weight: 700;">Declared anchors</h2>
+      <span style="font-size: 0.85rem; color: var(--text-muted);">
+        {anchors.length} of {catalog.length} sources declare one · {settled.length} has settled pairs
+      </span>
+    </div>
+
+    {anchors.length === 0 ? (
+      <p style="color: var(--text-muted);">No source in the catalog declares an anchor, so no accuracy is published anywhere on this site.</p>
+    ) : (
+      <div style="display: flex; flex-direction: column; gap: 1.25rem;">
+        {anchors.map((anchor) => {
+          const spec = ANCHOR_KINDS[anchor.kind] ?? null;
+          const acc = anchor.accuracy;
+          return (
+            <div id={anchorSlug(anchor.source_id, anchor.kind)} style="border: 1px solid var(--border-color); border-radius: 8px; padding: 1.25rem;">
+              <div style="display: flex; align-items: flex-start; justify-content: space-between; flex-wrap: wrap; gap: 0.5rem;">
+                <div>
+                  <h3 style="font-size: 1.15rem; font-weight: 700;">
+                    <a href={u(`/scorecards/${anchor.source_id}`)} style="color: inherit;">{anchor.source_name}</a>
+                  </h3>
+                  <div style="font-size: 0.8rem; color: var(--text-muted); text-transform: capitalize;">
+                    {categoryLabel(anchor.category)} · <code>{anchor.source_id}</code>
+                  </div>
+                </div>
+                <span class="badge">{spec ? spec.label : anchor.kind}</span>
+              </div>
+
+              <table style="margin: 1rem 0 0.75rem;">
+                <tbody>
+                  <tr>
+                    <th style="width: 11rem;">Paired on</th>
+                    <td>{anchor.pair_on.length ? anchor.pair_on.map((f) => <code style="margin-right: 0.5rem;">{f}</code>) : 'not declared'}</td>
+                  </tr>
+                  <tr>
+                    <th>Anchor source</th>
+                    <td>
+                      <code>{anchor.anchor_source}</code>
+                      {anchor.anchor_source === anchor.source_id
+                        ? ' — the publisher grades against its own later observations, so this is self-consistency, not external truth.'
+                        : ' — an independent publisher, itself scored on this site.'}
+                    </td>
+                  </tr>
+                  <tr>
+                    <th>Settle rule</th>
+                    <td>{spec ? spec.settle_rule : 'No settle rule is registered for this kind, so nothing computed from it is publishable.'}</td>
+                  </tr>
+                </tbody>
+              </table>
+
+              {acc ? (
+                <div style="border: 1px solid #bfdbfe; background: #f8fafc; border-radius: 6px; padding: 1rem;">
+                  <div style="display: flex; gap: 2rem; flex-wrap: wrap; align-items: flex-end;">
+                    <div>
+                      <div style="font-size: 0.78rem; color: var(--text-muted);">Metric</div>
+                      <div style="font-weight: 700;">{acc.metric}</div>
+                    </div>
+                    <div>
+                      <div style="font-size: 0.78rem; color: var(--text-muted);">Value</div>
+                      <div style="font-size: 1.4rem; font-weight: 800; color: #1d4ed8;">{acc.score} {acc.unit}</div>
+                    </div>
+                    <div>
+                      <div style="font-size: 0.78rem; color: var(--text-muted);">Settled pairs</div>
+                      <div style="font-weight: 700;">{acc.sample_count}</div>
+                    </div>
+                    {anchor.window && (
+                      <div>
+                        <div style="font-size: 0.78rem; color: var(--text-muted);">Window</div>
+                        <div style="font-weight: 700;">{anchor.window.snapshot_count} snapshots</div>
+                      </div>
+                    )}
+                  </div>
+                  {acc.sample_count < 30 && (
+                    <p style="font-size: 0.85rem; color: #78350f; background: #fffbeb; border-radius: 4px; padding: 0.5rem 0.7rem; margin-top: 0.75rem;">
+                      {acc.sample_count} settled {acc.sample_count === 1 ? 'pair' : 'pairs'} is an early reading, not a
+                      benchmark figure. It is published with its sample count rather than withheld, and it will move
+                      a lot before it means anything. Do not route on it.
+                    </p>
+                  )}
+                </div>
+              ) : (
+                <p style="font-size: 0.9rem; color: var(--text-muted);">
+                  Declared, with nothing settled yet. An anchor with no pairs produces no accuracy figure and no
+                  placeholder, which is a different statement from having no anchor at all.
+                </p>
+              )}
+            </div>
+          );
+        })}
+      </div>
+    )}
+  </section>
+
+  <section style="margin-bottom: 3rem;">
+    <h2 style="font-size: 1.5rem; font-weight: 700; margin-bottom: 1rem;">Sources with no anchor</h2>
+    <p style="color: var(--text-muted); max-width: 820px; margin-bottom: 1rem;">
+      These feeds publish figures nothing available to us can settle: an earthquake magnitude, an employment series,
+      a reanalysis. Their cards carry the six dimensions and no accuracy at all. That is the honest state, and it
+      stays that way until an anchor exists rather than being filled with a number that looks like one.
+    </p>
+    <table>
+      <thead><tr><th style="width: 12rem;">Source</th><th>Why there is no anchor yet</th></tr></thead>
+      <tbody>
+        {withoutAnchor.map((source) => (
+          <tr>
+            <td><a href={u(`/scorecards/${source.id}`)}><strong>{source.name ?? source.id}</strong></a></td>
+            <td>
+              No independent publisher of the same quantity is in the catalog yet, and the feed does not settle its
+              own values against later observations. A second source in {categoryLabel(source.category)} is what
+              changes this.
+            </td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
+  </section>
+
+  <section>
+    <h2 style="font-size: 1.5rem; font-weight: 700; margin-bottom: 0.75rem;">Proposing an anchor</h2>
+    <p style="color: var(--text-muted); max-width: 820px;">
+      Anchors are contributed the same way catalog entries are: a pull request, with the provenance of the settling
+      data, the rule that decides when a value counts as settled, and what is being paired on. An anchor whose
+      provenance cannot be checked is not registered, because everything computed from it would inherit the doubt.
+      Start at <a href={u('/submit')}>submit a feed</a>; the same review covers both.
+    </p>
+  </section>
+</Layout>

@@ -1,0 +1,146 @@
+---
+import Layout from '../layouts/Layout.astro';
+import { u, getManifest } from '../lib/data.mjs';
+
+const REPO_ISSUES = 'https://github.com/alexchouck-hash/modafied/issues';
+const manifest = getManifest();
+
+// The dispute log. Empty is a fact worth printing rather than a section worth hiding: it means
+// nobody has challenged a card yet, not that challenges are unwelcome (CLAUDE.md I4).
+const DISPUTES = [];
+---
+
+<Layout title="Disputes">
+  <div style="margin-bottom: 2.5rem;">
+    <h1 style="font-size: 2.25rem; font-weight: 800; margin-bottom: 0.75rem;">Disputes</h1>
+    <p style="font-size: 1.1rem; color: var(--text-muted); max-width: 820px;">
+      If a card is wrong about your feed, the fix is a public dispute with a reproduction attached, and the
+      resolution is a written decision or an experiment. Nothing here gets fixed by a quiet edit, including when the
+      quiet edit would be in your favour.
+    </p>
+  </div>
+
+  <section style="border: 1px solid var(--border-color); border-left: 5px solid var(--primary-color); border-radius: 8px; padding: 1.25rem 1.5rem; background: var(--bg-subtle); margin-bottom: 2.5rem;">
+    <h2 style="font-size: 1.15rem; font-weight: 700; margin-bottom: 0.5rem;">What a dispute has to contain</h2>
+    <p style="margin-bottom: 0.75rem;">
+      A reproduction. Not an opinion about the result, but the inputs and the command that produced a different one.
+    </p>
+    <p style="font-size: 0.92rem; color: var(--text-muted);">
+      This is not a hurdle for its own sake. A score here is a function of an archive and a code version, so a
+      disagreement is either a bug in the code, a bug in the catalog entry, or a disagreement about the method. All
+      three are answerable, and all three are answered differently. Without a reproduction, nobody can tell which
+      one you have found.
+    </p>
+  </section>
+
+  <section style="margin-bottom: 3rem;">
+    <h2 style="font-size: 1.5rem; font-weight: 700; margin-bottom: 1rem;">How to file one</h2>
+    <div style="display: flex; flex-direction: column; gap: 1rem;">
+      <div style="border: 1px solid var(--border-color); border-radius: 8px; padding: 1.1rem;">
+        <h3 style="font-size: 1.05rem; font-weight: 700;">1. Pin what you are disputing</h3>
+        <p style="font-size: 0.92rem; color: var(--text-muted); margin-top: 0.35rem;">
+          The source id, the dimension or the accuracy figure, the <code>method_version</code> on the card, and the
+          <code>generated_at</code> stamp. A card is only meaningful with its version, because the method moves and
+          old cards keep the version that produced them.
+        </p>
+      </div>
+      <div style="border: 1px solid var(--border-color); border-radius: 8px; padding: 1.1rem;">
+        <h3 style="font-size: 1.05rem; font-weight: 700;">2. Recompute it</h3>
+        <p style="font-size: 0.92rem; color: var(--text-muted); margin-top: 0.35rem;">
+          From the published archive, at the same timestamp, and show what you got. The recomputation is what makes
+          the dispute actionable.
+        </p>
+        <pre>{`make reproduce SOURCE=<id> AS_OF=<timestamp>`}</pre>
+        <p style="font-size: 0.85rem; color: #78350f; background: #fffbeb; border-radius: 4px; padding: 0.5rem 0.7rem;">
+          The verifier this command lives in is not published yet, so today an outside party cannot run it. Until it
+          is, file the dispute anyway with the artifacts you can reach and say what you expected instead; the
+          missing verifier is our problem, not yours. Progress on it is on the <a href={u('/replicas')}>replication page</a>.
+        </p>
+      </div>
+      <div style="border: 1px solid var(--border-color); border-radius: 8px; padding: 1.1rem;">
+        <h3 style="font-size: 1.05rem; font-weight: 700;">3. Open a public issue</h3>
+        <p style="font-size: 0.92rem; color: var(--text-muted); margin-top: 0.35rem;">
+          <a href={REPO_ISSUES}>On the repository</a>, titled with the source id. It gets a public answer and it is
+          listed on this page, whichever way it goes.
+        </p>
+        <p style="font-size: 0.85rem; color: #78350f; background: #fffbeb; border-radius: 4px; padding: 0.5rem 0.7rem; margin-top: 0.5rem;">
+          That repository is private today, so the link works for us and not for you. The same companion public
+          repository that carries the verifier is where issues and catalog pull requests will live, and until it
+          ships neither disputes nor submissions have the public front door this site describes. Saying so is more
+          use to you than a link that returns a 404.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <section style="margin-bottom: 3rem;">
+    <h2 style="font-size: 1.5rem; font-weight: 700; margin-bottom: 1rem;">How it is resolved</h2>
+    <table>
+      <thead><tr><th style="width: 15rem;">What you found</th><th>What happens</th></tr></thead>
+      <tbody>
+        <tr>
+          <td><strong>A bug in the scoring code</strong></td>
+          <td>Fixed, with a golden fixture added so it cannot come back silently. Affected cards recompute on the next publish. The fix and the fixture are both public.</td>
+        </tr>
+        <tr>
+          <td><strong>A wrong catalog entry</strong></td>
+          <td>Corrected by a pull request against <code>catalog/sources/&lt;id&gt;.yaml</code>. If your feed is described wrongly, this is usually the answer, and you can send the correction yourself.</td>
+        </tr>
+        <tr>
+          <td><strong>A disagreement with the method</strong></td>
+          <td>An ADR, argued in public, or an experiment that settles it with data. If it changes the method it changes it for every source at once, with a version bump and 30 days of both versions side by side.</td>
+        </tr>
+        <tr>
+          <td><strong>The card is right and you dislike it</strong></td>
+          <td>It stands, and the dispute stays listed with that answer. This is the case the process exists for.</td>
+        </tr>
+      </tbody>
+    </table>
+    <p style="color: var(--text-muted); font-size: 0.9rem; max-width: 820px;">
+      What never happens: a score adjusted by hand, a card pulled to end an argument, or a method changed for one
+      source. There is no override switch to reach for, which is the point of not having built one.
+    </p>
+  </section>
+
+  <section style="margin-bottom: 3rem;">
+    <h2 style="font-size: 1.5rem; font-weight: 700; margin-bottom: 1rem;">The log</h2>
+    {DISPUTES.length === 0 ? (
+      <div style="border: 1px dashed var(--border-color); border-radius: 8px; padding: 1.5rem; background: var(--bg-subtle);">
+        <p style="font-weight: 600; margin-bottom: 0.35rem;">No disputes have been filed.</p>
+        <p style="font-size: 0.92rem; color: var(--text-muted);">
+          Five sources are scored, the first cards published recently, and nobody has challenged one yet. Read that
+          as a young benchmark rather than a vindicated one. Every dispute that is filed appears here, including the
+          ones we lose.
+        </p>
+      </div>
+    ) : (
+      <table>
+        <thead><tr><th>Filed</th><th>Source</th><th>Claim</th><th>Resolution</th></tr></thead>
+        <tbody>
+          {DISPUTES.map((d) => (
+            <tr>
+              <td>{d.filed}</td>
+              <td><a href={u(`/scorecards/${d.source_id}`)}>{d.source_id}</a></td>
+              <td>{d.claim}</td>
+              <td>{d.resolution}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    )}
+  </section>
+
+  <section>
+    <h2 style="font-size: 1.5rem; font-weight: 700; margin-bottom: 0.75rem;">What you are disputing against</h2>
+    <p style="color: var(--text-muted); max-width: 820px; margin-bottom: 0.75rem;">
+      Every artifact behind a card is listed with its sha256 in the manifest. Pin it, and a dispute can name exactly
+      which bytes it disagrees with.
+    </p>
+    <pre>{`curl -s https://modafied.org/v1/manifest.json | sha256sum`}</pre>
+    {manifest.generated_at && (
+      <p style="font-size: 0.85rem; color: var(--text-muted);">
+        Manifest currently published at {manifest.generated_at}, covering {manifest.files?.length ?? 0} artifacts.
+      </p>
+    )}
+  </section>
+</Layout>

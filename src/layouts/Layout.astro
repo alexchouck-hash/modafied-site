@@ -184,6 +184,7 @@ const { title, description = "Modafied - Public Benchmark and Provenance Pipe fo
           <a href={u('/rankings')}>Rankings</a>
           <a href={u('/method')}>Methodology</a>
           <a href={u('/protocols')}>Protocols</a>
+          <a href={u('/independence')}>Independence</a>
           <a href={u('/emblems')}>Emblems</a>
           <a href={u('/trace')}>Trace</a>
           <a href={u('/submit')}>Submit a feed</a>
@@ -200,8 +201,18 @@ const { title, description = "Modafied - Public Benchmark and Provenance Pipe fo
       <div class="footer-container">
         <p><strong>Modafied</strong> is an independent, public, mechanically computed benchmark of data sources for apps and agents.</p>
         <p>All scorecards are computed mechanically from immutable snapshots. No manual overrides. No sponsored placement.</p>
-        <p>Funded by Trooth. Trooth is scored like everyone else.</p>
+        <p>
+          Funded by Trooth, which is scored like everyone else and buys nothing with the money. The whole
+          arrangement is written down on the <a href={u('/independence')}>independence page</a>.
+        </p>
         <p>Emblems state a computed rating and nothing else. No emblem, placement, or rank is purchasable, at any price.</p>
+        <p style="display: flex; flex-wrap: wrap; gap: 1rem;">
+          <a href={u('/independence')}>Independence</a>
+          <a href={u('/anchors')}>Anchors</a>
+          <a href={u('/replicas')}>Replication</a>
+          <a href={u('/disputes')}>Disputes</a>
+          <a href={u('/contribute')}>Contribute</a>
+        </p>
         <p>&copy; 2026 Modafied. Open contracts under permissive terms.</p>
       </div>
     </footer>

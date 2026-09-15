@@ -1,0 +1,146 @@
+---
+import Layout from '../layouts/Layout.astro';
+import { u, getScorecards } from '../lib/data.mjs';
+
+const cards = getScorecards();
+
+// Replication is the only trust mechanism here that does not require believing us. It needs no
+// consensus, no votes and no honest-majority assumption: two machines either derive the same hash
+// from the same public snapshot or they do not, and a disagreement is a bug report.
+const CROWD_CAN = [
+  'Run a replica: snapshot the same sources, compute scorecards with the same published code, publish a signed hash.',
+  'Propose an anchor for a domain, with its provenance and settle rule, by pull request.',
+  'Contribute a catalog entry, or a quirk report about a feed you know better than we do.',
+  'Propose a method change, as an ADR, versioned, applying to every source at once.',
+  'File a dispute with a reproduction attached.',
+];
+
+const CROWD_CANNOT = [
+  'Vote on a score. Popularity is not a measurement, and every benchmark that let the crowd vote was captured.',
+  'Set or adjust a number by hand, including their own.',
+  'Bypass review on a catalog entry or a license citation.',
+  'Change the method for one source without changing it for all of them.',
+  'File a dispute without a reproduction.',
+];
+---
+
+<Layout title="Replication">
+  <div style="margin-bottom: 2.5rem;">
+    <h1 style="font-size: 2.25rem; font-weight: 800; margin-bottom: 0.75rem;">Replication</h1>
+    <p style="font-size: 1.1rem; color: var(--text-muted); max-width: 820px;">
+      A benchmark you have to trust is not a benchmark. The intended check on this project is not our promise of
+      independence, it is that someone else runs the same code over the same public snapshots and gets the same
+      bytes. Two machines either agree on a hash or they do not.
+    </p>
+  </div>
+
+  <section style="border: 1px solid #fcd34d; background: #fffbeb; border-radius: 8px; padding: 1.25rem 1.5rem; margin-bottom: 2.5rem; color: #78350f;">
+    <h2 style="font-size: 1.15rem; font-weight: 700; margin-bottom: 0.5rem;">State today: zero replicas, and it is not yet possible to run one</h2>
+    <p style="font-size: 0.95rem; margin-bottom: 0.6rem;">
+      The scoring code is not public yet. The core repository is private by an accepted decision (ADR-0006), which
+      also commits to publishing the verification logic, the schemas, and the catalog as a companion public
+      repository. That companion has not shipped. Until it does, nobody outside this project can recompute a card,
+      <code>make reproduce</code> is a command only we can run, and every independence claim on this site rests on
+      our word.
+    </p>
+    <p style="font-size: 0.95rem;">
+      That is a gap between what this project says about itself and what it can currently demonstrate, and it is
+      stated here rather than left for a reader to discover. Publishing the verifier is the work that closes it.
+    </p>
+  </section>
+
+  <section style="margin-bottom: 3rem;">
+    <h2 style="font-size: 1.5rem; font-weight: 700; margin-bottom: 1rem;">What a replica is</h2>
+    <p style="color: var(--text-muted); max-width: 820px; margin-bottom: 1rem;">
+      An independent operator, on their own host, doing the whole job: snapshotting the same sources on the same
+      declared cadence, running the published scoring code, and publishing the resulting digests. The signal is
+      agreement between replicas that share no infrastructure.
+    </p>
+    <table>
+      <thead><tr><th style="width: 13rem;">Step</th><th>What it proves</th></tr></thead>
+      <tbody>
+        <tr>
+          <td><strong>Recompute from our archive</strong></td>
+          <td>The code does what the method page says. Same snapshots in, byte-identical card out. This catches a scoring bug and a fudged number equally well.</td>
+        </tr>
+        <tr>
+          <td><strong>Snapshot independently</strong></td>
+          <td>The archive itself is honest. A replica that captures the same feeds on its own schedule can compare what it saw against what we recorded, which is the only real check on an append-only archive nobody else witnessed.</td>
+        </tr>
+        <tr>
+          <td><strong>Publish an attestation</strong></td>
+          <td>The comparison is on the record: which snapshot, which method version, which digest, and whether it matched. A disagreement becomes a bug report with evidence rather than an argument.</td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
+
+  <section style="margin-bottom: 3rem;">
+    <h2 style="font-size: 1.5rem; font-weight: 700; margin-bottom: 1rem;">What a replica attestation says</h2>
+    <p style="color: var(--text-muted); max-width: 820px; margin-bottom: 0.5rem;">
+      The shape below is the target, not something published yet. It is here so it can be argued with before it
+      exists rather than after.
+    </p>
+    <pre>{`{
+  "replica_id":      "who ran it, and where",
+  "subject":         { "type": "scorecard", "source_id": "nws" },
+  "method_version":  "0.2",
+  "as_of":           "2026-09-13T22:00:04Z",
+  "snapshot_digest": "sha256 of the inputs it scored",
+  "result_digest":   "sha256 of the card it produced",
+  "matches_origin":  true,
+  "signed_at":       "2026-09-14T00:00:00Z"
+}`}</pre>
+    <p style="font-size: 0.9rem; color: var(--text-muted); max-width: 820px;">
+      <code>matches_origin: false</code> is the interesting record, and the one that has to survive publication. A
+      replica that only publishes its agreements is decoration.
+    </p>
+  </section>
+
+  <section style="margin-bottom: 3rem;">
+    <h2 style="font-size: 1.5rem; font-weight: 700; margin-bottom: 1rem;">What the crowd can and cannot do</h2>
+    <p style="color: var(--text-muted); max-width: 820px; margin-bottom: 1rem;">
+      Replication is the decentralisation this project wants. It needs no tokens, no consensus mechanism, and no
+      assumption that most participants are honest, because the check is arithmetic rather than a vote.
+    </p>
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.25rem;">
+      <div style="border: 1px solid var(--border-color); border-top: 4px solid #15803d; border-radius: 8px; padding: 1.1rem;">
+        <h3 style="font-size: 1.05rem; font-weight: 700; margin-bottom: 0.6rem;">Anyone can</h3>
+        <ul style="margin-left: 1.1rem; display: flex; flex-direction: column; gap: 0.5rem; font-size: 0.92rem;">
+          {CROWD_CAN.map((row) => <li>{row}</li>)}
+        </ul>
+      </div>
+      <div style="border: 1px solid var(--border-color); border-top: 4px solid #b91c1c; border-radius: 8px; padding: 1.1rem;">
+        <h3 style="font-size: 1.05rem; font-weight: 700; margin-bottom: 0.6rem;">Nobody can</h3>
+        <ul style="margin-left: 1.1rem; display: flex; flex-direction: column; gap: 0.5rem; font-size: 0.92rem;">
+          {CROWD_CANNOT.map((row) => <li>{row}</li>)}
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section style="margin-bottom: 3rem;">
+    <h2 style="font-size: 1.5rem; font-weight: 700; margin-bottom: 1rem;">The known replicas</h2>
+    <div style="border: 1px dashed var(--border-color); border-radius: 8px; padding: 1.5rem; background: var(--bg-subtle);">
+      <p style="font-weight: 600; margin-bottom: 0.35rem;">None. One operator, one host, {cards.length} cards.</p>
+      <p style="font-size: 0.92rem; color: var(--text-muted);">
+        The target is three replicas on three hosts, at least one of them not operated by us. When one exists it is
+        listed here with its attestations, agreements and disagreements alike. If replicas ever disagree and the
+        cause is not found to be a bug, scorecard publication stops until it is: an unreproducible method is not a
+        method.
+      </p>
+    </div>
+  </section>
+
+  <section>
+    <h2 style="font-size: 1.5rem; font-weight: 700; margin-bottom: 0.75rem;">What you can check right now</h2>
+    <p style="color: var(--text-muted); max-width: 820px; margin-bottom: 0.75rem;">
+      Short of a replica, the published artifacts are still checkable by hand: every band edge is on the
+      <a href={u('/protocols')}>protocols page</a>, so any letter grade can be re-derived from the measured value
+      printed beside it, and every emblem resolves to the claim it made on the <a href={u('/trace')}>trace ledger</a>.
+      Those checks catch a mislabelled grade. They do not catch a wrong measurement, which is what a replica is for.
+    </p>
+    <pre>{`curl -s https://modafied.org/v1/scorecards/nws.json | jq '{method_version, dimensions}'
+curl -s https://modafied.org/v1/ratings/nws.json   | jq '.composite'`}</pre>
+  </section>
+</Layout>

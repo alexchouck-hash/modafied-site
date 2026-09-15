@@ -59,9 +59,9 @@
     "rating_json_url": "https://alexchouck-hash.github.io/modafied-site/v1/ratings/nws.json",
     "scorecard_json_url": "https://alexchouck-hash.github.io/modafied-site/v1/scorecards/nws.json",
     "scorecard_page_url": "https://alexchouck-hash.github.io/modafied-site/scorecards/nws",
-    "scorecard_sha256": "d24b9ad0843a24f1e8655e266257ae8eb3d05d32111ddd5c313680ccc056afcd"
+    "scorecard_sha256": "dfd5c2ac409f31f541c1fa91783594e448a9de068ff4a2f64007a7f32e426ea9"
   },
-  "generated_at": "2026-09-14T01:52:25Z",
+  "generated_at": "2026-09-15T05:14:23Z",
   "method_version": "0.2",
   "notice": "Mechanically computed from public snapshots. This is a measurement, not an endorsement, a verification, or a partnership. It cannot be purchased and it changes without notice when the measurement changes.",
   "rank": {

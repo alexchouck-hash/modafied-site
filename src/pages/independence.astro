@@ -1,0 +1,160 @@
+---
+import Layout from '../layouts/Layout.astro';
+import { u, getRatings } from '../lib/data.mjs';
+
+// Policy, not measurement, so it is written here rather than generated. Every claim below is one a
+// reader can check: against the published artifacts, against the ADRs, or against the absence of a
+// thing we say is absent. Required by plan v0.2 section 5.4 and item M-07, which puts this page in
+// front of any scorecard published under the Modafied name.
+const scoredCount = getRatings().length;
+
+const ALLOWED = [
+  {
+    what: 'A fixed, published transfer from Trooth for the compute behind public scorecards',
+    why: 'It pays the bills. It is a number, not a formula, it does not vary with any score, and it belongs on this page. If it ever moves with a result, the arrangement has failed and this page is the evidence.',
+    state: 'Active. The number is not yet set; see the open items below.',
+  },
+  {
+    what: 'Grading a private, unpublished source on request',
+    why: 'A service, not a score for sale. The output is a private report. It never becomes a public card, a grade, a rank, or an emblem, and paying for one does not put a source in the public catalog.',
+    state: 'Not offered yet.',
+  },
+  {
+    what: 'Sponsorship or grants from parties that are not graded',
+    why: 'Money from an organisation with nothing in the catalog and nothing in the rankings cannot buy a result, because there is no result of theirs to buy.',
+    state: 'None received.',
+  },
+];
+
+const FORBIDDEN = [
+  'Listing fees, of any size, from any source.',
+  'Advertising or sponsorship from any party that is graded here, including Trooth beyond the fixed transfer above.',
+  'Payment for an emblem, a badge, a grade, a rank, a category placement, or an early look at a result.',
+  'Payment to remove, delay, soften, or re-run an unflattering card.',
+  'Equity, revenue share, or a referral fee from any source in the catalog.',
+  'Any arrangement whose size depends on what a score turns out to be.',
+];
+---
+
+<Layout title="Independence and Conflict Policy">
+  <div style="margin-bottom: 2.5rem;">
+    <h1 style="font-size: 2.25rem; font-weight: 800; margin-bottom: 0.75rem;">Independence and conflict policy</h1>
+    <p style="font-size: 1.1rem; color: var(--text-muted); max-width: 820px;">
+      Modafied grades {scoredCount} sources today and intends to grade many more, including software owned by the
+      person who funds it. A benchmark that takes money from the things it measures is an advertisement with a
+      table in it. This page says where the money comes from, what it is allowed to buy, and what it can never buy.
+    </p>
+  </div>
+
+  <section style="border: 1px solid var(--border-color); border-left: 5px solid var(--primary-color); border-radius: 8px; padding: 1.25rem 1.5rem; background: var(--bg-subtle); margin-bottom: 2.5rem;">
+    <h2 style="font-size: 1.15rem; font-weight: 700; margin-bottom: 0.5rem;">The rule, in one line</h2>
+    <p style="font-size: 1rem;">
+      <strong>Modafied takes no revenue from any party it grades</strong>, other than a fixed published transfer
+      from its funder that does not vary with any score. There is no price for a grade, and no price for a better
+      one.
+    </p>
+  </section>
+
+  <section style="margin-bottom: 3rem;">
+    <h2 style="font-size: 1.5rem; font-weight: 700; margin-bottom: 1rem;">Who owns what, and who pays for what</h2>
+    <p style="color: var(--text-muted); max-width: 820px; margin-bottom: 1rem;">
+      One person runs Modafied and also runs Trooth, which funds it. That is a conflict. It is not hidden, it is not
+      resolved by assurance, and what follows is the design that keeps it from reaching a number.
+    </p>
+    <table>
+      <thead><tr><th style="width: 9rem;">Party</th><th>Relationship</th><th style="width: 21rem;">What stops it from moving a score</th></tr></thead>
+      <tbody>
+        <tr>
+          <td><strong>Trooth</strong></td>
+          <td>Funds this repository. Consumes its published output to route between data sources. Same owner.</td>
+          <td>It reads the same artifacts you read, at the same time: no earlier access, no unpublished fields, no say in what is scored or how. Sources Trooth prefers run the identical code path. When Trooth ships a public MCP server, it is scored here like anything else.</td>
+        </tr>
+        <tr>
+          <td><strong>KouroB</strong></td>
+          <td>Same owner. A node architecture named on the <a href={u('/protocols')}>protocols page</a> as a pattern we recommend.</td>
+          <td>Our pipeline does not run on it and does not depend on it. A node is never what we measure; we measure the origin endpoints a catalog entry declares. When a KouroB node is public, it is graded by the same code as any other node.</td>
+        </tr>
+        <tr>
+          <td><strong>Every source in the catalog</strong></td>
+          <td>Measured. None of them pays us anything, and none of them is asked to.</td>
+          <td>Scores are computed by one code path from immutable snapshots, and that path has no override switch in it. A source that paid us for anything would be marked <code>funder</code> on its card and scored identically. None has.</td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
+
+  <section style="margin-bottom: 3rem;">
+    <h2 style="font-size: 1.5rem; font-weight: 700; margin-bottom: 1rem;">Revenue we will accept</h2>
+    <div style="display: flex; flex-direction: column; gap: 1rem;">
+      {ALLOWED.map((row) => (
+        <div style="border: 1px solid var(--border-color); border-radius: 8px; padding: 1.1rem;">
+          <h3 style="font-size: 1.05rem; font-weight: 700;">{row.what}</h3>
+          <p style="font-size: 0.92rem; color: var(--text-muted); margin-top: 0.35rem;">{row.why}</p>
+          <p style="margin-top: 0.6rem;"><span class="badge">{row.state}</span></p>
+        </div>
+      ))}
+    </div>
+  </section>
+
+  <section style="margin-bottom: 3rem;">
+    <h2 style="font-size: 1.5rem; font-weight: 700; margin-bottom: 1rem;">Revenue we will not accept, at any price</h2>
+    <ul style="margin-left: 1.5rem; display: flex; flex-direction: column; gap: 0.5rem;">
+      {FORBIDDEN.map((row) => <li>{row}</li>)}
+    </ul>
+    <p style="color: var(--text-muted); font-size: 0.9rem; margin-top: 1rem; max-width: 820px;">
+      If anyone tells you they bought one of these, the way to prove otherwise is to
+      <a href={u('/replicas')}> recompute the card yourself</a> and
+      <a href={u('/disputes')}> open a dispute</a> when it does not match.
+    </p>
+  </section>
+
+  <section style="margin-bottom: 3rem;">
+    <h2 style="font-size: 1.5rem; font-weight: 700; margin-bottom: 1rem;">How a method change happens</h2>
+    <p style="color: var(--text-muted); max-width: 820px; margin-bottom: 1rem;">
+      The second way a benchmark gets captured is not a payment. It is a quiet edit to the method that happens to
+      help someone. So method changes are slow, written down, and versioned.
+    </p>
+    <ul style="margin-left: 1.5rem; display: flex; flex-direction: column; gap: 0.6rem;">
+      <li>A change starts as an ADR in the repository, arguing for itself in public before any code moves.</li>
+      <li>It ships as a new <code>method_version</code>. Cards already published keep the version that produced them.</li>
+      <li>History is re-run under both versions for 30 days, so anyone can see who the change helped and who it hurt.</li>
+      <li>A change to one source's treatment is a change to every source's treatment. There is no per-source method.</li>
+      <li>Band edges are policy, versioned separately from the method that produces the numbers, and published in full on the <a href={u('/protocols')}>protocols page</a> so any grade can be checked by hand.</li>
+      <li>There is no manual override. Not a flag, not a config field, not a spreadsheet. A card is what the code computed from the archive, or it does not publish.</li>
+    </ul>
+  </section>
+
+  <section style="margin-bottom: 3rem;">
+    <h2 style="font-size: 1.5rem; font-weight: 700; margin-bottom: 1rem;">What is not settled yet</h2>
+    <p style="color: var(--text-muted); max-width: 820px; margin-bottom: 1rem;">
+      Publishing the parts of a conflict policy that are already true while hiding the parts that are not would
+      defeat the point of having one.
+    </p>
+    <table>
+      <thead><tr><th style="width: 17rem;">Open item</th><th>State today</th></tr></thead>
+      <tbody>
+        <tr>
+          <td><strong>The size of the transfer from Trooth</strong></td>
+          <td>Not set, and therefore not published. It will appear here as a monthly figure before it is described as fixed anywhere else. What is true today is that the whole project runs inside a hard $10 per month cap, on free tiers.</td>
+        </tr>
+        <tr>
+          <td><strong>Modafied's legal shape</strong></td>
+          <td>Undecided. Today it is a separate repository with a published conflict policy, run by the same person as its funder. Separate company or foundation-style project is an open decision, and the choice affects who is allowed to fund it.</td>
+        </tr>
+        <tr>
+          <td><strong>Independent verification</strong></td>
+          <td>Not yet possible. Nobody outside this project has recomputed a card, because the verifier has not been published yet. Until it is, the claims on this page rest on our word, which is worth less than a matching hash. See <a href={u('/replicas')}>replication</a>.</td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
+
+  <section>
+    <h2 style="font-size: 1.5rem; font-weight: 700; margin-bottom: 0.75rem;">If you think we are captured</h2>
+    <p style="color: var(--text-muted); max-width: 820px;">
+      Say so in public, with a reproduction. A dispute that carries a recomputation is worth more to this project
+      than agreement is, and it is resolved by an ADR or an experiment, never by a quiet edit. The process is on the
+      <a href={u('/disputes')}>disputes page</a>.
+    </p>
+  </section>
+</Layout>

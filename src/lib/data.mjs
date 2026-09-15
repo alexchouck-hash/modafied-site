@@ -202,3 +202,55 @@ export function formatMeasured(dimension, entry) {
       return `${value}%`;
   }
 }
+
+/**
+ * Anchor kinds this method knows how to settle against, with the settle rule stated in prose so a
+ * reader can check the number by hand. An accuracy figure names one of these; a figure that names
+ * none of them is not publishable (H1, and plan v0.2 section 5.1: no accuracy without an anchor_ref).
+ */
+export const ANCHOR_KINDS = {
+  later_observation_of_same_source: {
+    label: 'Later observation of the same source',
+    settle_rule:
+      'A forecast is settled by the same publisher’s own later observation for the same key. The pair is admitted only when the observation was captured at or after the forecast, so nothing is graded against a value that was already known when the forecast was made.',
+    independence:
+      'Weak. Publisher and grader are the same organisation, so this measures self-consistency, not correspondence with the world. It is named this way on every card that uses it.',
+  },
+  other_source: {
+    label: 'A different source',
+    settle_rule:
+      'A value is settled against an independent publisher measuring the same quantity, paired on the fields the catalog entry declares in anchor.pair_on.',
+    independence: 'Stronger, and bounded by the anchor source’s own scorecard, which is published here like any other.',
+  },
+};
+
+/**
+ * The anchor registry: one entry per source that declares an anchor, joined to whatever that anchor
+ * has actually settled so far. An entry with no accuracy block has an anchor and no samples yet,
+ * which is a different statement from having no anchor at all.
+ */
+export function getAnchors() {
+  const scorecards = {};
+  for (const card of getScorecards()) scorecards[card.source_id] = card;
+  const anchors = [];
+  for (const source of getCatalog()) {
+    if (!source.anchor) continue;
+    const card = scorecards[source.id] ?? null;
+    anchors.push({
+      source_id: source.id,
+      source_name: source.name ?? source.id,
+      category: source.category ?? null,
+      kind: source.anchor.kind,
+      pair_on: source.anchor.pair_on ?? [],
+      anchor_source: source.anchor.source ?? source.id,
+      accuracy: card?.accuracy ?? null,
+      window: card?.scoring_window ?? null,
+    });
+  }
+  return anchors.sort((a, b) => a.source_id.localeCompare(b.source_id));
+}
+
+/** Anchor id used in links, so an accuracy figure on a card can point at the registry entry behind it. */
+export function anchorSlug(sourceId, kind) {
+  return `${sourceId}-${String(kind).replace(/_/g, '-')}`;
+}

@@ -153,7 +153,35 @@ const categoriesWithContest = rankings.categories.filter((c) => c.ranked.length 
       </div>
     </div>
     <p style="color: var(--text-muted); font-size: 0.9rem; margin-top: 1rem;">
-      Accuracy is published only where a named anchor exists, and it is never folded into the letter grade.
+      Accuracy is published only where a named anchor exists, it is never folded into the letter grade, and every
+      anchor in force is listed on the <a href={u('/anchors')}>anchor registry</a>.
     </p>
+  </section>
+
+  <section style="margin-bottom: 3rem;">
+    <h2 style="font-size: 1.5rem; font-weight: 700; margin-bottom: 1rem;">Why you should not simply take our word for it</h2>
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 1rem;">
+      <a href={u('/independence')} style="display: block; border: 1px solid var(--border-color); border-radius: 8px; padding: 1.1rem; text-decoration: none; color: inherit;">
+        <strong>Nothing here is for sale</strong>
+        <p style="font-size: 0.88rem; color: var(--text-muted); margin-top: 0.3rem;">
+          Modafied takes no revenue from anything it grades. Trooth funds it, is scored by it, and buys nothing with
+          the money. The full policy, including what is still unsettled.
+        </p>
+      </a>
+      <a href={u('/replicas')} style="display: block; border: 1px solid var(--border-color); border-radius: 8px; padding: 1.1rem; text-decoration: none; color: inherit;">
+        <strong>Check the arithmetic yourself</strong>
+        <p style="font-size: 0.88rem; color: var(--text-muted); margin-top: 0.3rem;">
+          The intended check is replication, not assurance. Today there are no replicas and the verifier is not
+          published yet, which is stated plainly rather than hidden.
+        </p>
+      </a>
+      <a href={u('/disputes')} style="display: block; border: 1px solid var(--border-color); border-radius: 8px; padding: 1.1rem; text-decoration: none; color: inherit;">
+        <strong>Argue with a card in public</strong>
+        <p style="font-size: 0.88rem; color: var(--text-muted); margin-top: 0.3rem;">
+          A dispute with a reproduction attached is answered by a written decision or an experiment. No card is ever
+          adjusted by hand, in either direction.
+        </p>
+      </a>
+    </div>
   </section>
 </Layout>

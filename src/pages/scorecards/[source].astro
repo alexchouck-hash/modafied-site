@@ -12,10 +12,15 @@ import {
   formatMeasured,
   DIMENSION_ORDER,
   DIMENSION_LABELS,
+  ANCHOR_KINDS,
+  anchorSlug,
   NEUTRAL,} from '../../lib/data.mjs';
 
 export async function getStaticPaths() {
-  const scorecardsDir = path.resolve('./public/scorecards');
+  // The published contract, the same bytes the manifest hashes and a consumer pins. The pre-v1
+  // copy at public/scorecards is still served for old links but is never what a card renders from:
+  // a page that disagrees with its own artifact is worse than no page.
+  const scorecardsDir = path.resolve('./public/v1/scorecards');
   if (!fs.existsSync(scorecardsDir)) {
     return [];
   }
@@ -41,6 +46,12 @@ const compositeColor = ratedOk ? gradeColor(rating.composite.grade) : NEUTRAL;
 const emblemAlt = ratedOk
   ? `Modafied benchmark grade ${rating.composite.grade} for ${scorecard.source_name}`
   : `Modafied benchmark: ${scorecard.source_name} has insufficient data for a rating`;
+// An accuracy figure is only publishable beside the thing that settled it, so the card resolves the
+// anchor kind to its registered settle rule and links the registry entry (H1, plan v0.2 item M-02).
+const anchorKind = accuracy?.anchor ?? scorecard.anchor?.kind ?? null;
+const anchorSpec = anchorKind ? ANCHOR_KINDS[anchorKind] ?? null : null;
+const anchorHref = anchorKind ? u(`/anchors#${anchorSlug(scorecard.source_id, anchorKind)}`) : u('/anchors');
+
 const emblemHtml = `<a href="https://modafied.org/scorecards/${scorecard.source_id}" target="_blank" rel="noopener">
   <img src="https://modafied.org/v1/emblems/${scorecard.source_id}.svg" alt="${emblemAlt}" height="96">
 </a>`;
@@ -219,11 +230,20 @@ const emblemHtml = `<a href="https://modafied.org/scorecards/${scorecard.source_
 
       <div style="margin-bottom: 1rem; padding: 0.75rem; background-color: white; border: 1px solid #bfdbfe; border-radius: 6px;">
         <strong style="color: #1e40af; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.05em; display: block; margin-bottom: 0.25rem;">
-          Named Ground-Truth Anchor
+          Named Anchor
         </strong>
         <p style="font-size: 0.95rem; font-weight: 600; color: #1e293b;">
-          {accuracy.anchor}
+          <a href={anchorHref}>{anchorSpec ? anchorSpec.label : accuracy.anchor}</a>
+          <code style="font-weight: 400; font-size: 0.8rem; color: var(--text-muted); margin-left: 0.5rem;">{accuracy.anchor}</code>
         </p>
+        {anchorSpec && (
+          <>
+            <p style="font-size: 0.88rem; color: var(--text-muted); margin-top: 0.4rem;">{anchorSpec.settle_rule}</p>
+            <p style="font-size: 0.88rem; color: var(--text-muted); margin-top: 0.4rem;">
+              <strong>How independent it is.</strong> {anchorSpec.independence}
+            </p>
+          </>
+        )}
       </div>
 
       <div style="display: flex; gap: 2rem; flex-wrap: wrap;">
@@ -245,12 +265,22 @@ const emblemHtml = `<a href="https://modafied.org/scorecards/${scorecard.source_
           {accuracy.details.notes}
         </p>
       )}
+      {accuracy.sample_count < 30 && (
+        <p style="font-size: 0.85rem; color: #78350f; background: #fffbeb; border: 1px solid #fcd34d; border-radius: 4px; padding: 0.6rem 0.75rem; margin-top: 0.75rem;">
+          {accuracy.sample_count} settled {accuracy.sample_count === 1 ? 'pair' : 'pairs'} is an early reading, not a
+          benchmark figure. It is shown with its sample count rather than withheld, and it will move a great deal
+          before it means anything. Do not route on it.
+        </p>
+      )}
     </section>
   ) : (
     <section style="border: 1px dashed var(--border-color); border-radius: 8px; padding: 1.25rem; background-color: var(--bg-subtle); margin-bottom: 3rem;">
-      <h2 style="font-size: 1.1rem; font-weight: 600; color: var(--text-muted); margin-bottom: 0.25rem;">Accuracy Benchmark Not Applicable</h2>
+      <h2 style="font-size: 1.1rem; font-weight: 600; color: var(--text-muted); margin-bottom: 0.25rem;">No accuracy figure, because nothing settles this feed yet</h2>
       <p style="font-size: 0.85rem; color: var(--text-muted);">
-        In accordance with Rule H1, accuracy is strictly published only when an independent ground-truth anchor exists. Because no official settlement authority is designated for this feed, accuracy is omitted. Lineage and disagreement metrics remain active.
+        Under Rule H1, accuracy is published only against a named anchor. No anchor is registered for this feed, so
+        the card carries the six dimensions and no accuracy number at all rather than a number with nothing behind
+        it. What would change that is on the <a href={anchorHref}>anchor registry</a>. Lineage and disagreement
+        measurements are unaffected.
       </p>
     </section>
   )}

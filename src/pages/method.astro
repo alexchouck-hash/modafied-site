@@ -1,5 +1,9 @@
 ---
 import Layout from '../layouts/Layout.astro';
+import { u, getAnchors, anchorSlug } from '../lib/data.mjs';
+
+const anchors = getAnchors();
+const settled = anchors.filter((a) => a.accuracy);
 ---
 
 <Layout title="Scoring Methodology v0.2">
@@ -19,7 +23,8 @@ import Layout from '../layouts/Layout.astro';
       <li><strong>Mechanical computation:</strong> Every score is calculated automatically by open code running against immutable snapshot history. No manual score adjustments exist.</li>
       <li><strong>No sponsored placement:</strong> Feed evaluations cannot be purchased, sponsored, or altered by commercial agreements.</li>
       <li><strong>Rule H1 compliance:</strong> Accuracy is never published without an authoritative, independent settlement anchor named on the same card. In the absence of an anchor, accuracy is omitted.</li>
-      <li><strong>Full reproducibility:</strong> Given the snapshot archive and method version stamp, any third party can re-run scoring code to produce byte-identical scorecards.</li>
+      <li><strong>Full reproducibility:</strong> Given the snapshot archive and the method version stamp, re-running the scoring code produces a byte-identical scorecard. The archive and the artifacts are public; the scoring code is not published yet, so this is not yet something an outside party can check for themselves. That gap, and what closes it, is on the <a href={u('/replicas')}>replication page</a>.</li>
+      <li><strong>No revenue from anything graded:</strong> Nothing on a card is for sale, at any price, and the funding arrangement that makes that credible is written out on the <a href={u('/independence')}>independence page</a>.</li>
     </ul>
   </section>
 
@@ -97,8 +102,95 @@ import Layout from '../layouts/Layout.astro';
     <blockquote style="border-left: 3px solid #2563eb; background: var(--bg-subtle); padding: 1rem; margin-bottom: 1rem; font-style: italic;">
       "Never publish an accuracy number without naming the anchor on the same page. Lineage and disagreement are always allowed; truth is never claimed."
     </blockquote>
-    <p style="font-size: 0.95rem; line-height: 1.6;">
-      In Phase 0, National Weather Service terminal forecasts are graded against settled surface observations recorded at Automated Surface Observing System (ASOS) weather stations. The ground-truth anchor is explicitly identified as the NWS MADIS Surface Weather Observation Network.
+    <p style="font-size: 0.95rem; line-height: 1.6; margin-bottom: 1rem;">
+      Today exactly one anchor is in force. National Weather Service forecasts are paired with the National Weather
+      Service's own later observations for the same station and valid hour, admitted only when the observation was
+      captured at or after the forecast. That is a <em>later observation of the same source</em>: it measures whether
+      a publisher agrees with itself, not whether it agrees with the world, and it is labelled that way on every card
+      that carries it. Anchors against an independent publisher of the same quantity are stronger, and none is in
+      force yet.
+    </p>
+    <p style="font-size: 0.95rem; line-height: 1.6; margin-bottom: 1rem;">
+      {settled.length === 0
+        ? 'No anchor has settled any pairs yet, so no accuracy figure is published anywhere on this site.'
+        : `Across the catalog, ${anchors.length} source${anchors.length === 1 ? '' : 's'} declare an anchor and ${settled.length} ${settled.length === 1 ? 'has' : 'have'} settled pairs. Samples are still small enough that the figures move; each is printed with its sample count so a reader can see how little is behind it.`}
+    </p>
+    <p style="font-size: 0.95rem;">
+      Every anchor, its settle rule, its provenance and how independent it actually is, is listed on the
+      <a href={u('/anchors')}>anchor registry</a>, and every accuracy figure on this site links back to its entry
+      there. Accuracy never enters the letter grade, because a grade that folds in accuracy quietly punishes every
+      feed that has no anchor available.
+      {settled.length > 0 && (
+        <> Current entry: <a href={u(`/anchors#${anchorSlug(settled[0].source_id, settled[0].kind)}`)}>{settled[0].source_name}</a>.</>
+      )}
+    </p>
+  </section>
+
+  <section style="margin-bottom: 3rem;">
+    <h2 style="font-size: 1.5rem; font-weight: 700; margin-bottom: 1rem;">Why the six dimensions constrain each other</h2>
+    <p style="color: var(--text-muted); margin-bottom: 1rem; max-width: 820px;">
+      Anything measured and published will eventually be optimised against, and a benchmark that can be gamed by
+      changing one behaviour is worse than no benchmark, because it rewards the change. The six dimensions are
+      chosen so that winning one by manipulation loses another. This is published rather than kept quiet: the trap
+      only works if it is known.
+    </p>
+    <table>
+      <thead><tr><th style="width: 20rem;">Optimise this</th><th>And this gets worse</th></tr></thead>
+      <tbody>
+        <tr>
+          <td>Publish earlier to win <strong>freshness lag</strong></td>
+          <td>More of what you publish turns out to need changing, which raises <strong>revision behaviour</strong>.</td>
+        </tr>
+        <tr>
+          <td>Stop issuing corrections to win <strong>revision behaviour</strong></td>
+          <td>Wrong values stay in the feed and contradict its own later values, which shows up in <strong>internal consistency</strong> and lengthens <strong>correction latency</strong>.</td>
+        </tr>
+        <tr>
+          <td>Pad the payload with fields to win <strong>completeness</strong></td>
+          <td>The shape of the response keeps moving, which costs <strong>schema stability</strong>.</td>
+        </tr>
+        <tr>
+          <td>Freeze the schema to win <strong>schema stability</strong></td>
+          <td>New segments cannot be added where they belong, so coverage gaps surface as <strong>completeness</strong> by segment.</td>
+        </tr>
+      </tbody>
+    </table>
+    <p style="color: var(--text-muted); font-size: 0.92rem; max-width: 820px;">
+      The honest way to win is the boring one: publish when the value is ready, correct it visibly when it changes,
+      and keep the shape stable. There is no arrangement of the six that rewards anything else, and if one is found,
+      that is a method bug and a <a href={u('/disputes')}>dispute</a> worth filing.
+    </p>
+  </section>
+
+  <section style="margin-bottom: 3rem;">
+    <h2 style="font-size: 1.5rem; font-weight: 700; margin-bottom: 1rem;">What gets a scorecard</h2>
+    <p style="color: var(--text-muted); margin-bottom: 1rem; max-width: 820px;">
+      Data sources today. The method is written so that other things an agent depends on can be graded by the same
+      rules, and each is listed here only when it is actually measured, not when it is planned.
+    </p>
+    <table>
+      <thead><tr><th style="width: 12rem;">Subject</th><th>What is measured</th><th style="width: 9rem;">State</th></tr></thead>
+      <tbody>
+        <tr>
+          <td><strong>Sources</strong></td>
+          <td>The six dimensions, plus accuracy where an anchor exists.</td>
+          <td><span class="badge">Published</span></td>
+        </tr>
+        <tr>
+          <td><strong>MCP servers</strong></td>
+          <td>Tool count, schema bytes, whether provenance is returned, how untrusted text is handled, injection surface, latency.</td>
+          <td><span class="badge">Not yet</span></td>
+        </tr>
+        <tr>
+          <td><strong>Nodes and paths</strong></td>
+          <td>Accuracy against a named anchor, calibration error, cost per call, p95 latency, drift since the last grade; and for a path, its end-to-end accuracy against the product of its hops.</td>
+          <td><span class="badge">Not yet</span></td>
+        </tr>
+      </tbody>
+    </table>
+    <p style="color: var(--text-muted); font-size: 0.92rem; max-width: 820px;">
+      The same constraint governs all three: no anchor, no accuracy. A subject in a class nothing can settle can
+      still be measured on the properties its own behaviour reveals, and gets no accuracy number at all.
     </p>
   </section>
 
