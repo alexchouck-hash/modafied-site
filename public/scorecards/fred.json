@@ -34,7 +34,7 @@
       "status": "insufficient_data"
     }
   },
-  "generated_at": "2026-09-15T05:57:22Z",
+  "generated_at": "2026-09-15T06:02:35Z",
   "inputs": {
     "digest": "sha256:4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
     "snapshot_count": 0,
@@ -49,9 +49,9 @@
   "method_version": "0.2",
   "schema_version": "0.3",
   "scoring_window": {
-    "end": "2026-09-15T05:57:22Z",
+    "end": "2026-09-15T06:02:35Z",
     "snapshot_count": 0,
-    "start": "2026-09-15T05:57:22Z"
+    "start": "2026-09-15T06:02:35Z"
   },
   "source_id": "fred",
   "source_name": "Federal Reserve Economic Data (FRED)",

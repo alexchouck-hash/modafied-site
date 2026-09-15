@@ -59,9 +59,9 @@
     "rating_json_url": "https://alexchouck-hash.github.io/modafied-site/v1/ratings/fred.json",
     "scorecard_json_url": "https://alexchouck-hash.github.io/modafied-site/v1/scorecards/fred.json",
     "scorecard_page_url": "https://alexchouck-hash.github.io/modafied-site/scorecards/fred",
-    "scorecard_sha256": "dcfac64a85856d70f62c733080e27f19a58353e89463de32e1dd924fa6bb0f3a"
+    "scorecard_sha256": "f160439a4c0f15a321232ea6379a8029bc43bab6cc649ea81e086deab5e775e3"
   },
-  "generated_at": "2026-09-15T05:57:22Z",
+  "generated_at": "2026-09-15T06:02:35Z",
   "method_version": "0.2",
   "notice": "Mechanically computed from public snapshots. This is a measurement, not an endorsement, a verification, or a partnership. It cannot be purchased and it changes without notice when the measurement changes.",
   "rank": null,

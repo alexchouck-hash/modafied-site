@@ -59,9 +59,9 @@
     "rating_json_url": "https://alexchouck-hash.github.io/modafied-site/v1/ratings/open-meteo.json",
     "scorecard_json_url": "https://alexchouck-hash.github.io/modafied-site/v1/scorecards/open-meteo.json",
     "scorecard_page_url": "https://alexchouck-hash.github.io/modafied-site/scorecards/open-meteo",
-    "scorecard_sha256": "a9d4f66727973b7f6fe30a401019629b7241effe4eedd208b441c372815724cd"
+    "scorecard_sha256": "55f7497fbc7647b87267b288fe31081fe2ebedd8aed84e19909d3b1006dc5132"
   },
-  "generated_at": "2026-09-15T05:57:22Z",
+  "generated_at": "2026-09-15T06:02:35Z",
   "method_version": "0.2",
   "notice": "Mechanically computed from public snapshots. This is a measurement, not an endorsement, a verification, or a partnership. It cannot be purchased and it changes without notice when the measurement changes.",
   "rank": {
